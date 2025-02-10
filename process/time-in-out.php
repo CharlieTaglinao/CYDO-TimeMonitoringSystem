@@ -62,24 +62,26 @@ if (isset($_POST['timeIn'])) {
         $clientId = $conn->insert_id;
 
         $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
-        $insertEmailStmt = $conn->prepare($insertEmailQuery);
+        $insertEmailStmt =  $conn->prepare($insertEmailQuery);
         $insertEmailStmt->bind_param("is", $clientId, $email);
         $insertEmailStmt->execute();
     }
 
-   
-    $checkTimeInQuery = "SELECT time_in FROM time_logs WHERE client_id = ? AND time_out IS NULL";
-    $checkTimeInStmt = $conn->prepare($checkTimeInQuery);
-    $checkTimeInStmt->bind_param("i", $clientId);
-    $checkTimeInStmt->execute();
-    $checkTimeInStmt->store_result();
 
-    if ($checkTimeInStmt->num_rows > 0) {
-        $_SESSION['message'] = "You are already timed in.";
-        $_SESSION['message_type'] = 'warning';
-        header("Location: ../index.php");
-        exit();
-    }
+    //time in validation working but we need to use the first, middle, last name as basis for the validation
+   
+    // $checkTimeInQuery = "SELECT time_in FROM time_logs WHERE client_id = ? AND time_out IS NULL";
+    // $checkTimeInStmt = $conn->prepare($checkTimeInQuery);
+    // $checkTimeInStmt->bind_param("i", $clientId);
+    // $checkTimeInStmt->execute();
+    // $checkTimeInStmt->store_result();
+
+    // if ($checkTimeInStmt->num_rows > 0) {
+    //     $_SESSION['message'] = "You are already timed in.";
+    //     $_SESSION['message_type'] = 'warning';
+    //     header("Location: ../index.php");
+    //     exit();
+    // }
 
     $randomCode = generateRandomCode();
     $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
