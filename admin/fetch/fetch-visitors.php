@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 include '../includes/database.php';
 
 // Count today's visitors from the time_logs table
@@ -9,17 +8,40 @@ $totalVisitorsTodayResult = $conn->query($totalVisitorsTodayQuery);
 $totalVisitorsToday = $totalVisitorsTodayResult->fetch_assoc()['total_today'];
 
 // Count current visitors
-$currentVisitorsQuery = "SELECT COUNT(DISTINCT client_id) AS current_visitors 
-                         FROM time_logs 
-                         WHERE time_out IS NULL";
+$currentVisitorsQuery = "SELECT COUNT(DISTINCT client_id) AS current_visitors FROM time_logs WHERE time_out IS NULL";
 $currentVisitorsResult = $conn->query($currentVisitorsQuery);
 $currentVisitors = $currentVisitorsResult->fetch_assoc()['current_visitors'];
 
-// Fetch data for reports and analytics
-$visitorsQuery = "SELECT * FROM visitors";
+// Count weekly visitors
+$totalWeeklyVisitorsQuery = "SELECT COUNT(DISTINCT client_id) AS total_week FROM time_logs WHERE YEARWEEK(time_in, 1) = YEARWEEK(CURDATE(), 1)";
+$totalWeeklyVisitorsResult = $conn->query($totalWeeklyVisitorsQuery);
+$totalWeeklyVisitor = $totalWeeklyVisitorsResult->fetch_assoc()['total_week'];
+
+// Set pagination variables
+$limit = 10; // Rows per page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page
+$offset = ($page - 1) * $limit; // Offset for SQL
+
+// Count total rows
+$totalRowsQuery = "SELECT COUNT(*) AS total FROM visitors INNER JOIN time_logs ON visitors.id = time_logs.client_id";
+$totalRowsResult = $conn->query($totalRowsQuery);
+$totalRows = $totalRowsResult->fetch_assoc()['total'];
+$totalPages = ceil($totalRows / $limit); // Total pages
+
+// Fetch paginated records
+$visitorsQuery = "
+    SELECT 
+        visitors.id AS visitor_id,
+        visitors.first_name,
+        visitors.middle_name,
+        visitors.last_name,
+        time_logs.time_in,
+        time_logs.time_out,
+        time_logs.code
+    FROM visitors
+    INNER JOIN time_logs ON visitors.id = time_logs.client_id
+    ORDER BY time_in DESC
+    LIMIT $limit OFFSET $offset
+";
 $visitorsResult = $conn->query($visitorsQuery);
-
-$timeLogsQuery = "SELECT * FROM time_logs";
-$timeLogsResult = $conn->query($timeLogsQuery);
-
 ?>

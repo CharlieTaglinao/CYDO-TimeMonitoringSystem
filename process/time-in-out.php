@@ -61,38 +61,42 @@ if (isset($_POST['timeIn'])) {
         $clientId = $conn->insert_id;
     }
 
-    // Check for active logs (time_out is NULL)
-    $checkActiveLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
-    $checkActiveLogStmt = $conn->prepare($checkActiveLogQuery);
-    $checkActiveLogStmt->bind_param("i", $clientId);
-    $checkActiveLogStmt->execute();
-    $checkActiveLogStmt->store_result();
+    // Check if the user has already timed in without timing out
+    $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
+    $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
+    $checkTimeLogStmt->bind_param("i", $clientId);
+    $checkTimeLogStmt->execute();
+    $checkTimeLogStmt->store_result();
 
-    if ($checkActiveLogStmt->num_rows > 0) {
-        $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in. If you forgot your code, ask the staff for assistance.";
-        $_SESSION['message_type'] = 'warning';
+    if ($checkTimeLogStmt->num_rows > 0) {
+        $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in.";
+        $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
-    } else {
-        // Insert new time log
-        $randomCode = generateRandomCode();
-        $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
-        $insertPurposeStmt = $conn->prepare($insertPurposeQuery);
-        $insertPurposeStmt->bind_param("is", $clientId, $purpose);
-        $insertPurposeStmt->execute();
-
-        $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?)";
-        $insertLogStmt = $conn->prepare($insertLogQuery);
-        $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
-
-        if ($insertLogStmt->execute()) {
-            $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
-            $_SESSION['message_type'] = 'success';
-        } else {
-            $_SESSION['message'] = "Failed to log in.";
-            $_SESSION['message_type'] = 'danger';
-        }
     }
+
+    // Allow a new time-in
+    $randomCode = generateRandomCode();
+
+    // Insert purpose
+    $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
+    $insertPurposeStmt = $conn->prepare($insertPurposeQuery);
+    $insertPurposeStmt->bind_param("is", $clientId, $purpose);
+    $insertPurposeStmt->execute();
+
+    // Insert new time log
+    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?)";
+    $insertLogStmt = $conn->prepare($insertLogQuery);
+    $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
+
+    if ($insertLogStmt->execute()) {
+        $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
+        $_SESSION['message_type'] = 'success';
+    } else {
+        $_SESSION['message'] = "Failed to log in.";
+        $_SESSION['message_type'] = 'danger';
+    }
+
 } elseif (isset($_POST['timeOut'])) {
     if (!$code) {
         $_SESSION['message'] = "Code is required.";
@@ -127,4 +131,4 @@ if (isset($_POST['timeIn'])) {
 
 header("Location: ../index.php");
 exit();
-
+?>
