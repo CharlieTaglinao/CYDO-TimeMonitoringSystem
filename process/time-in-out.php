@@ -1,14 +1,17 @@
 <?php
 session_start();
+
+date_default_timezone_set('Asia/Manila');
+
 include '../includes/database.php';
 
-$firstName = $_POST['firstName'] ?? null;
-$middleName = $_POST['middleName'] ?? null;
-$lastName = $_POST['lastName'] ?? null;
-$email = $_POST['email'] ?? null;
-$purpose = $_POST['purpose'] ?? null;
-$sex = $_POST['sex'] ?? null;
-$code = $_POST['code'] ?? null;
+$firstName = strtoupper(trim($_POST['firstName'])) ?? null;
+$middleName = strtoupper(trim($_POST['middleName'])) ?? null;
+$lastName = strtoupper(trim($_POST['lastName'])) ?? null;
+$email = strtoupper(trim($_POST['email'])) ?? null;
+$purpose = strtoupper(trim($_POST['purpose'])) ?? null;
+$sex = strtoupper(trim($_POST['sex'])) ?? null;
+$code = strtoupper(trim($_POST['code'])) ?? null;
 
 function generateRandomCode($length = 6)
 {
@@ -31,11 +34,6 @@ if (isset($_POST['timeIn'])) {
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
-    } elseif (!$email) {
-        $_SESSION['message'] = "Email is required.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
     } elseif (!$purpose) {
         $_SESSION['message'] = "Purpose is required.";
         $_SESSION['message_type'] = 'danger';
@@ -45,58 +43,55 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
-    $checkEmailQuery = "SELECT client_id FROM email WHERE email = ?";
-    $checkEmailStmt = $conn->prepare($checkEmailQuery);
-    $checkEmailStmt->bind_param("s", $email);
-    $checkEmailStmt->execute();
-    $checkEmailStmt->store_result();
+    // Check if the visitor exists in the database
+    $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name = ? AND last_name = ?";
+    $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
+    $checkFullNameStmt->bind_param("sss", $firstName, $middleName, $lastName);
+    $checkFullNameStmt->execute();
+    $checkFullNameStmt->store_result();
 
-    if ($checkEmailStmt->num_rows > 0) {
-        $checkEmailStmt->bind_result($clientId);
-        $checkEmailStmt->fetch();
+    if ($checkFullNameStmt->num_rows > 0) {
+        $checkFullNameStmt->bind_result($clientId);
+        $checkFullNameStmt->fetch();
     } else {
         $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id) VALUES (?, ?, ?, ?)";
         $insertStmt = $conn->prepare($insertQuery);
         $insertStmt->bind_param("sssi", $firstName, $middleName, $lastName, $sex);
         $insertStmt->execute();
         $clientId = $conn->insert_id;
-
-        $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
-        $insertEmailStmt =  $conn->prepare($insertEmailQuery);
-        $insertEmailStmt->bind_param("is", $clientId, $email);
-        $insertEmailStmt->execute();
     }
 
+    // Check for active logs (time_out is NULL)
+    $checkActiveLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
+    $checkActiveLogStmt = $conn->prepare($checkActiveLogQuery);
+    $checkActiveLogStmt->bind_param("i", $clientId);
+    $checkActiveLogStmt->execute();
+    $checkActiveLogStmt->store_result();
 
-    //time in validation working but we need to use the first, middle, last name as basis for the validation
-   
-    // $checkTimeInQuery = "SELECT time_in FROM time_logs WHERE client_id = ? AND time_out IS NULL";
-    // $checkTimeInStmt = $conn->prepare($checkTimeInQuery);
-    // $checkTimeInStmt->bind_param("i", $clientId);
-    // $checkTimeInStmt->execute();
-    // $checkTimeInStmt->store_result();
+    if ($checkActiveLogStmt->num_rows > 0) {
+        $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in. If you forgot your code, ask the staff for assistance.";
+        $_SESSION['message_type'] = 'warning';
+        header("Location: ../index.php");
+        exit();
+    } else {
+        // Insert new time log
+        $randomCode = generateRandomCode();
+        $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
+        $insertPurposeStmt = $conn->prepare($insertPurposeQuery);
+        $insertPurposeStmt->bind_param("is", $clientId, $purpose);
+        $insertPurposeStmt->execute();
 
-    // if ($checkTimeInStmt->num_rows > 0) {
-    //     $_SESSION['message'] = "You are already timed in.";
-    //     $_SESSION['message_type'] = 'warning';
-    //     header("Location: ../index.php");
-    //     exit();
-    // }
+        $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?)";
+        $insertLogStmt = $conn->prepare($insertLogQuery);
+        $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
 
-    $randomCode = generateRandomCode();
-    $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
-    $insertPurposeStmt = $conn->prepare($insertPurposeQuery);
-    $insertPurposeStmt->bind_param("is", $clientId, $purpose);
-    $insertPurposeStmt->execute();
-
-    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE time_in = VALUES(time_in), code = VALUES(code)";
-    $insertLogStmt = $conn->prepare($insertLogQuery);
-    $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
-    $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
-    $_SESSION['message_type'] = 'success';
-
-    if (isset($insertLogStmt)) {
-        $insertLogStmt->execute();
+        if ($insertLogStmt->execute()) {
+            $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
+            $_SESSION['message_type'] = 'success';
+        } else {
+            $_SESSION['message'] = "Failed to log in.";
+            $_SESSION['message_type'] = 'danger';
+        }
     }
 } elseif (isset($_POST['timeOut'])) {
     if (!$code) {
@@ -114,8 +109,9 @@ if (isset($_POST['timeIn'])) {
 
     if ($updateLogStmt->execute()) {
         $_SESSION['message'] = "Successfully Time OUT at $logTime";
-        $_SESSION['message_type'] = 'danger';
+        $_SESSION['message_type'] = 'success';
 
+        // Clear the code after successful Time Out
         $deleteCodeQuery = "UPDATE time_logs SET code = NULL WHERE code = ? AND time_out IS NOT NULL";
         $deleteCodeStmt = $conn->prepare($deleteCodeQuery);
         $deleteCodeStmt->bind_param("s", $code);
@@ -131,4 +127,4 @@ if (isset($_POST['timeIn'])) {
 
 header("Location: ../index.php");
 exit();
-?>
+
