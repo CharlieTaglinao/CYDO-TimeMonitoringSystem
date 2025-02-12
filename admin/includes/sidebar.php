@@ -30,7 +30,7 @@ if (isset($_SESSION['username'])) {
             <div class="collapse" id="accountSubmenu">
                 <nav class="nav flex-column ms-3">
                 <a href="#" class="nav-link text-white" id="addAccountBtn">Add Account</a>
-                    <a href="#" class="nav-link text-white">Blank</a>
+                    <a href="view-account.php" class="nav-link text-white">View Account</a>
                 </nav>
             </div>
         </div>
