@@ -47,7 +47,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="timeInModalLabel">Time In</h5>
+                        <h5 class="modal-title" id="timeInModalLabel">Personal Details</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -79,7 +79,7 @@
                                     <option value="2">FEMALE</option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-secondary" name="timeIn">Time In</button>
+                            <button type="submit" class="btn btn-success" name="timeIn">TIME IN</button>
                         </form>
                     </div>
                 </div>

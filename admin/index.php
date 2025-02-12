@@ -1,8 +1,7 @@
 
 <?php include 'fetch-visitors.php'; ?>
 
-<!DOCTYPE html>
-<html lang="en">
+
 <?php include 'includes/header.php'; ?>
 
 <body class="bg-light">
@@ -39,6 +38,8 @@
                         </div>
                     </div>
                 </div>
+                
+                <div id="modalContainer"></div>
 
                 <div class="mt-4">
                     <h3>Visitor Records</h3>

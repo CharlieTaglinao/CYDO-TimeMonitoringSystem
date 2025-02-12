@@ -105,6 +105,19 @@ if (isset($_POST['timeIn'])) {
         exit();
     }
 
+    $validateCodeQuery = "SELECT id FROM time_logs WHERE code = ? AND time_out IS NULL";
+    $validateCodeStmt = $conn->prepare($validateCodeQuery);
+    $validateCodeStmt->bind_param("s", $code);
+    $validateCodeStmt->execute();
+    $validateCodeStmt->store_result();
+
+    if ($validateCodeStmt->num_rows === 0) {
+        $_SESSION['message'] = "The code is invalid or has already been used. Please check your code. If you have forgotten your code,kindly ask the admin or staff for assistance.";
+        $_SESSION['message_type'] = 'danger';
+        header("Location: ../index.php");
+        exit();
+    }
+
     $logTime = date('Y-m-d H:i:s');
 
     $updateLogQuery = "UPDATE time_logs SET time_out = ? WHERE code = ? AND time_out IS NULL";

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (logoutButton) {
         logoutButton.addEventListener("click", function (e) {
-            e.preventDefault(); // Prevent default link action
+            e.preventDefault();
 
             Swal.fire({
                 title: "Are you sure?",
@@ -23,19 +23,40 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('search-input');
-    const visitorTable = document.getElementById('visitor-table');
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input");
+    const visitorTable = document.getElementById("visitor-table");
 
     if (searchInput) {
-        searchInput.addEventListener('input', (event) => {
+        searchInput.addEventListener("input", (event) => {
             const query = event.target.value;
             fetch(`fetch-visitors.php?search=${encodeURIComponent(query)}`)
-                .then(response => response.text())
-                .then(data => {
-                    visitorTable.innerHTML = data;
+                .then((response) => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
                 })
-                .catch(error => console.error('Error fetching data:', error));
+                .then((data) => {
+                    visitorTable.innerHTML = data; // Update table row
+                })
+                .catch((error) => console.error("Error fetching data:", error));
         });
     }
 });
+
+    $(document).ready(function () {
+        $("#addAccountBtn").click(function (e) {
+            e.preventDefault(); 
+
+            // Load modal 
+            $.get("add-account.php", function (data) {
+                $("#modalContainer").html(data); 
+                $("#exampleModal").modal("show"); 
+            });
+        });
+    });
+
+    
+
+
+
+    
