@@ -2,6 +2,8 @@
 session_start();
 include '../includes/database.php';
 
+$search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+
 // Count today's visitors from the time_logs table
 $totalVisitorsTodayQuery = "SELECT COUNT(DISTINCT client_id) AS total_today FROM time_logs WHERE DATE(time_in) = CURDATE()";
 $totalVisitorsTodayResult = $conn->query($totalVisitorsTodayQuery);
@@ -18,17 +20,22 @@ $totalWeeklyVisitorsResult = $conn->query($totalWeeklyVisitorsQuery);
 $totalWeeklyVisitor = $totalWeeklyVisitorsResult->fetch_assoc()['total_week'];
 
 // Set pagination variables
-$limit = 10; // Rows per page
+$limit = 10; 
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; // Current page
 $offset = ($page - 1) * $limit; // Offset for SQL
 
-// Count total rows
-$totalRowsQuery = "SELECT COUNT(*) AS total FROM visitors INNER JOIN time_logs ON visitors.id = time_logs.client_id";
+// Count total rows with search filter
+$totalRowsQuery = "
+    SELECT COUNT(*) AS total 
+    FROM visitors 
+    INNER JOIN time_logs ON visitors.id = time_logs.client_id
+    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+";
 $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit); // Total pages
 
-// Fetch paginated records
+// Fetch paginated records with search filter
 $visitorsQuery = "
     SELECT 
         visitors.id AS visitor_id,
@@ -40,8 +47,13 @@ $visitorsQuery = "
         time_logs.code
     FROM visitors
     INNER JOIN time_logs ON visitors.id = time_logs.client_id
+    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
     ORDER BY time_in DESC
     LIMIT $limit OFFSET $offset
 ";
 $visitorsResult = $conn->query($visitorsQuery);
+
+
+
+
 ?>

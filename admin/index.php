@@ -1,4 +1,5 @@
-<?php include 'fetch/fetch-visitors.php'; ?>
+
+<?php include 'fetch-visitors.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -43,7 +44,9 @@
                     <h3>Visitor Records</h3>
                     <div class="d-flex justify-content-between mb-3">
                         <!-- Search Box -->
-                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name">
+                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name"
+                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+
 
                         <div class="flex-end">
                             <a class="btn btn-success" id="export-csv" href="process/export/export-csv.php">
@@ -122,6 +125,8 @@
             </div>
         </div>
     </div>
+
+    <script src="assets/js/script.js"></script>
 </body>
 
 </html>
