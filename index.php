@@ -1,4 +1,7 @@
-    <?php include 'includes/header.php'; ?>
+    <?php 
+    
+    include 'includes/header.php'; 
+    ?>
     <?php session_start(); ?>
 
     <body class="bg-dark d-flex justify-content-center" style="height: 100vh;">

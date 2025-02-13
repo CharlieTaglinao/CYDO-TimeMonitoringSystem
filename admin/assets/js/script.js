@@ -1,3 +1,4 @@
+    //SWAL FOR LOGOUT
     document.addEventListener("DOMContentLoaded", function () {
         const logoutButton = document.getElementById("logout-button");
 
@@ -10,7 +11,7 @@
                     text: "You will be logged out of your session.",
                     icon: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#d33",
+                    confirmButtonColor: "#0A9548",
                     cancelButtonColor: "#a9a9a9",
                     confirmButtonText: "Yes",
                     cancelButtonText: "Cancel"
@@ -24,17 +25,51 @@
         
     });
 
+    //SWAL FOR DELETE BUTTON IN VIEW ACCOUNT FORMS
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteForms = document.querySelectorAll(".delete-form");
+    
+        deleteForms.forEach((form) => {
+            const deleteButton = form.querySelector(".delete-button");
+            deleteButton.addEventListener("click", function (e) {
+                e.preventDefault(); 
+    
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This action will permanently delete the account.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#0A9548",
+                    cancelButtonColor: "#a9a9a9",
+                    confirmButtonText: "Yes",
+                    cancelButtonText: "Cancel"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                            title: "Successfully Deleted.",
+                            icon: "success",
+                            confirmButtonText: "Okay"
+                        }).then(() => {
+                            form.submit(); 
+                        });
+                        
+                    }
+                });
+            });
+        });
+    });
+    
+
+    //Pop up modal for edit user account
     document.addEventListener("DOMContentLoaded", function () {
         const editButtons = document.querySelectorAll(".editModalBtn");
     
         editButtons.forEach(button => {
             button.addEventListener("click", function () {
-                // Extract data from button attributes
                 const id = this.getAttribute("data-id");
                 const username = this.getAttribute("data-username");
                 const role = this.getAttribute("data-role");
     
-                // Populate modal fields
                 document.getElementById("edit-id").value = id;
                 document.getElementById("edit-username").value = username;
                 document.getElementById("edit-role").value = role;
@@ -42,7 +77,7 @@
         });
     });
     
-
+    //featch visitors data by search
     document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("search-input");
         const visitorTable = document.getElementById("visitor-table");
@@ -63,6 +98,7 @@
         }
     });
 
+    //Pop up modal for adding an account
     $(document).ready(function () {
         $("#addAccountBtn").click(function (e) {
             e.preventDefault(); 

@@ -8,7 +8,6 @@ function hideForm(formId) {
     document.getElementById(formId).style.display = 'none';
 }
 
-//for closing alert after 10 seconds automatically in time in and time out 
 setTimeout(function () {
     var alert = document.querySelector('.alert');
     if (alert) {
@@ -17,3 +16,13 @@ setTimeout(function () {
     }
 }, 10000);
 
+
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+if (getQueryParam('showLoginModal') === 'true') {
+    const LoginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+    LoginModal.show();
+}

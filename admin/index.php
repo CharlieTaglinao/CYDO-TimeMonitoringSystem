@@ -1,5 +1,9 @@
 
-<?php include 'fetch-visitors.php'; ?>
+
+<?php
+
+
+include 'fetch-visitors.php'; ?>
 
 
 <?php include 'includes/header.php'; ?>

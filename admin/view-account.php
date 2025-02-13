@@ -98,11 +98,12 @@ include 'fetch-accounts.php';
                                         </button>
 
                                         <!-- Delete  -->
-                                        <form action="process/delete-account-logic.php" method="POST"
+                                        <form action="process/delete-account-logic.php" method="POST" id="delete-button-on-form"
                                             class="d-inline delete-form">
                                             <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit"
-                                                class="btn btn-sm btn-danger delete-button">DELETE</button>
+                                            <button type="submit" class="btn btn-sm btn-danger delete-button">DELETE</button>
+
+                        
                                         </form>
 
                                     </td>

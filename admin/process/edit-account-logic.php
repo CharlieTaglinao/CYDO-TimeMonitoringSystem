@@ -1,5 +1,5 @@
 <?php 
-include '../../includes/database.php'; // Database connection
+include '../../includes/database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);
