@@ -1,4 +1,10 @@
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- Add Account Modal -->
+<div class="modal fade <?php if (isset($_SESSION['show_modal']) && $_SESSION['show_modal']) echo 'show'; ?>" 
+     id="exampleModal" 
+     tabindex="-1" 
+     aria-labelledby="exampleModalLabel" 
+     aria-hidden="true"
+     style="<?php if (isset($_SESSION['show_modal']) && $_SESSION['show_modal']) echo 'display: block;'; ?>">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
@@ -7,12 +13,12 @@
             </div>
             
             <div class="modal-body">
+
+                <!-- Form -->
                 <form action="process/add-account-logic.php" method="POST">
                     <div class="mb-3">
                         <label for="role" class="form-label">Select a role</label>
                         <select name="role" id="role" class="form-control">
-                            <!-- ROLE LEGEND : 1 = admin
-                                               2 = staff-->
                             <option value="1">ADMIN</option>
                             <option value="2">STAFF</option>
                         </select>

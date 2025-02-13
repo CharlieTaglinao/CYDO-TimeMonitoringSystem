@@ -6,20 +6,6 @@ include 'fetch-accounts.php';
 ?>
 
 
-<?php if (isset($_SESSION['success'])): ?>
-    <div class="alert alert-success">
-        <?php echo $_SESSION['success'];
-        unset($_SESSION['success']); ?>
-    </div>
-<?php elseif (isset($_SESSION['error'])): ?>
-    <div class="alert alert-danger">
-        <?php echo $_SESSION['error'];
-        unset($_SESSION['error']); ?>
-    </div>
-<?php endif; ?>
-
-
-
 
 
 
@@ -63,12 +49,27 @@ include 'fetch-accounts.php';
 
                 <div id="modalContainer"></div>
 
+                <!-- Validation message for adding an account is appearing here -->
+                <?php if (isset($_SESSION['message'])): ?>
+                    <div class="alert-container">
+                        <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show"
+                            role="alert">
+                            <?php
+                            echo $_SESSION['message'];
+                            unset($_SESSION['message']);
+                            unset($_SESSION['message_type']);
+                            ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    </div>
+                <?php endif; ?>
+
+
+
                 <div class="mt-4">
                     <h3>Account Records</h3>
                     <div class="d-flex justify-content-between mb-3">
-                        <!-- Search Box -->
-                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by Username"
-                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                    <input type="text" id="search-input" class="form-control w-25" placeholder="Search by Username" value="<?php echo htmlspecialchars($search); ?>">
 
                     </div>
                     <table class="table table-bordered">
@@ -98,12 +99,13 @@ include 'fetch-accounts.php';
                                         </button>
 
                                         <!-- Delete  -->
-                                        <form action="process/delete-account-logic.php" method="POST" id="delete-button-on-form"
-                                            class="d-inline delete-form">
+                                        <form action="process/delete-account-logic.php" method="POST"
+                                            id="delete-button-on-form" class="d-inline delete-form">
                                             <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit" class="btn btn-sm btn-danger delete-button">DELETE</button>
+                                            <button type="submit"
+                                                class="btn btn-sm btn-danger delete-button">DELETE</button>
 
-                        
+
                                         </form>
 
                                     </td>
@@ -142,5 +144,4 @@ include 'fetch-accounts.php';
     </div>
 
     <script src="assets/js/script.js"></script>
-
 </body>

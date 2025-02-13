@@ -111,5 +111,13 @@
         });
     });
     
+    // alert message dismiss in 10 seconds
+    setTimeout(function () {
+        var alert = document.querySelector('.alert');
+        if (alert) {
+            var bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        }
+    }, 3000);
   
     

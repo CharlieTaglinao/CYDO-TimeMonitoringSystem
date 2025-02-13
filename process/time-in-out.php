@@ -11,6 +11,7 @@ $lastName = strtoupper(trim($_POST['lastName'])) ?? null;
 $email = strtoupper(trim($_POST['email'])) ?? null;
 $purpose = strtoupper(trim($_POST['purpose'])) ?? null;
 $sex = strtoupper(trim($_POST['sex'])) ?? null;
+$age = strtoupper(trim($_POST['age'])) ?? null;
 $code = strtoupper(trim($_POST['code'])) ?? null;
 
 function generateRandomCode($length = 6)
@@ -39,6 +40,11 @@ if (isset($_POST['timeIn'])) {
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
+    }elseif (!$age){
+        $_SESSION['message'] = "Age is required.";
+        $_SESSION['message_type'] = 'danger';
+        header("Location: ../index.php");
+        exit();
     }
 
     $logTime = date('Y-m-d H:i:s');
@@ -54,9 +60,9 @@ if (isset($_POST['timeIn'])) {
         $checkFullNameStmt->bind_result($clientId);
         $checkFullNameStmt->fetch();
     } else {
-        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id) VALUES (?, ?, ?, ?)";
+        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, age) VALUES (?, ?, ?, ?, ?)";
         $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("sssi", $firstName, $middleName, $lastName, $sex);
+        $insertStmt->bind_param("sssii", $firstName, $middleName, $lastName, $sex, $age);
         $insertStmt->execute();
         $clientId = $conn->insert_id;
     }

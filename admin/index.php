@@ -69,6 +69,8 @@ include 'fetch-visitors.php'; ?>
                                 <th>Date</th>
                                 <th>Time In</th>
                                 <th>Time Out</th>
+                                <th>Age</th>
+                                <th>Sex</th>
                                 <th>Duration</th>
                                 <th>Code</th>
                             </tr>
@@ -84,6 +86,8 @@ include 'fetch-visitors.php'; ?>
                                     </td>
                                     <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?>
                                     </td>
+                                    <td><?php echo isset($row['age']) ? $row['age'] : '-'; ?></td>
+                                    <td><?php echo $row['sex_name']?></td>
                                     <td>
                                         <?php
                                         if (isset($row['time_in'], $row['time_out'])) {

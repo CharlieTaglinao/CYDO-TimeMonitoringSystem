@@ -9,16 +9,21 @@
 
 function checkUserRole($requiredRole) {
     if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
+        session_unset();
+        session_destroy();
         header("Location: ../index.php?showLoginModal=true");
-        exit();
+        
     }
 
     if ($_SESSION['role'] !== $requiredRole) {
-        header("Location: ../no_access.php");
+        header("Location: ../security/no-access.html");
         exit();
     }
 }
 
 function RoleAsAdmin() {
     checkUserRole('admin');
+}
+function RoleAsStaff(){
+    checkUserRole('staff');
 }

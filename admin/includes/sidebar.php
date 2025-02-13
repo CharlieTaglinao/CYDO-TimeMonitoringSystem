@@ -49,8 +49,8 @@ if (isset($_SESSION['username'])) {
             </a>
             <div class="collapse" id="settingsSubmenu">
                 <nav class="nav flex-column ms-3">
-                    <a href="#">blank</a>
-                    <a href="#">blank</a>
+                    <a href="#" class="nav-link text-white">blank</a>
+                    <a href="#" class="nav-link text-white">blank</a>
                 </nav>
             </div>
         </div>

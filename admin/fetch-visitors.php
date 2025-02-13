@@ -38,10 +38,11 @@ $totalPages = ceil($totalRows / $limit);
 // Fetch paginated records with search filter
     $visitorsQuery = "
         SELECT 
-            visitors.first_name, visitors.middle_name, visitors.last_name,
+            visitors.first_name, visitors.middle_name, visitors.last_name,visitors.age,visitors.sex_id,sex.sex_name,
             time_logs.time_in, time_logs.time_out, time_logs.code
         FROM visitors
         INNER JOIN time_logs ON visitors.id = time_logs.client_id
+        INNER JOIN sex ON visitors.sex_id = sex.id
         WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
         ORDER BY time_in DESC LIMIT $limit OFFSET $offset
     ";
@@ -54,6 +55,8 @@ $totalPages = ceil($totalRows / $limit);
                 <td>" . (isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-') . "</td>
                 <td>" . (isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-') . "</td>
                 <td>" . (isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-') . "</td>
+                <td>" . (isset($row['age']) ? $row['age'] : '-') . "</td>
+                <td>" . (isset($row['sex_name']) ? $row['sex_name'] : '-') . "</td>
                 <td>";
             if (isset($row['time_in'], $row['time_out'])) {
                 $timeIn = new DateTime($row['time_in']);

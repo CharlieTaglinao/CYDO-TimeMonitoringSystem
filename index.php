@@ -1,7 +1,4 @@
-    <?php 
-    
-    include 'includes/header.php'; 
-    ?>
+    <?php include 'includes/header.php'; ?>
     <?php session_start(); ?>
 
     <body class="bg-dark d-flex justify-content-center" style="height: 100vh;">
@@ -47,7 +44,7 @@
 
         <!-- Time In Modal -->
         <div class="modal fade" id="timeInModal" tabindex="-1" aria-labelledby="timeInModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="timeInModalLabel">Personal Details</h5>
@@ -55,32 +52,62 @@
                     </div>
                     <div class="modal-body">
                         <form action="process/time-in-out.php" method="POST">
-                            <div class="mb-3">
-                                <label for="firstName" class="form-label">First Name</label>
-                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Ex. Juan">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="firstName" class="form-label">First Name</label>
+                                        <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Ex. Juan">
+                                    </div>
+                                </div>
+
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="middleName" class="form-label">Middle Name</label>
+                                        <input type="text" class="form-control" id="middleName" name="middleName" placeholder="Ex. Santos">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="middleName" class="form-label">Middle Name</label>
-                                <input type="text" class="form-control" id="middleName" name="middleName" placeholder="Ex. Santos">
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Ex. Dela Cruz">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" placeholder="Ex. abcdefg@gmail.com">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="lastName" class="form-label">Last Name</label>
-                                <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Ex. Dela Cruz">
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="purpose" class="form-label">Purpose</label>
+                                        <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Ex. Personal Matters">
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="mb-3">
+                                        <label for="age" class="form-label">Age</label>
+                                        <input type="text" class="form-control" id="age" name="age" placeholder="Ex. 21">
+                                    </div>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="email" name="email" placeholder="Ex. abcdefg@gmail.com">
-                            </div>
-                            <div class="mb-3">
-                                <label for="purpose" class="form-label">Purpose</label>
-                                <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Ex. Personal Matters">
-                            </div>
-                            <div class="mb-3">
-                                <label for="sex" class="form-label">Sex</label>
-                                <select name="sex" class="form-control" id="sex">
-                                    <option value="1">MALE</option>
-                                    <option value="2">FEMALE</option>
-                                </select>
+                            
+                            <div class="row">
+                                <div class="col">
+                                    <div class="mb-3">
+                                        <label for="sex" class="form-label">Sex</label>
+                                        <select name="sex" class="form-select" id="sex">
+                                            <option value="1">MALE</option>
+                                            <option value="2">FEMALE</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-success" name="timeIn">TIME IN</button>
                         </form>

@@ -9,15 +9,14 @@ $query = "
     SELECT 
         CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS `Full Name`, 
         time_logs.time_in, 
-        time_logs.time_out 
-    FROM 
-        visitors
-    LEFT JOIN 
-        time_logs 
-    ON 
-        visitors.id = time_logs.client_id 
-    ORDER BY 
-        time_logs.time_in DESC";
+        time_logs.time_out,
+        visitors.age,
+        visitors.sex_id,
+        sex.sex_name
+    FROM visitors
+        INNER JOIN time_logs ON visitors.id = time_logs.client_id
+        INNER JOIN sex ON visitors.sex_id = sex.id";
+    
 
 $result = $conn->query($query);
 
@@ -58,34 +57,29 @@ $pdf->SetFont('times', '', 10);
 
 $pdf->Ln(20);
 
-// Table Header
-$pdf->SetFillColor(0, 0, 0);
-$pdf->SetTextColor(255, 255, 255);
-$pdf->SetDrawColor(50, 50, 50);
-$pdf->SetLineWidth(0.3);
+$pdf->SetFillColor(245, 245, 245);
+$pdf->SetTextColor(0);
 $pdf->SetFont('', 'B');
 
 
-$colWidths = [90, 40, 40, 40, 70];
-$headers = ['Name', 'Date', 'Time In', 'Time Out', 'Duration'];
+$colWidths = [80, 30, 30, 20, 20, 20, 80]; 
+$headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration'];
 
+$fill = false;
 // Add headers
 foreach ($headers as $i => $header) {
-    $pdf->Cell($colWidths[$i], 10, $header, 1, 0, 'C', true); // true enables background color
+    $pdf->Cell($colWidths[$i], 10, $header, 1, 0, 'C', true);
 }
 $pdf->Ln();
 
 // Table rows
-$pdf->SetFont('', '');
-$pdf->SetFillColor(245, 245, 245);
-$pdf->SetTextColor(0);
-
-$fill = false;
 while ($row = $result->fetch_assoc()) {
     $name = strtoupper($row['Full Name']);
     $date = isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-';
     $timeIn = isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-';
     $timeOut = isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-';
+    $age = isset($row['age']) ? $row['age'] : '-';
+    $sex = isset($row['sex_name']) ? $row['sex_name'] : '-';
     $duration = '-';
 
     if (isset($row['time_in'], $row['time_out'])) {
@@ -95,15 +89,18 @@ while ($row = $result->fetch_assoc()) {
         $duration = $interval->format('%h hours %i minutes %s seconds');
     }
 
-    // Add row to PDF
+    // Add row
     $pdf->Cell($colWidths[0], 10, $name, 1, 0, 'L', $fill);
     $pdf->Cell($colWidths[1], 10, $date, 1, 0, 'C', $fill);
     $pdf->Cell($colWidths[2], 10, $timeIn, 1, 0, 'C', $fill);
     $pdf->Cell($colWidths[3], 10, $timeOut, 1, 0, 'C', $fill);
-    $pdf->Cell($colWidths[4], 10, $duration, 1, 1, 'C', $fill);
+    $pdf->Cell($colWidths[4], 10, $age, 1, 0, 'C', $fill);
+    $pdf->Cell($colWidths[5], 10, $sex, 1, 0, 'C', $fill);
+    $pdf->Cell($colWidths[6], 10, $duration, 1, 1, 'C', $fill);
 
     $fill = !$fill;
 }
+
 
 $timestamp = date('Y-m-d_H-i-s'); 
 $filename = "Visitor-Reports_{$timestamp}.pdf";
