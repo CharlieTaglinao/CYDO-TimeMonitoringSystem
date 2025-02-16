@@ -1,0 +1,109 @@
+/* Updated Styling for index.php */
+
+body {
+    background-color: #343a40;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    color: #fff; /* Updated color for h5 */
+    font-weight: bold;
+}
+
+.card {
+    background-color: #495057;
+    border: none;
+    border-radius: 12px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.card-body {
+    padding: 1rem;
+}
+
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background-color: #212529;
+    border-bottom: 1px solid #495057;
+}
+
+.modal-title {
+    color: #fff;
+}
+
+.modal-body {
+    background-color: #212529;
+    color: #fff;
+}
+
+input.form-control:focus, select.form-select:focus {
+    border-color: #40A4FF; /* Updated focus color */
+    box-shadow: 0 0 5px #40A4FF;
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+button.btn-success {
+    background-color: #40A4FF; /* Modernized submit button */
+    color: #fff;
+}
+
+button.btn-success:hover {
+    background-color: #1E88E5;
+    box-shadow: 0px 8px 16px rgba(64, 164, 255, 0.3);
+}
+
+button.btn-danger {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+button.btn-danger:hover {
+    background-color: #c82333;
+    box-shadow: 0px 8px 16px rgba(220, 53, 69, 0.3);
+}
+
+img {
+    max-width: 200px;
+    border-radius: 10px;
+}
+
+.alert {
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.alert-dismissible .btn-close {
+    background-color: transparent;
+    color: #fff;
+    opacity: 0.8;
+}
+
+select.form-select {
+    border-radius: 8px;
+}
+
+#date-time-container{
+    margin: 10rem 0 2rem 0;
+}

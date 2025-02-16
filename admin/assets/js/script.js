@@ -111,7 +111,7 @@
         });
     });
     
-    // alert message dismiss in 10 seconds
+    // alert message dismiss in 3 seconds
     setTimeout(function () {
         var alert = document.querySelector('.alert');
         if (alert) {
