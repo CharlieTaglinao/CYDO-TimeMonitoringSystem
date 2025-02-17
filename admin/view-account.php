@@ -33,7 +33,7 @@ include 'fetch-accounts.php';
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">ALL</h5>
+                                <h5 class="card-title">TOTAL ACCOUNTS</h5>
                                 <p class="card-text" id="current-visitors"><?php echo $totalAll; ?></p>
                             </div>
                         </div>
@@ -54,12 +54,12 @@ include 'fetch-accounts.php';
                         </div>
                     </div>
                 <?php endif; ?>
-                <div id="results"></div>
+                
                 <div class="mt-4">
                     <h3>Account Records</h3>
                     <div class="d-flex justify-content-between mb-3">
-                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by Username"
-                            value="<?php echo htmlspecialchars($search); ?>">
+                    <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name"
+                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     </div>
                     <table class="table table-bordered">
                         <thead class="table-dark">

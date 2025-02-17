@@ -77,7 +77,7 @@
         });
     });
     
-    //featch visitors data by search
+    //fetch visitors data by search
     document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("search-input");
         const visitorTable = document.getElementById("visitor-table");
@@ -92,6 +92,27 @@
                     })
                     .then((data) => {
                         visitorTable.innerHTML = data; // Update table row
+                    })
+                    .catch((error) => console.error("Error fetching data:", error));
+            });
+        }
+    });
+
+    //fetch account data by search
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("search-input");
+        const accountTable = document.getElementById("account-table");
+
+        if (searchInput) {
+            searchInput.addEventListener("input", (event) => {
+                const query = event.target.value;
+                fetch(`fetch-accounts.php?search=${encodeURIComponent(query)}`)
+                    .then((response) => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.text();
+                    })
+                    .then((data) => {
+                        accountTable.innerHTML = data; 
                     })
                     .catch((error) => console.error("Error fetching data:", error));
             });
