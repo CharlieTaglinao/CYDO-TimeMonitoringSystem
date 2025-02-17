@@ -94,6 +94,12 @@
                                     <input type="email" class="form-control" id="email" name="email"
                                         placeholder="Ex. abcdefg@gmail.com">
                                 </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="noEmail" name="noEmail">
+                                    <label class="form-check-label text-light" for="noEmail">
+                                        I don't have an email
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
@@ -127,6 +133,7 @@
                         <button type="submit" class="btn btn-primary" name="timeIn">TIME IN</button>
                     </form>
                 </div>
+
             </div>
         </div>
     </div>
@@ -170,7 +177,7 @@
                             <label for="password" class="form-label">Password</label>
                             <input type="password" class="form-control" id="password" name="password" required>
                         </div>
-                        <button type="submit" class="btn btn-success">Login</button>
+                        <button type="submit" class="btn btn-primary">Login</button>
                     </form>
                 </div>
             </div>

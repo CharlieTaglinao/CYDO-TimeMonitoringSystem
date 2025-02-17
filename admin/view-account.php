@@ -2,20 +2,13 @@
 session_start();
 include 'includes/header.php';
 include 'fetch-accounts.php';
-
 ?>
-
-
-
-
 
 <body class="bg-light">
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php';
-        include 'edit-account-modal.php'
-
-            ?>
+        include 'edit-account-modal.php' ?>
 
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
@@ -47,9 +40,7 @@ include 'fetch-accounts.php';
                     </div>
                 </div>
 
-                <div id="modalContainer"></div>
-
-                <!-- Validation message for adding an account is appearing here -->
+                <!-- Validation message for adding an account -->
                 <?php if (isset($_SESSION['message'])): ?>
                     <div class="alert-container">
                         <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show"
@@ -63,14 +54,12 @@ include 'fetch-accounts.php';
                         </div>
                     </div>
                 <?php endif; ?>
-
-
-
+                <div id="results"></div>
                 <div class="mt-4">
                     <h3>Account Records</h3>
                     <div class="d-flex justify-content-between mb-3">
-                    <input type="text" id="search-input" class="form-control w-25" placeholder="Search by Username" value="<?php echo htmlspecialchars($search); ?>">
-
+                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by Username"
+                            value="<?php echo htmlspecialchars($search); ?>">
                     </div>
                     <table class="table table-bordered">
                         <thead class="table-dark">
@@ -85,10 +74,8 @@ include 'fetch-accounts.php';
                             <?php while ($row = $accountResult->fetch_assoc()): ?>
                                 <tr>
                                     <td><?php echo $row['username']; ?></td>
-                                    <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?>
-                                    </td>
+                                    <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?></td>
                                     <td><?php echo $row['created_at']; ?></td>
-                                    <!-- Edit -->
                                     <td>
                                         <button class="btn btn-sm btn-primary editModalBtn"
                                             data-id="<?php echo $row['id']; ?>"
@@ -98,16 +85,12 @@ include 'fetch-accounts.php';
                                             EDIT
                                         </button>
 
-                                        <!-- Delete  -->
                                         <form action="process/delete-account-logic.php" method="POST"
                                             id="delete-button-on-form" class="d-inline delete-form">
                                             <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                             <button type="submit"
                                                 class="btn btn-sm btn-danger delete-button">DELETE</button>
-
-
                                         </form>
-
                                     </td>
                                 </tr>
                             <?php endwhile; ?>
@@ -115,6 +98,7 @@ include 'fetch-accounts.php';
                     </table>
                 </div>
 
+                <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <nav aria-label="Page navigation">
                         <ul class="pagination">

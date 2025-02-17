@@ -110,6 +110,20 @@
             });
         });
     });
+
+      //Pop up modal for adding an account
+      $(document).ready(function () {
+        $("#addAccountBtn").click(function (e) {
+            e.preventDefault(); 
+
+            // Load modal 
+            $.get("view-visitor-detail-modal.php", function (data) {
+                $("#modalContainer").html(data); 
+                $("#visitorDetailsModal").modal("show");   
+            });
+        });
+    });
+    
     
     // alert message dismiss in 3 seconds
     setTimeout(function () {
@@ -120,4 +134,26 @@
         }
     }, 3000);
   
-    
+
+
+    //use for calling the details into the modal 
+document.addEventListener('click', function (event) {
+    if (event.target.classList.contains('view-details')) {
+        let name = event.target.getAttribute('data-name');
+        let age = event.target.getAttribute('data-age');
+        let sex = event.target.getAttribute('data-sex');
+        let code = event.target.getAttribute('data-code');
+        let purpose = event.target.getAttribute('data-purpose');
+
+        // Populate modal content
+        document.getElementById('modal-name').textContent = name;
+        document.getElementById('modal-age').textContent = age;
+        document.getElementById('modal-sex').textContent = sex;
+        document.getElementById('modal-code').textContent = code;
+        document.getElementById('modal-purpose').textContent = purpose;
+    }
+});
+
+
+
+ 

@@ -1,9 +1,9 @@
-
-
 <?php
 
 
-include 'fetch-visitors.php'; ?>
+include 'fetch-visitors.php';
+
+?>
 
 
 <?php include 'includes/header.php'; ?>
@@ -42,7 +42,7 @@ include 'fetch-visitors.php'; ?>
                         </div>
                     </div>
                 </div>
-                
+
                 <div id="modalContainer"></div>
 
                 <div class="mt-4">
@@ -69,16 +69,15 @@ include 'fetch-visitors.php'; ?>
                                 <th>Date</th>
                                 <th>Time In</th>
                                 <th>Time Out</th>
-                                <th>Age</th>
-                                <th>Sex</th>
                                 <th>Duration</th>
-                                <th>Code</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="visitor-table">
                             <?php while ($row = $visitorsResult->fetch_assoc()): ?>
                                 <tr>
-                                    <td><?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
+                                    <td>
+                                        <?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
                                     </td>
                                     <td><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?>
                                     </td>
@@ -86,8 +85,7 @@ include 'fetch-visitors.php'; ?>
                                     </td>
                                     <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?>
                                     </td>
-                                    <td><?php echo isset($row['age']) ? $row['age'] : '-'; ?></td>
-                                    <td><?php echo $row['sex_name']?></td>
+
                                     <td>
                                         <?php
                                         if (isset($row['time_in'], $row['time_out'])) {
@@ -100,11 +98,45 @@ include 'fetch-visitors.php'; ?>
                                         }
                                         ?>
                                     </td>
-                                    <td><?php echo $row['code']; ?></td>
+                                    <td>
+                                        <button class="btn btn-success view-details"
+                                            data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
+                                            data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
+                                            data-code="<?php echo $row['code']; ?>"
+                                            data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
+                                            data-bs-target="#visitorDetailsModal">
+                                            View Details
+                                        </button>
+                                    </td>
                                 </tr>
                             <?php endwhile; ?>
                         </tbody>
+
                     </table>
+                </div>
+
+                <!-- MODAL FOR VIEWING VISITOR DETAIL -->
+                <div class="modal fade" id="visitorDetailsModal" tabindex="-1"
+                    aria-labelledby="visitorDetailsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="visitorDetailsModalLabel"> <span id="modal-name"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Age:</strong> <span id="modal-age"></span></p>
+                                <p><strong>Sex:</strong> <span id="modal-sex"></span></p>
+                                <p><strong>Code:</strong> <span id="modal-code"></span></p>
+                                <p><strong>Purpose:</strong> <span id="modal-purpose"></span></p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-3">

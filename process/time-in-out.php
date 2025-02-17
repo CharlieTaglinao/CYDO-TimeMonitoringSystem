@@ -8,11 +8,12 @@ include '../includes/database.php';
 $firstName = strtoupper(trim($_POST['firstName'])) ?? null;
 $middleName = strtoupper(trim($_POST['middleName'])) ?? null;
 $lastName = strtoupper(trim($_POST['lastName'])) ?? null;
-$email = strtoupper(trim($_POST['email'])) ?? null;
+$email = trim($_POST['email']) ?? null;
 $purpose = strtoupper(trim($_POST['purpose'])) ?? null;
 $sex = strtoupper(trim($_POST['sex'])) ?? null;
 $age = strtoupper(trim($_POST['age'])) ?? null;
 $code = strtoupper(trim($_POST['code'])) ?? null;
+$checkBoxNotAvailEmail = $_POST['noEmail'];
 
 function generateRandomCode($length = 6)
 {
@@ -65,9 +66,15 @@ if (isset($_POST['timeIn'])) {
         $insertStmt->bind_param("sssii", $firstName, $middleName, $lastName, $sex, $age);
         $insertStmt->execute();
         $clientId = $conn->insert_id;
+
+         $emailValue = $checkBoxNotAvailEmail ? 'This visitor has no email' : $email;
+         $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
+         $insertEmailStmt = $conn->prepare($insertEmailQuery);
+         $insertEmailStmt->bind_param("is", $clientId, $emailValue);
+         $insertEmailStmt->execute();
+        
     }
 
-    // Check if the user has already timed in without timing out
     $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
     $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
     $checkTimeLogStmt->bind_param("i", $clientId);
@@ -94,6 +101,8 @@ if (isset($_POST['timeIn'])) {
     $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?)";
     $insertLogStmt = $conn->prepare($insertLogQuery);
     $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
+
+    
 
     if ($insertLogStmt->execute()) {
         $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";

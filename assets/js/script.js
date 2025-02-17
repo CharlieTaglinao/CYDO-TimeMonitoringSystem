@@ -47,5 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const dateElement = document.getElementById('date');
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+
+    const noEmailCheckbox = document.getElementById("noEmail");
+    const emailField = document.getElementById("email");
+
     dateElement.textContent = today.toLocaleDateString(undefined, options);
+    noEmailCheckbox.addEventListener("change", function () {
+        if (this.checked) {
+            emailField.value = "This visitor has no email.";
+            emailField.disabled = true;
+        } else {
+            emailField.disabled = false;
+        }
+    });
+
+
 });
+
+
