@@ -35,9 +35,8 @@ $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit); 
 
-// Fetch paginated records with search filter
-    $visitorsQuery = "
-        SELECT 
+$visitorsQuery = "
+        SELECT DISTINCT
             visitors.first_name, visitors.middle_name, visitors.last_name,visitors.age,visitors.sex_id,sex.sex_name,
             time_logs.time_in, time_logs.time_out, time_logs.code, purpose.purpose
         FROM visitors
@@ -47,6 +46,29 @@ $totalPages = ceil($totalRows / $limit);
         WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
         ORDER BY time_in DESC LIMIT $limit OFFSET $offset
     ";
+
+// Fetch paginated records with search filter
+    $visitorsQuery = "
+        SELECT DISTINCT
+            visitors.first_name, 
+            visitors.middle_name, 
+            visitors.last_name,
+            visitors.age, 
+            visitors.sex_id, 
+            sex.sex_name,
+            time_logs.time_in, 
+            time_logs.time_out, 
+            time_logs.code, 
+            purpose.purpose
+        FROM visitors
+            INNER JOIN time_logs ON visitors.id = time_logs.client_id
+            INNER JOIN sex ON visitors.sex_id = sex.id
+            INNER JOIN (SELECT client_id, MAX(id) as latest_purpose_id FROM purpose GROUP BY client_id) as latest_purposes ON visitors.id = latest_purposes.client_id
+            INNER JOIN purpose ON latest_purposes.latest_purpose_id = purpose.id 
+            WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+            ORDER BY time_logs.time_in DESC 
+            LIMIT $limit OFFSET $offset";
+
     $visitorsResult = $conn->query($visitorsQuery);
     if (isset($_GET['search'])) {
         if ($visitorsResult->num_rows > 0) {

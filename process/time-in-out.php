@@ -50,6 +50,19 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
+    $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
+    $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
+    $checkTimeLogStmt->bind_param("i", $clientId);
+    $checkTimeLogStmt->execute();
+    $checkTimeLogStmt->store_result();
+
+    if ($checkTimeLogStmt->num_rows > 0) {
+        $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in.";
+        $_SESSION['message_type'] = 'danger';
+        header("Location: ../index.php");
+        exit();
+    }
+
     // Check if the visitor exists in the database
     $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name = ? AND last_name = ?";
     $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
@@ -73,19 +86,6 @@ if (isset($_POST['timeIn'])) {
          $insertEmailStmt->bind_param("is", $clientId, $emailValue);
          $insertEmailStmt->execute();
         
-    }
-
-    $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
-    $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
-    $checkTimeLogStmt->bind_param("i", $clientId);
-    $checkTimeLogStmt->execute();
-    $checkTimeLogStmt->store_result();
-
-    if ($checkTimeLogStmt->num_rows > 0) {
-        $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
     }
 
     // Allow a new time-in

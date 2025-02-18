@@ -91,7 +91,7 @@
                         return response.text();
                     })
                     .then((data) => {
-                        visitorTable.innerHTML = data; // Update table row
+                        visitorTable.innerHTML = data; 
                     })
                     .catch((error) => console.error("Error fetching data:", error));
             });
