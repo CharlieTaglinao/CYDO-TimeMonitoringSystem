@@ -21,7 +21,7 @@ include 'fetch-visitors.php';
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Today's Visitors</h5>
-                                <p class="card-text"><?php echo $totalVisitorsToday; ?></p>
+                                <h4 class="card-text text-secondary"><?php echo $totalVisitorsToday; ?></h4>
                             </div>
                         </div>
                     </div>
@@ -29,7 +29,7 @@ include 'fetch-visitors.php';
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Current Visitors</h5>
-                                <p class="card-text" id="current-visitors"><?php echo $currentVisitors; ?></p>
+                                <h4 class="card-text text-secondary" id="current-visitors"><?php echo $currentVisitors; ?></h4>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@ include 'fetch-visitors.php';
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Weekly Visitors</h5>
-                                <p class="card-text" id="current-visitors"><?php echo $totalWeeklyVisitor; ?></p>
+                                <h4 class="card-text text-secondary" id="current-visitors"><?php echo $totalWeeklyVisitor; ?></h4>
                             </div>
                         </div>
                     </div>

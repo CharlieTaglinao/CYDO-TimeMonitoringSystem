@@ -1,10 +1,12 @@
 
 <?php
+
 if (isset($_SESSION['username'])) {
     $user_login = $_SESSION['username'];
 } else {
     $user_login = "Guest";
 }
+
 ?>
 <div id="sidebar" class="bg-dark text-white p-3" style="width: 250px; height: 100vh;">
     <div class="btn mb-3 w-100">
@@ -35,7 +37,7 @@ if (isset($_SESSION['username'])) {
             </div>
         </div>
 
-        <a href="#" class="nav-link text-white">Reports</a>
+        <a href="monitor-visitor.php" class="nav-link text-white">Monitor</a>
 
         <div class="nav-item">
             <a 

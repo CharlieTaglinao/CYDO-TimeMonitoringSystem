@@ -1,5 +1,4 @@
 <?php
-session_start();
 include '../includes/database.php';
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
@@ -10,7 +9,12 @@ $totalVisitorsTodayResult = $conn->query($totalVisitorsTodayQuery);
 $totalVisitorsToday = $totalVisitorsTodayResult->fetch_assoc()['total_today'];
 
 // Count current visitors
-$currentVisitorsQuery = "SELECT COUNT(client_id) AS current_visitors FROM time_logs WHERE time_out IS NULL";
+
+$currentVisitorsQuery = "SELECT (COUNT(client_id) - (SELECT COUNT(client_id) 
+                        FROM time_logs WHERE DATE(time_in) = CURDATE() AND time_out IS NOT NULL)) 
+                        AS current_visitors FROM time_logs 
+                        WHERE DATE(time_in) = CURDATE();";
+
 $currentVisitorsResult = $conn->query($currentVisitorsQuery);
 $currentVisitors = $currentVisitorsResult->fetch_assoc()['current_visitors'];
 
