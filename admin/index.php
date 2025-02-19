@@ -29,7 +29,9 @@ include 'fetch-visitors.php';
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Current Visitors</h5>
-                                <h4 class="card-text text-secondary" id="current-visitors"><?php echo $currentVisitors; ?></h4>
+                                <h4 class="card-text text-secondary" id="current-visitors">
+                                    <?php echo $currentVisitors; ?>
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -37,7 +39,9 @@ include 'fetch-visitors.php';
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Weekly Visitors</h5>
-                                <h4 class="card-text text-secondary" id="current-visitors"><?php echo $totalWeeklyVisitor; ?></h4>
+                                <h4 class="card-text text-secondary" id="current-visitors">
+                                    <?php echo $totalWeeklyVisitor; ?>
+                                </h4>
                             </div>
                         </div>
                     </div>
@@ -45,12 +49,25 @@ include 'fetch-visitors.php';
 
                 <div id="modalContainer"></div>
 
+
                 <div class="mt-4">
                     <h3>Visitor Records</h3>
                     <div class="d-flex justify-content-between mb-3">
                         <!-- Search Box -->
-                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name"
-                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                        <div class="row">
+                            <div class="col">
+                                <input type="text" id="search-input" class="form-control" placeholder="Search by name"
+                                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                            </div>
+
+                            <div class="col-3">
+                                <button class="form-control" id="todayBtn">All</button>
+                            </div>
+                            <div class="col-4">
+                                <button class="form-control" id="customRangeBtn">Custom range</button>
+                            </div>
+                        </div>
+
 
 
                         <div class="flex-end">
@@ -62,6 +79,8 @@ include 'fetch-visitors.php';
 
 
                     </div>
+
+
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
@@ -74,42 +93,48 @@ include 'fetch-visitors.php';
                             </tr>
                         </thead>
                         <tbody id="visitor-table">
-                            <?php while ($row = $visitorsResult->fetch_assoc()): ?>
-                                <tr>
-                                    <td>
-                                        <?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
-                                    </td>
-                                    <td><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?>
-                                    </td>
-                                    <td><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?>
-                                    </td>
-                                    <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?>
-                                    </td>
-
-                                    <td>
-                                        <?php
-                                        if (isset($row['time_in'], $row['time_out'])) {
-                                            $timeIn = new DateTime($row['time_in']);
-                                            $timeOut = new DateTime($row['time_out']);
-                                            $interval = $timeIn->diff($timeOut);
-                                            echo $interval->format('%h hours %i minutes %s seconds');
-                                        } else {
-                                            echo '-';
-                                        }
-                                        ?>
-                                    </td>
-                                    <td>
-                                        <button class="btn btn-success view-details"
-                                            data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
-                                            data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
-                                            data-code="<?php echo $row['code']; ?>"
-                                            data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
-                                            data-bs-target="#visitorDetailsModal">
-                                            View Details
-                                        </button>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
+                            <?php if (!empty($startDate) && !empty($endDate)) {
+                                include 'fetch-range-logic.php';
+                            } else {
+                                while ($row = $visitorsResult->fetch_assoc()):
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            <?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
+                                        </td>
+                                        <td><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?>
+                                        </td>
+                                        <td><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?>
+                                        </td>
+                                        <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?>
+                                        </td>
+                                        <td>
+                                            <?php
+                                            if (isset($row['time_in'], $row['time_out'])) {
+                                                $timeIn = new DateTime($row['time_in']);
+                                                $timeOut = new DateTime($row['time_out']);
+                                                $interval = $timeIn->diff($timeOut);
+                                                echo $interval->format('%h hours %i minutes %s seconds');
+                                            } else {
+                                                echo '-';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-success view-details"
+                                                data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
+                                                data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
+                                                data-code="<?php echo $row['code']; ?>"
+                                                data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
+                                                data-bs-target="#visitorDetailsModal">
+                                                View Details
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php
+                                endwhile;
+                            }
+                            ?>
                         </tbody>
 
                     </table>

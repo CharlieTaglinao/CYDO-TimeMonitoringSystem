@@ -119,6 +119,49 @@
         }
     });
 
+    //fetch insite data by search
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("searchInsite");
+        const visitorTable = document.getElementById("insite-table");
+    
+        if (searchInput) {
+            searchInput.addEventListener("input", (event) => {
+                const query = event.target.value;
+                fetch(`fetch-monitor-visitor.php?searchInsite=${encodeURIComponent(query)}`)
+                    .then((response) => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.text();
+                    })
+                    .then((data) => {
+                        visitorTable.innerHTML = data; 
+                    })
+                    .catch((error) => console.error("Error fetching data:", error));
+            });
+        }
+    });
+
+     //fetch outgoing data by search
+     document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("searchOutgoing");
+        const visitorTable = document.getElementById("outgoing-table");
+    
+        if (searchInput) {
+            searchInput.addEventListener("input", (event) => {
+                const query = event.target.value;
+                fetch(`fetch-monitor-visitor.php?searchOutgoing=${encodeURIComponent(query)}`)
+                    .then((response) => {
+                        if (!response.ok) throw new Error("Network response was not ok");
+                        return response.text();
+                    })
+                    .then((data) => {
+                        visitorTable.innerHTML = data; 
+                    })
+                    .catch((error) => console.error("Error fetching data:", error));
+            });
+        }
+    });
+    
+
     //Pop up modal for adding an account
     $(document).ready(function () {
         $("#addAccountBtn").click(function (e) {
@@ -132,20 +175,20 @@
         });
     });
 
-      //Pop up modal for adding an account
-      $(document).ready(function () {
-        $("#addAccountBtn").click(function (e) {
+    //Pop up modal for adding an account
+    $(document).ready(function () {
+        $("#customRangeBtn").click(function (e) {
             e.preventDefault(); 
 
             // Load modal 
-            $.get("view-visitor-detail-modal.php", function (data) {
+            $.get("custom-range-modal.php", function (data) {
                 $("#modalContainer").html(data); 
-                $("#visitorDetailsModal").modal("show");   
+                $("#customRangeModal").modal("show");   
             });
         });
     });
-    
-    
+
+        
     // alert message dismiss in 3 seconds
     setTimeout(function () {
         var alert = document.querySelector('.alert');
@@ -177,4 +220,3 @@ document.addEventListener('click', function (event) {
 
 
 
- 

@@ -39,23 +39,6 @@ if (isset($_SESSION['username'])) {
 
         <a href="monitor-visitor.php" class="nav-link text-white">Monitor</a>
 
-        <div class="nav-item">
-            <a 
-                href="#settingsSubmenu"
-                class="nav-link text-white dropdown-toggle"
-                data-bs-toggle="collapse"
-                role="button"
-                aria-expanded="false"
-                aria-controls="#settingsSubmenu">
-                Setting
-            </a>
-            <div class="collapse" id="settingsSubmenu">
-                <nav class="nav flex-column ms-3">
-                    <a href="#" class="nav-link text-white">blank</a>
-                    <a href="#" class="nav-link text-white">blank</a>
-                </nav>
-            </div>
-        </div>
         <hr>
         
         <a href="process/logout.php" class="nav-link text-white" id="logout-button">Logout</a>

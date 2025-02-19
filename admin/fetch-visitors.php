@@ -2,6 +2,10 @@
 include '../includes/database.php';
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+$startDate = $_POST['startDate'] ?? '';
+$endDate = $_POST['endDate'] ?? '';
+
+
 
 // Count today's visitors from the time_logs table
 $totalVisitorsTodayQuery = "SELECT COUNT(client_id) AS total_today FROM time_logs WHERE DATE(time_in) = CURDATE()";
