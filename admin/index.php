@@ -12,7 +12,6 @@ include 'fetch-visitors.php';
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
-
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
             <div class="container mt-4">
@@ -58,6 +57,7 @@ include 'fetch-visitors.php';
                             <div class="col">
                                 <input type="text" id="search-input" class="form-control" placeholder="Search by name"
                                     value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                                    <button class="btn btn-primary" id="searchButton">Submit</button>
                             </div>
 
                             <div class="col-3">
@@ -75,7 +75,7 @@ include 'fetch-visitors.php';
 
                         <div class="flex-end">
                             <a class="btn btn-success" id="export-csv" href="process/export/export-csv.php">
-                                CSV</a>
+                                XLSX</a>
                             <a class="btn btn-primary" id="export-pdf" href="process/export/export-pdf.php">
                                 PDF</a>
                         </div>
@@ -166,10 +166,10 @@ include 'fetch-visitors.php';
                         </div>
                     </div>
                 </div>
-
+                            
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <nav aria-label="Page navigation">
-                        <ul class="pagination">
+                        <ul class="pagination" id="pagination">
                             <?php if ($page > 1): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>

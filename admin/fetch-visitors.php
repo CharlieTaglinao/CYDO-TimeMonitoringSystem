@@ -4,7 +4,7 @@ include '../includes/database.php';
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 $startDate = $_POST['startDate'] ?? '';
 $endDate = $_POST['endDate'] ?? '';
-$all = $_POST['all'] ?? '';
+   $all = $_POST['all'] ?? '';
 
 
 

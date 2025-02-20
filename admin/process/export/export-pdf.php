@@ -28,13 +28,17 @@ if (!$result) {
 class CustomPDF extends TCPDF {
     // Page header
     public function Header() {
-        $this->SetFont('times', 'B', 20);
-        $this->Cell(0, 15, 'Visitor Records Report', 0, 1, 'C', false, '', 0, false, 'T', 'M');
-        $this->SetFont('times', '', 12); 
-        $date = date('F j, Y, g:i A'); 
-        $this->Cell(0, 10, 'Report Generated on: ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
-        
-        $this->Ln(12); 
+        if ($this->PageNo() == 1) { 
+            $this->SetFont('times', 'B', 20);
+            $this->Cell(0, 15, 'Visitor Records Report', 0, 1, 'C', false, '', 0, false, 'T', 'M');
+            $this->SetFont('times', '', 10); 
+            $date = date('F j, Y, g:i A'); 
+            $this->Cell(0, 0, 'Report Generated : ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
+            $this->Ln(8); 
+            $this->Image('../../../assets/images/CYDO-LOGO.png', 92, 2, 15); 
+            $this->Image('../../../assets/images/GENTRI-LOGO.jpeg', 190, 2, 15); 
+
+        }
     }
     
 

@@ -119,6 +119,7 @@
         }
     });
 
+
     //fetch insite data by search
     document.addEventListener("DOMContentLoaded", () => {
         const searchInput = document.getElementById("searchInsite");

@@ -10,18 +10,20 @@ date_default_timezone_set('Asia/Manila');
 
 
 // Determine report type and format
-$type = isset($_GET['type']) ? $_GET['type'] : 'today';
+$type = isset($_GET['type']) ? $_GET['type'] : 'today'; 
 $format = isset($_GET['format']) ? $_GET['format'] : 'pdf';
 
-// Set the date range based on the type
+
 if ($type === 'month') {
     $startDate = date('Y-m-01');
     $endDate = date('Y-m-t');
-    $title = "Visitor Records Report - 1 Month";
+    $title = "Visitor Records Report";
+    $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
     $filename = "Visitor_1_Month_Report_" . date('Y-m');
 } else {
     $startDate = $endDate = date('Y-m-d');
-    $title = "Visitor Records Report - Today";
+    $title = "Visitor Records Report";
+    $subtitle = date('F j, Y', strtotime($startDate));
     $filename = "Visitor_Today_Report_" . $startDate;
 }
 
@@ -58,7 +60,7 @@ if ($format === 'xlsx') {
         $sheet = $spreadsheet->getActiveSheet();
         $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration'];
         $sheet->fromArray($headers, NULL, 'A1');
-
+        
         // Style headers
         $sheet->getStyle('A1:G1')->getFill()
             ->setFillType(Fill::FILL_SOLID)
@@ -83,9 +85,9 @@ if ($format === 'xlsx') {
         // Populate data
         $rowNumber = 2;
         while ($row = $result->fetch_assoc()) {
-            $duration = isset($row['time_out'])
-                ? gmdate('H:i:s', strtotime($row['time_out']) - strtotime($row['time_in']))
-                : '-';
+            $duration = isset($row['time_out']) 
+            ? gmdate('H:i:s', strtotime($row['time_out']) - strtotime($row['time_in'])) 
+            : '-';        
             $sheet->fromArray([
                 $row['full_name'] ?? '-',
                 $row['log_date'] ?? '-',
@@ -97,14 +99,7 @@ if ($format === 'xlsx') {
             ], NULL, "A$rowNumber");
             $rowNumber++;
         }
-        // Add a break row every 10 visitors
-        if ($visitorCount % 10 === 0) {
-            $sheet->mergeCells("A$rowNumber:G$rowNumber"); // Merge the break row
-            $sheet->setCellValue("A$rowNumber", "");
-            $sheet->getStyle("A$rowNumber")->getFont()->setBold(true);
-            $sheet->getStyle("A$rowNumber")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $rowNumber++;
-        }
+        
         // Align cells
         $sheet->getStyle("A1:G$rowNumber")
             ->getAlignment()
@@ -122,60 +117,90 @@ if ($format === 'xlsx') {
     }
 } else {
     // Generate PDF
-    class CustomPDF extends TCPDF
-    {
-        public function Header()
-        {
+    class CustomPDF extends TCPDF {
+        // Page header
+        public function Header() {
             global $title;
-            $this->SetFont('times', 'B', 20);
-            $this->Cell(0, 15, $title, 0, 1, 'C');
-            $this->Ln(12);
+            global $subtitle;
+            
+            if ($this->PageNo() == 1) { 
+                 // Title
+                $this->SetFont('times', 'B', 20);
+                $this->Cell(0, 10, $title, 0, 1, 'C');
+                $this->SetFont('times', '', 12);
+                $this->Cell(0, 10, $subtitle, 0, 1, 'C');
+                $this->Ln(4);
+                $this->Image('../../../../assets/images/CYDO-LOGO.png', 92, 2, 15); 
+                $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', 190, 2, 15); 
+            }
         }
-
-        public function Footer()
-        {
+    
+        // Page footer
+        public function Footer() {
             $this->SetY(-15);
             $this->SetFont('helvetica', 'I', 8);
             $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, 0, 'C');
         }
     }
-
+    
     $pdf = new CustomPDF('L');
+    $pdf->SetCreator(PDF_CREATOR);
+    $pdf->SetTitle($title);
+    $pdf->SetMargins(10, 20, 10);
     $pdf->AddPage();
     $pdf->SetFont('times', '', 10);
-
-    // Table header
-    $pdf->SetFillColor(245, 245, 245);
-    $pdf->SetTextColor(0);
-    $pdf->SetFont('', 'B');
+    
+    // Table Headers
     $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration'];
-    foreach ($headers as $header) {
-        $pdf->Cell(40, 10, $header, 1, 0, 'C', true);
+    $colWidths = [80, 30, 30, 30, 20, 20, 70];
+    
+    $pdf->SetFillColor(230, 230, 230);
+    $pdf->SetTextColor(0);
+    $pdf->SetDrawColor(50, 50, 50);
+    $pdf->SetLineWidth(0.3);
+    $pdf->SetFont('', 'B');
+    
+    // Header Row
+    foreach ($headers as $i => $header) {
+        $pdf->Cell($colWidths[$i], 10, $header, 1, 0, 'C', true);
     }
     $pdf->Ln();
-
-    // Table data
+    
+    // Table Rows
     $pdf->SetFont('', '');
+    $pdf->SetFillColor(245, 245, 245);
+    $fill = false;
     while ($row = $result->fetch_assoc()) {
-        $duration = isset($row['time_out'])
-            ? gmdate('H:i:s', strtotime($row['time_out']) - strtotime($row['time_in']))
-            : '-';
-        $pdf->Cell(40, 10, strtoupper($row['full_name'] ?? '-'));
-        $pdf->Cell(40, 10, $row['log_date'] ?? '-');
-        $pdf->Cell(40, 10, $row['time_in'] ?? '-');
-        $pdf->Cell(40, 10, $row['time_out'] ?? '-');
-        $pdf->Cell(40, 10, $row['age'] ?? '-');
-        $pdf->Cell(40, 10, $row['sex_name'] ?? '-');
-        $pdf->Cell(40, 10, $duration);
-        $pdf->Ln();
-
-        if ($visitorCount % 10 === 0) {
-            $pdf->SetFont('', 'B');
-            $pdf->Cell(280, 10, '', 0, 1, 'C');
-            $pdf->SetFont('', '');
+        $name = strtoupper($row['full_name'] ?? '-');
+        $date = $row['log_date'] ?? '-';
+        $timeIn = $row['time_in'] ?? '-';
+        $timeOut = $row['time_out'] ?? '-';
+        $age = $row['age'] ?? '-';
+        $sex = $row['sex_name'] ?? '-';
+        $duration = '-';
+    
+        if (isset($row['time_in'], $row['time_out'])) {
+            $timeInObj = new DateTime($row['time_in']);
+            $timeOutObj = new DateTime($row['time_out']);
+            $interval = $timeInObj->diff($timeOutObj);
+            $duration = $interval->format('%h hours %i minutes %s seconds');
         }
+    
+        $pdf->Cell($colWidths[0], 10, $name, 1, 0, 'L', $fill);
+        $pdf->Cell($colWidths[1], 10, $date, 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[2], 10, $timeIn, 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[3], 10, $timeOut, 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[4], 10, $age, 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[5], 10, $sex, 1, 0, 'C', $fill);
+        $pdf->Cell($colWidths[6], 10, $duration, 1, 1, 'C', $fill);
+    
+        $fill = !$fill;
     }
-
-    $pdf->Output("$filename.pdf", 'D');
-}
-?>
+    
+    
+    // Output PDF
+    $outputFile = "$filename.pdf";
+    $pdf->Output($outputFile, 'D');
+    }
+    ?>
+    
