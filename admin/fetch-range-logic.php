@@ -4,6 +4,7 @@ include '../includes/database.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $startDate = $_POST['startDate'] ?? '';
     $endDate = $_POST['endDate'] ?? '';
+    $all = $_POST['all'] ?? '';
 
     if (!empty($startDate) && !empty($endDate)) {
         $stmt = $conn->prepare("

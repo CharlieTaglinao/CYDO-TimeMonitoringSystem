@@ -61,7 +61,10 @@ include 'fetch-visitors.php';
                             </div>
 
                             <div class="col-3">
-                                <button class="form-control" id="todayBtn">All</button>
+                                <form method="POST">
+                                    <input type="hidden" name="all" id="all">
+                                    <button class="form-control" id="allBtn">All</button>
+                                </form>
                             </div>
                             <div class="col-4">
                                 <button class="form-control" id="customRangeBtn">Custom range</button>

@@ -15,7 +15,8 @@ $totalInsiteResult = $conn->query($totalInsiteVisitorQuery);
 $totalInsite = $totalInsiteResult->fetch_assoc()['total_insite'];
 
 // Count today's already out visitors from the time_logs table
-$totalAlreadyOutVisitorQuery = "SELECT COUNT(client_id) AS total_already_out FROM time_logs WHERE DATE(time_out) = CURDATE()";
+$totalAlreadyOutVisitorQuery = " SELECT COUNT(client_id) AS total_already_out FROM time_logs WHERE DATE(time_out) = CURDATE() AND DATE(time_in) = DATE(time_out)";
+
 $totalAlreadyOutResult = $conn->query($totalAlreadyOutVisitorQuery);
 $totalAlreadyOut = $totalAlreadyOutResult->fetch_assoc()['total_already_out'];
 
