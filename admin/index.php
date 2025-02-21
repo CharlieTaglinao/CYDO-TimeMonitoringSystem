@@ -57,7 +57,6 @@ include 'fetch-visitors.php';
                             <div class="col">
                                 <input type="text" id="search-input" class="form-control" placeholder="Search by name"
                                     value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
-                                    <button class="btn btn-primary" id="searchButton">Submit</button>
                             </div>
 
                             <div class="col-3">
