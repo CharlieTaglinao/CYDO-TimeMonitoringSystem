@@ -52,6 +52,28 @@
         </div>
     </div>
 
+    <!-- QR Code Modal -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="">
+            <div class="modal-header">
+                <h5 class="modal-title" id="qrModalLabel"><?php echo $_SESSION['first_name']. ' ' . $_SESSION['middle_name'] . ' ' . $_SESSION['last_name'];?></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img src="includes/generate-qr-code.php" alt="QR Code">
+                <p class="mt-3">Please take a capture for your QR CODE <br> or use this code for time out.</p>
+                <h4><?php echo $_SESSION['randomCode'] ?></h4>
+            </div>
+            <div class="modal-footer">
+                
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Print</button>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Time In Modal -->
     <div class="modal fade" id="timeInModal" tabindex="-1" aria-labelledby="timeInModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -147,8 +169,8 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                <h4>Place your QR Code on camera to time out</h4>
-                <video id="preview" width="100%"></video>
+                    <h4>Place your QR Code on camera to time out</h4>
+                    <video id="preview" width="100%"></video>
                     <form action="process/time-in-out.php" method="POST">
                         <div class="mb-3">
                             <label for="code" class="form-label">Code</label>
@@ -186,7 +208,15 @@
         </div>
     </div>
     <?php include 'includes/footer.php'; ?>
-    
+
+    <script>
+        <?php if (isset($_SESSION['showQRModal'])): ?>
+            var qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+            qrModal.show();
+            <?php unset($_SESSION['showQRModal']); ?>
+        <?php endif; ?>
+    </script>
+
 </body>
 
 </html>

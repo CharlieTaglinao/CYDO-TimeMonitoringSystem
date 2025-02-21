@@ -14,6 +14,11 @@ $age = (int) ($_POST['age'] ?? 0);
 $code = strtoupper(trim($_POST['code'] ?? ''));
 $checkBoxNotAvailEmail = isset($_POST['noEmail']) ? $_POST['noEmail'] : false;
 
+
+$_SESSION['first_name'] = $firstName;
+$_SESSION['middle_name'] = $middleName;
+$_SESSION['last_name'] = $lastName;
+
 function generateRandomCode($length = 6)
 {
     return substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'), 0, $length);
@@ -87,6 +92,7 @@ if (isset($_POST['timeIn'])) {
     $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
 
     if ($insertLogStmt->execute()) {
+        $_SESSION['showQRModal'] = true;
         $_SESSION['randomCode'] = $randomCode; 
         $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
         $_SESSION['message_type'] = 'success';

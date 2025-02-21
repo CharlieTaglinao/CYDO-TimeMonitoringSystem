@@ -12,6 +12,6 @@ if (!isset($_SESSION['randomCode'])) {
 $text = $_SESSION['randomCode'];
 
 header('Content-Type: image/png');
-QRcode::png($text, null, QR_ECLEVEL_H, 4, 4);
+QRcode::png($text, null, QR_ECLEVEL_H, 8, 2);
 
 ?>
