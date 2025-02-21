@@ -106,3 +106,8 @@ select.form-select {
 #date-time-container{
     margin: 10rem 0 2rem 0;
 }
+
+.receipt{
+   height: 400px;
+   max-height: 100%;
+}

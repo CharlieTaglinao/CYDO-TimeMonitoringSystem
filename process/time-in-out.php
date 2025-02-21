@@ -1,19 +1,18 @@
 <?php
 session_start();
-
 date_default_timezone_set('Asia/Manila');
 
 include '../includes/database.php';
 
-$firstName = strtoupper(trim($_POST['firstName'])) ?? null;
-$middleName = strtoupper(trim($_POST['middleName'])) ?? null;
-$lastName = strtoupper(trim($_POST['lastName'])) ?? null;
-$email = trim($_POST['email']) ?? null;
-$purpose = strtoupper(trim($_POST['purpose'])) ?? null;
-$sex = strtoupper(trim($_POST['sex'])) ?? null;
-$age = strtoupper(trim($_POST['age'])) ?? null;
-$code = strtoupper(trim($_POST['code'])) ?? null;
-$checkBoxNotAvailEmail = $_POST['noEmail'];
+$firstName = strtoupper(trim($_POST['firstName'] ?? ''));
+$middleName = strtoupper(trim($_POST['middleName'] ?? ''));
+$lastName = strtoupper(trim($_POST['lastName'] ?? ''));
+$email = trim($_POST['email'] ?? '');
+$purpose = strtoupper(trim($_POST['purpose'] ?? ''));
+$sex = strtoupper(trim($_POST['sex'] ?? ''));
+$age = (int) ($_POST['age'] ?? 0);
+$code = strtoupper(trim($_POST['code'] ?? ''));
+$checkBoxNotAvailEmail = isset($_POST['noEmail']) ? $_POST['noEmail'] : false;
 
 function generateRandomCode($length = 6)
 {
@@ -21,28 +20,9 @@ function generateRandomCode($length = 6)
 }
 
 if (isset($_POST['timeIn'])) {
-    if (!$firstName) {
-        $_SESSION['message'] = "First Name is required.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
-    } elseif (!$middleName) {
-        $_SESSION['message'] = "Middle Name is required.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
-    } elseif (!$lastName) {
-        $_SESSION['message'] = "Last Name is required.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
-    } elseif (!$purpose) {
-        $_SESSION['message'] = "Purpose is required.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
-    }elseif (!$age){
-        $_SESSION['message'] = "Age is required.";
+    // Validation
+    if (!$firstName || !$middleName || !$lastName || !$purpose || !$age) {
+        $_SESSION['message'] = "All required fields must be filled out.";
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
@@ -50,6 +30,35 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
+    // Check if client is already timed in
+    $clientId = null;
+
+    $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name = ? AND last_name = ?";
+    $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
+    $checkFullNameStmt->bind_param("sss", $firstName, $middleName, $lastName);
+    $checkFullNameStmt->execute();
+    $checkFullNameStmt->store_result();
+
+    if ($checkFullNameStmt->num_rows > 0) {
+        $checkFullNameStmt->bind_result($clientId);
+        $checkFullNameStmt->fetch();
+    } else {
+        // Insert new visitor
+        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, age) VALUES (?, ?, ?, ?, ?)";
+        $insertStmt = $conn->prepare($insertQuery);
+        $insertStmt->bind_param("sssii", $firstName, $middleName, $lastName, $sex, $age);
+        $insertStmt->execute();
+        $clientId = $conn->insert_id;
+
+        // Insert email
+        $emailValue = $checkBoxNotAvailEmail ? 'This visitor has no email' : $email;
+        $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
+        $insertEmailStmt = $conn->prepare($insertEmailQuery);
+        $insertEmailStmt->bind_param("is", $clientId, $emailValue);
+        $insertEmailStmt->execute();
+    }
+
+    // Check if the client is already timed in
     $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
     $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
     $checkTimeLogStmt->bind_param("i", $clientId);
@@ -61,31 +70,6 @@ if (isset($_POST['timeIn'])) {
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
-    }
-
-    // Check if the visitor exists in the database
-    $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name = ? AND last_name = ?";
-    $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
-    $checkFullNameStmt->bind_param("sss", $firstName, $middleName, $lastName);
-    $checkFullNameStmt->execute();
-    $checkFullNameStmt->store_result();
-
-    if ($checkFullNameStmt->num_rows > 0) {
-        $checkFullNameStmt->bind_result($clientId);
-        $checkFullNameStmt->fetch();
-    } else {
-        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, age) VALUES (?, ?, ?, ?, ?)";
-        $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("sssii", $firstName, $middleName, $lastName, $sex, $age);
-        $insertStmt->execute();
-        $clientId = $conn->insert_id;
-
-         $emailValue = $checkBoxNotAvailEmail ? 'This visitor has no email' : $email;
-         $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
-         $insertEmailStmt = $conn->prepare($insertEmailQuery);
-         $insertEmailStmt->bind_param("is", $clientId, $emailValue);
-         $insertEmailStmt->execute();
-        
     }
 
     // Allow a new time-in
@@ -102,16 +86,15 @@ if (isset($_POST['timeIn'])) {
     $insertLogStmt = $conn->prepare($insertLogQuery);
     $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
 
-    
-
     if ($insertLogStmt->execute()) {
+        $_SESSION['randomCode'] = $randomCode; 
         $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
         $_SESSION['message_type'] = 'success';
+        include '../includes/generate-qr-code.php';
     } else {
         $_SESSION['message'] = "Failed to log in.";
         $_SESSION['message_type'] = 'danger';
     }
-
 } elseif (isset($_POST['timeOut'])) {
     if (!$code) {
         $_SESSION['message'] = "Code is required.";
@@ -127,7 +110,7 @@ if (isset($_POST['timeIn'])) {
     $validateCodeStmt->store_result();
 
     if ($validateCodeStmt->num_rows === 0) {
-        $_SESSION['message'] = "The code is invalid or has already been used. Please check your code. If you have forgotten your code,kindly ask the admin or staff for assistance.";
+        $_SESSION['message'] = "Invalid or used code. Ask admin/staff for assistance.";
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
@@ -142,12 +125,6 @@ if (isset($_POST['timeIn'])) {
     if ($updateLogStmt->execute()) {
         $_SESSION['message'] = "Successfully Time OUT at $logTime";
         $_SESSION['message_type'] = 'success';
-
-        // Clear the code after successful Time Out
-        $deleteCodeQuery = "UPDATE time_logs SET code = NULL WHERE code = ? AND time_out IS NOT NULL";
-        $deleteCodeStmt = $conn->prepare($deleteCodeQuery);
-        $deleteCodeStmt->bind_param("s", $code);
-        $deleteCodeStmt->execute();
     } else {
         $_SESSION['message'] = "Failed to log out.";
         $_SESSION['message_type'] = 'warning';
@@ -159,4 +136,3 @@ if (isset($_POST['timeIn'])) {
 
 header("Location: ../index.php");
 exit();
-?>

@@ -147,12 +147,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                <h4>Place your QR Code on camera to time out</h4>
+                <video id="preview" width="100%"></video>
                     <form action="process/time-in-out.php" method="POST">
                         <div class="mb-3">
                             <label for="code" class="form-label">Code</label>
                             <input type="text" class="form-control" id="code" name="code" placeholder="Enter your code">
                         </div>
-                        <button type="submit" class="btn btn-danger" name="timeOut">Time Out</button>
+                        <button type="submit" class="btn btn-danger" name="timeOut" id="btnTimeOut">Time Out</button>
                     </form>
                 </div>
             </div>
@@ -184,6 +186,7 @@
         </div>
     </div>
     <?php include 'includes/footer.php'; ?>
+    
 </body>
 
 </html>
