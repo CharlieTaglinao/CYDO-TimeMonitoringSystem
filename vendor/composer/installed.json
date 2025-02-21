@@ -813,7 +813,7 @@
             },
             "time": "2025-01-26T14:03:12+00:00",
             "type": "library",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "config",
