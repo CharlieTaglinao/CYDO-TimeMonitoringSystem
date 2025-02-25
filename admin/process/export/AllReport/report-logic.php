@@ -11,8 +11,11 @@ use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 date_default_timezone_set('Asia/Manila');
 ob_start();
 
-$type = isset($_GET['type']) ? $_GET['type'] : 'today'; 
+$type = isset($_GET['type']) ? $_GET['type'] : 'today';
 $format = isset($_GET['format']) ? $_GET['format'] : 'pdf';
+$customStartDate = isset($_POST['startDate']) ? $_POST['startDate'] : null;
+$customEndDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
+
 
 if ($type === 'month') {
     $startDate = date('Y-m-01');
@@ -20,6 +23,12 @@ if ($type === 'month') {
     $title = "Visitor Records Report";
     $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
     $filename = "Visitor_1_Month_Report_" . date('Y-m');
+} else if ($type === 'custom' && $customStartDate && $customEndDate) {
+    $startDate = $customStartDate;
+    $endDate = $customEndDate;
+    $title = "Visitor Records Report";
+    $subtitle = date('F j, Y', strtotime($startDate)) . " to " . date('F j, Y', strtotime($endDate));
+    $filename = "Visitor_Custom_Range_Report_" . date('Ymd', strtotime($startDate)) . "_to_" . date('Ymd', strtotime($endDate));
 } else {
     $startDate = $endDate = date('Y-m-d');
     $title = "Visitor Records Report";
@@ -28,23 +37,23 @@ if ($type === 'month') {
 }
 
 $query = "
-SELECT 
-    CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
-    DATE(time_logs.time_in) AS log_date,
-    DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
-    DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
-    visitors.age,
-    sex.sex_name, 
-    TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration
-FROM 
-    time_logs
-INNER JOIN 
-    visitors ON time_logs.client_id = visitors.id
-LEFT JOIN 
-    sex ON visitors.sex_id = sex.id
-WHERE 
-    DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
-";
+    SELECT 
+        CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
+        DATE(time_logs.time_in) AS log_date,
+        DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
+        DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
+        visitors.age,
+        sex.sex_name, 
+        TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration
+    FROM 
+        time_logs
+    INNER JOIN 
+        visitors ON time_logs.client_id = visitors.id
+    LEFT JOIN 
+        sex ON visitors.sex_id = sex.id
+    WHERE 
+        DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
+    ";
 
 
 $result = $conn->query($query);
@@ -63,7 +72,7 @@ if ($format === 'xlsx') {
         $sheet = $spreadsheet->getActiveSheet();
         $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration'];
         $sheet->fromArray($headers, NULL, 'A1');
-        
+
         // Style headers
         $sheet->getStyle('A1:G1')->applyFromArray([
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1c1c1c']],
@@ -71,9 +80,9 @@ if ($format === 'xlsx') {
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
         ]);
 
-        
 
-        
+
+
 
         // Adjust column widths
         $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 8, 'F' => 8, 'G' => 15];
@@ -83,6 +92,7 @@ if ($format === 'xlsx') {
         $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
 
         $rowNumber = 2;
+        $dataCount = 0;
         while ($row = $result->fetch_assoc()) {
             $sheet->fromArray([
                 $row['full_name'] ?? '-',
@@ -94,22 +104,30 @@ if ($format === 'xlsx') {
                 $row['duration'] ?? '-',
             ], NULL, "A$rowNumber");
             $rowNumber++;
+            $dataCount++;
+        }
+
+        if ($dataCount % 10 === 0) {
+            $sheet->mergeCells("A$rowNumber:G$rowNumber");
+            $sheet->setCellValue("A$rowNumber", str_repeat('-', 50));
+            $sheet->getStyle("A$rowNumber")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+            $rowNumber++;
         }
 
 
         $lastColumn = $sheet->getHighestColumn();
         $lastRow = $sheet->getHighestRow();
         $sheet->getStyle("A2:{$lastColumn}{$lastRow}")->applyFromArray([
-        'alignment' => [
-        'horizontal' => Alignment::HORIZONTAL_CENTER,
-        'vertical' => Alignment::VERTICAL_CENTER,
-    ],
-]);
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ]);
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header("Content-Disposition: attachment; filename=\"$filename.xlsx\"");
         $writer = new Xlsx($spreadsheet);
-        ob_end_clean(); 
+        ob_end_clean();
         $writer->save('php://output');
     } catch (Exception $e) {
         error_log('XLSX Generation Error: ' . $e->getMessage());
@@ -118,8 +136,10 @@ if ($format === 'xlsx') {
 } else {
     require '../../../../vendor/tecnickcom/tcpdf/tcpdf.php';
 
-    class CustomPDF extends TCPDF {
-        public function Header() {
+    class CustomPDF extends TCPDF
+    {
+        public function Header()
+        {
             global $title, $subtitle;
             $this->SetFont('times', 'B', 20);
             $this->Cell(0, 10, $title, 0, 1, 'C');
@@ -128,7 +148,8 @@ if ($format === 'xlsx') {
             $this->Ln(4);
         }
 
-        public function Footer() {
+        public function Footer()
+        {
             $this->SetY(-15);
             $this->SetFont('helvetica', 'I', 8);
             $this->Cell(0, 10, 'Page ' . $this->getAliasNumPage() . '/' . $this->getAliasNbPages(), 0, 0, 'C');

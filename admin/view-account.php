@@ -53,12 +53,12 @@ include 'fetch-accounts.php';
                         </div>
                     </div>
                 <?php endif; ?>
-                
+
                 <div class="mt-4">
                     <h3>Account Records</h3>
                     <div class="d-flex justify-content-between mb-3">
-                    <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name"
-                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
+                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name"
+                            value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     </div>
                     <table class="table table-bordered">
                         <thead class="table-dark">
@@ -73,7 +73,8 @@ include 'fetch-accounts.php';
                             <?php while ($row = $accountResult->fetch_assoc()): ?>
                                 <tr>
                                     <td><?php echo $row['username']; ?></td>
-                                    <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?></td>
+                                    <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?>
+                                    </td>
                                     <td><?php echo $row['created_at']; ?></td>
                                     <td>
                                         <button class="btn btn-sm btn-primary editModalBtn"
@@ -100,19 +101,35 @@ include 'fetch-accounts.php';
                 <!-- Pagination -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <nav aria-label="Page navigation">
-                        <ul class="pagination">
-                            <?php if ($page > 1): ?>
+                        <ul class="pagination" id="pagination">
+                            <?php
+                            $pagesToShow = 3;
+
+                            $startPage = max(1, $page - (($page - 1) % $pagesToShow));
+                            $endPage = min($totalPages, $startPage + $pagesToShow - 1);
+
+                            // Display "Previous" button
+                            if ($page > 1): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>
                                 </li>
                             <?php endif; ?>
 
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <!-- Display the range of pages dynamically -->
+                            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
                                 <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
                                     <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
 
+                            <!-- Show ellipsis if there are more pages -->
+                            <?php if ($endPage < $totalPages): ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<?php echo $endPage + 1; ?>">...</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <!-- Display "Next" button -->
                             <?php if ($page < $totalPages): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>

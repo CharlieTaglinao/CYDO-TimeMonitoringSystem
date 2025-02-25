@@ -1,8 +1,10 @@
 <?php
 
+if (isset($_GET['visitor_code'])) {
+    $_SESSION['randomCode'] = $_GET['visitor_code'];
+}
 
 include 'fetch-visitors.php';
-
 ?>
 
 
@@ -132,6 +134,10 @@ include 'fetch-visitors.php';
                                                 View Details
                                             </button>
                                         </td>
+
+
+
+                                        </td>
                                     </tr>
                                     <?php
                                 endwhile;
@@ -161,26 +167,50 @@ include 'fetch-visitors.php';
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                <form action="process/export/print-receipt.php" method="GET">
+                                    <input type="hidden" name="visitor_code" id="visitor_code">
+                                    <button type="submit" class="btn btn-primary">Print</button>
+                                </form>
+
+
+
                             </div>
                         </div>
                     </div>
                 </div>
-                            
+
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <nav aria-label="Page navigation">
                         <ul class="pagination" id="pagination">
-                            <?php if ($page > 1): ?>
+                            <?php
+                            $pagesToShow = 3;
+
+                            $startPage = max(1, $page - (($page - 1) % $pagesToShow));
+                            $endPage = min($totalPages, $startPage + $pagesToShow - 1);
+
+                            // Display "Previous" button
+                            if ($page > 1): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>
                                 </li>
                             <?php endif; ?>
 
-                            <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+                            <!-- Display the range of pages dynamically -->
+                            <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
                                 <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
                                     <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
 
+                            <!-- Show ellipsis if there are more pages -->
+                            <?php if ($endPage < $totalPages): ?>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<?php echo $endPage + 1; ?>">...</a>
+                                </li>
+                            <?php endif; ?>
+
+                            <!-- Display "Next" button -->
                             <?php if ($page < $totalPages): ?>
                                 <li class="page-item">
                                     <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
@@ -188,6 +218,9 @@ include 'fetch-visitors.php';
                             <?php endif; ?>
                         </ul>
                     </nav>
+
+
+
                     <p>Page <?php echo $page; ?> of <?php echo $totalPages; ?></p>
                 </div>
             </div>

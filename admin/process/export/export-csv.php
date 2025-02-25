@@ -58,6 +58,8 @@ try {
 
     // Populate data
     $rowNumber = 2; 
+    $dataCount = 0; // Counter to track rows of data
+
     if ($result && $result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
             $duration = isset($row['duration_seconds']) && $row['duration_seconds'] > 0 
@@ -76,6 +78,19 @@ try {
             ], NULL, "A$rowNumber");
 
             $rowNumber++;
+            $dataCount++;
+
+
+            if ($dataCount % 10 === 0) {
+                $sheet->fromArray(['-', '-', '-', '-', '-', '-', '-','-'], NULL, "A$rowNumber");
+                $sheet->mergeCells("A$rowNumber:H$rowNumber");
+                $sheet->getStyle("A$rowNumber:H$rowNumber")->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                    'font' => ['bold' => true],
+                ]);
+                $rowNumber++;
+            }
+            
         }
     }
 

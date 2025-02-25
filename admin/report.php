@@ -9,7 +9,8 @@
             <div class="flex-grow-1 p-4">
                 <div class="container mt-4">
 
-                    <div id="modalContainer"></div>
+
+                <div id="modalContainer"></div>
 
                     <div class="mt-4">
                         <h3>Visitor Reports</h3>
@@ -36,9 +37,8 @@
                                         <!-- Custom Report -->
                                         <div class="col-md-4">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
-                                                <a class="btn btn-success w-100" id="export-custom"
-                                                    href="#">
-                                                    Custom
+                                                <a class="btn btn-success w-100" id="customRangeExportXLSXBtn">
+                                                    Custom    
                                                 </a>
                                             </div>
                                         </div>
@@ -69,9 +69,8 @@
                                         <!-- Custom Report -->
                                         <div class="col-md-4">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
-                                                <a class="btn btn-success w-100" id="export-custom"
-                                                    href="#">
-                                                    Custom
+                                                <a class="btn btn-success w-100" id="customRangeExportPDFBtn">
+                                                    Custom    
                                                 </a>
                                             </div>
                                         </div>

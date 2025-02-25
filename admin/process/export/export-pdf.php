@@ -103,9 +103,8 @@ while ($row = $result->fetch_assoc()) {
     $pdf->Cell($colWidths[6], 10, $duration, 1, 1, 'C', $fill);
 
     $fill = !$fill;
+
 }
-
-
 $timestamp = date('Y-m-d_H-i-s'); 
 $filename = "Visitor-Reports_{$timestamp}.pdf";
 
