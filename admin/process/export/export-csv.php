@@ -17,14 +17,14 @@ try {
     $sheet = $spreadsheet->getActiveSheet();
 
     // headers
-    $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration', 'Code'];
+    $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex','Office', 'Purpose', 'Barangay',  'Duration', 'Code'];
     $sheet->fromArray($headers, NULL, 'A1');
 
-    $sheet->getStyle('A1:H1')->getFill()
+    $sheet->getStyle('A1:K1')->getFill()
         ->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setRGB('1c1c1c');
 
-    $sheet->getStyle('A1:H1')->getFont()
+    $sheet->getStyle('A1:K1')->getFont()
         ->setBold(true) 
         ->setSize(12)   
         ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF')) 
@@ -37,8 +37,11 @@ try {
     $sheet->getColumnDimension('D')->setWidth(12);
     $sheet->getColumnDimension('E')->setWidth(8);
     $sheet->getColumnDimension('F')->setWidth(8);
-    $sheet->getColumnDimension('G')->setWidth(12);
+    $sheet->getColumnDimension('G')->setWidth(30);
     $sheet->getColumnDimension('H')->setWidth(12);
+    $sheet->getColumnDimension('I')->setWidth(12);
+    $sheet->getColumnDimension('J')->setWidth(12);
+    $sheet->getColumnDimension('K')->setWidth(12);
 
     // Fetch data from DB
     $GetDataQuery = "
@@ -73,6 +76,9 @@ try {
                 $row['time_out'] ?? '-',
                 $row['age'] ?? '-',
                 $row['sex'] ?? '-',
+                $row['office'] ?? '-',
+                $row['purpose'] ?? '-',
+                $row['barangay'] ?? '-',
                 $duration,
                 $row['code'] ?? '-'
             ], NULL, "A$rowNumber");
@@ -94,7 +100,7 @@ try {
         }
     }
 
-    $sheet->getStyle("A1:H$rowNumber")
+    $sheet->getStyle("A1:K$rowNumber")
         ->getAlignment()
         ->setHorizontal(Alignment::HORIZONTAL_CENTER)
         ->setVertical(Alignment::VERTICAL_CENTER);

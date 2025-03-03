@@ -8,6 +8,8 @@ $firstName = strtoupper(trim($_POST['firstName'] ?? ''));
 $middleName = strtoupper(trim($_POST['middleName'] ?? ''));
 $lastName = strtoupper(trim($_POST['lastName'] ?? ''));
 $email = trim($_POST['email'] ?? '');
+$officename = strtoupper(trim($_POST['office']));
+$barangayname = strtoupper(trim($_POST['barangay']));
 $purpose = strtoupper(trim($_POST['purpose'] ?? ''));
 $sex = strtoupper(trim($_POST['sex'] ?? ''));
 $age = (int) ($_POST['age'] ?? 0);
@@ -49,11 +51,11 @@ if (isset($_POST['timeIn'])) {
         $checkFullNameStmt->fetch();
     } else {
         // Insert new visitor
-        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, age) VALUES (?, ?, ?, ?, ?)";
-        $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("sssii", $firstName, $middleName, $lastName, $sex, $age);
-        $insertStmt->execute();
-        $clientId = $conn->insert_id;
+    $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, office_id, barangay_id, age) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    $insertStmt = $conn->prepare($insertQuery);
+    $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $officename, $barangayname, $age);
+    $insertStmt->execute();
+    $clientId = $conn->insert_id;
 
         // Insert email
         $emailValue = $checkBoxNotAvailEmail ? 'This visitor has no email' : $email;
@@ -86,6 +88,12 @@ if (isset($_POST['timeIn'])) {
     $insertPurposeStmt->bind_param("is", $clientId, $purpose);
     $insertPurposeStmt->execute();
 
+    // Update Purpose_id
+    $updatePurposeIdQuery = "UPDATE visitors SET visitors.purpose_id = ? WHERE visitors.id = ?";
+    $updatePurposeIdStmt = $conn->prepare($updatePurposeIdQuery);
+    $updatePurposeIdStmt->bind_param("ii",$clientId,$clientId);
+    $updatePurposeIdStmt->execute();
+
     // Insert new time log
     $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?)";
     $insertLogStmt = $conn->prepare($insertLogQuery);
@@ -93,7 +101,7 @@ if (isset($_POST['timeIn'])) {
 
     if ($insertLogStmt->execute()) {
         $_SESSION['showQRModal'] = true;
-        $_SESSION['randomCode'] = $randomCode; 
+        $_SESSION['randomCode'] = $randomCode;
         $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
         $_SESSION['message_type'] = 'success';
         include '../includes/generate-qr-code.php';

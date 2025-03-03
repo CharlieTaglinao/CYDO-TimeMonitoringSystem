@@ -53,26 +53,28 @@
     </div>
 
     <!-- QR Code Modal -->
-<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" id="">
-            <div class="modal-header">
-                <h5 class="modal-title" id="qrModalLabel"><?php echo $_SESSION['first_name']. ' ' . $_SESSION['middle_name'] . ' ' . $_SESSION['last_name'];?></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img src="includes/generate-qr-code.php" alt="QR Code">
-                <p class="mt-3">Please take a capture for your QR CODE <br> or use this code for time out.</p>
-                <h4><?php echo $_SESSION['randomCode'] ?></h4>
-            </div>
-            <div class="modal-footer">
-                
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Print</button>
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" id="">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel">
+                        <?php echo $_SESSION['first_name'] . ' ' . $_SESSION['middle_name'] . ' ' . $_SESSION['last_name']; ?>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="includes/generate-qr-code.php" alt="QR Code">
+                    <p class="mt-3">Please take a capture for your QR CODE <br> or use this code for time out.</p>
+                    <h4><?php echo $_SESSION['randomCode'] ?></h4>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Print</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <!-- Time In Modal -->
     <div class="modal fade" id="timeInModal" tabindex="-1" aria-labelledby="timeInModalLabel" aria-hidden="true">
@@ -124,7 +126,60 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="office">Office</label>
+                                    <select class="form-select" name="office" id="office">
+                                        <option value="" selected disabled>Select an Office</option>
+                                        <option value="1">City Youth Development Office</option>
+                                        <option value="2">Person with Disablity Affairs Office</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="mb-3">
+                                    <label class="form-label" for="barangay">Barangay</label>
+                                    <select class="form-select" name="barangay" id="barangay">
+                                        <option value="" selected disabled>Select a Barangay</option>
+                                        <option value="1">Alingaro</option>
+                                        <option value="2">Arnaldo</option>
+                                        <option value="3">Bacao I</option>
+                                        <option value="4">Bacao II</option>
+                                        <option value="5">Bagumbayan</option>
+                                        <option value="6">Biclatan</option>
+                                        <option value="7">Buenavista I</option>
+                                        <option value="8">Buenavista II</option>
+                                        <option value="9">Buenavista III</option>
+                                        <option value="10">Corregidor</option>
+                                        <option value="11">Dulong Bayan</option>
+                                        <option value="12">Governor Ferrer</option>
+                                        <option value="13">Javalera</option>
+                                        <option value="14">Manggahan</option>
+                                        <option value="15">Navarro</option>
+                                        <option value="16">Panungyanan</option>
+                                        <option value="17">Pasong Camachile I</option>
+                                        <option value="18">Pasong Camachile II</option>
+                                        <option value="19">Pasong Kawayan I</option>
+                                        <option value="20">Pasong Kawayan II</option>
+                                        <option value="21">Pinagtipunan</option>
+                                        <option value="22">Prinza</option>
+                                        <option value="23">Sampalucan</option>
+                                        <option value="24">Santiago</option>
+                                        <option value="25">San Francisco</option>
+                                        <option value="26">San Gabriel</option>
+                                        <option value="27">San Juan I</option>
+                                        <option value="28">San Juan II</option>
+                                        <option value="29">Santa Clara</option>
+                                        <option value="30">Tapia</option>
+                                        <option value="31">Tejero</option>
+                                        <option value="32">Vibora</option>
+                                        <option value="33">1896</option>
+                                    </select>
+                                </div>
+                            </div>
 
+                        </div>
                         <div class="row">
                             <div class="col-6">
                                 <div class="mb-3">
