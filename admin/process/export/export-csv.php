@@ -29,6 +29,13 @@ try {
         ->setSize(12)   
         ->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('FFFFFF')) 
         ->setName('Arial');
+
+    // to be fit in a 1 page for printing
+    $sheet->getPageSetup()
+        ->setOrientation(\PhpOffice\PhpSpreadsheet\Worksheet\PageSetup::ORIENTATION_LANDSCAPE)
+        ->setFitToWidth(1)
+        ->setFitToHeight(1);
+    
     
     // Width of every column to be fit
     $sheet->getColumnDimension('A')->setWidth(40);    
@@ -38,7 +45,7 @@ try {
     $sheet->getColumnDimension('E')->setWidth(8);
     $sheet->getColumnDimension('F')->setWidth(8);
     $sheet->getColumnDimension('G')->setWidth(30);
-    $sheet->getColumnDimension('H')->setWidth(12);
+    $sheet->getColumnDimension('H')->setWidth(20);
     $sheet->getColumnDimension('I')->setWidth(12);
     $sheet->getColumnDimension('J')->setWidth(12);
     $sheet->getColumnDimension('K')->setWidth(12);
@@ -53,10 +60,16 @@ try {
             v.age,
             s.sex_name AS sex,
             TIMESTAMPDIFF(SECOND, t.time_in, t.time_out) AS duration_seconds,
-            t.code
+            t.code,
+            o.office_name AS office,
+            p.purpose AS purpose,
+            b.barangay_name AS barangay
         FROM visitors v
         INNER JOIN time_logs t ON v.id = t.client_id
-        INNER JOIN sex s ON v.sex_id = s.id";
+        INNER JOIN sex s ON v.sex_id = s.id
+        INNER JOIN office o ON v.office_id = o.id
+        INNER JOIN purpose p ON v.purpose_id = p.client_id
+        INNER JOIN barangays b ON v.barangay_id = b.id";
     $result = $conn->query($GetDataQuery);
 
     // Populate data
