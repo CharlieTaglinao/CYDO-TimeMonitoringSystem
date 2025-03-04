@@ -1,49 +1,35 @@
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php';
+include 'includes/loader.php'; ?>
 <?php session_start(); ?>
 
-<body style="height: 100vh;" class="flex-column">
+<body style="height: 100vh;" class="d-flex flex-column">
 
     <div class="w-100">
-        <div class="container-fluid w-100">
+        <div class="container-fluid w-100" style="position: relative; bottom: 120px;">
             <div class="cydo-logo">
                 <div class="row">
-                    <div class="col-md-3">
-                        <img src="assets/images/CYDO-LOGO.png" alt="CYDO LOGO" style="max-width: 250px;">
+                    <div class="col-md-3 d-flex align-items-center">
+                        <img src="assets/images/CYDO-LOGO.png" class="LOGO-CYDO" alt="CYDO-LOGO">
                     </div>
-                    <div class="col-md-8 d-flex">
-                    <h1 style="font-size: 2.8rem; z-index:1000; left: 430px;" class="card-title text-light position-absolute">CITY YOUTH DEVELOPMENT OFFICE
-                    </h1> 
-                    <div class="header-bar "> 
-                    <div class="mb-2">
-                            
-                        </div>  
-                        <div class="right-decor">
-                            <div class="slice"></div>
-                            <div class="slice"></div>
-                            <div class="slice"></div>
-                            <div class="slice"></div>
+                    <div class="col-md-9 d-flex flex-column justify-content-center">
+                        <h1 class="card-title text-light position-absolute TEXT-CYDO">CITY YOUTH DEVELOPMENT OFFICE</h1> 
+                    <div class="header-bar d-flex align-items-center">  
+                            <div class="right-decor">
+                                <div class="slice"></div>
+                                <div class="slice"></div>
+                                <div class="slice"></div>
+                                <div class="slice"></div>   
+                            </div>
                         </div>
-                    </div> 
                     </div>
-                </div>
-
-
-
-
+                </div>          
             </div>
-
-
-           
         </div>
-    </div>
 
 
 
 
     <div class="container text-center">
-        <!-- Logo in the upper-right corner -->
-
-
         <!-- Login button -->
         <div class="position-absolute top-0 end-0 p-3">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
@@ -314,6 +300,8 @@
     <footer>
         Let's Join Forces for a progressive of City of General Trias
     </footer>
+
+    
 
 </body>
 

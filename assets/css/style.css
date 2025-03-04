@@ -1,10 +1,15 @@
 body {
     background-color: #fff; /* Set background color to white */
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+}
+
+.header-container {
+    margin-bottom: 2rem;
 }
 
 footer {
@@ -21,7 +26,6 @@ footer {
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
     letter-spacing: 0.5px; 
 }
-
 
 .card-title {
     font-size: 1.25rem;
@@ -78,12 +82,12 @@ button {
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
-button.btn-success {
+button.btn-primary {
     background-color: #40A4FF; 
     color: #fff;
 }
 
-button.btn-success:hover {
+button.btn-primary:hover {
     background-color: #1E88E5;
     box-shadow: 0px 8px 16px rgba(64, 164, 255, 0.3);
 }
@@ -100,6 +104,7 @@ button.btn-danger:hover {
 
 img {
     max-width: 200px;
+    margin-right: 10px; /* Adjust the logo to move 10px to the right */
     border-radius: 10px;
 }
 
@@ -118,31 +123,45 @@ select.form-select {
     border-radius: 8px;
 }
 
-#date-time-container{
-    margin:0 0 4rem 0;
+#date-time-container {
+    margin: 0 0 4rem 0;
 }
-.date{
+
+.date {
+    font-weight: bold;
     font-size: 4rem;
 }
-.clock{
+
+.clock {
     font-size: 3rem;
 }
 
-.receipt{
-   height: 400px;
-   max-height: 100%;
+.receipt {
+    height: 400px;
+    max-height: 100%;
 }
 
-.office-title-text{
-    margin: 8.3rem 5px 0 0;
-    
+.LOGO-CYDO {
+    max-width: 250px;
+    position: absolute;
+    left: 80px;
 }
+
+.TEXT-CYDO{
+    font-size: 3.4rem; 
+    z-index:1000;
+    padding-left: 10px;
+}
+
 /* Full header bar */
 .header-bar {
     background-color: #409c6c; 
     height: 70px;
     width: 100%;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center; 
     overflow: hidden;
 }
 
@@ -164,7 +183,7 @@ select.form-select {
 .slice {
     background-color: white;
     height: 15px;
+
     width: 100%;
     margin-bottom: 5px;
 }
-

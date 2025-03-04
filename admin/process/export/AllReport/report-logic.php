@@ -16,7 +16,6 @@ $format = isset($_GET['format']) ? $_GET['format'] : 'pdf';
 $customStartDate = isset($_POST['startDate']) ? $_POST['startDate'] : null;
 $customEndDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
 
-
 if ($type === 'month') {
     $startDate = date('Y-m-01');
     $endDate = date('Y-m-t');
@@ -42,19 +41,19 @@ $query = "
         DATE(time_logs.time_in) AS log_date,
         DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
         DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
-        visitors.age,
-        sex.sex_name, 
-        TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration
+        TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
+        office.office_name,
+        purpose.purpose,
+        barangays.barangay_name
     FROM 
         time_logs
-    INNER JOIN 
-        visitors ON time_logs.client_id = visitors.id
-    LEFT JOIN 
-        sex ON visitors.sex_id = sex.id
+    INNER JOIN visitors ON time_logs.client_id = visitors.id
+    INNER JOIN office ON visitors.office_id = office.id
+    INNER JOIN purpose ON visitors.purpose_id = purpose.client_id
+    INNER JOIN barangays ON visitors.barangay_id = barangays.id
     WHERE 
         DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
     ";
-
 
 $result = $conn->query($query);
 if (!$result) {
@@ -70,26 +69,26 @@ if ($format === 'xlsx') {
     try {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration'];
+        $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION'];
         $sheet->fromArray($headers, NULL, 'A1');
 
         // Style headers
-        $sheet->getStyle('A1:G1')->applyFromArray([
+        $sheet->getStyle('A1:H1')->applyFromArray([
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1c1c1c']],
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
         ]);
 
-
-
-
-
         // Adjust column widths
-        $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 8, 'F' => 8, 'G' => 15];
+        $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 35, 'F' => 20, 'G' => 20, 'H' => 15];
         foreach ($columns as $col => $width) {
             $sheet->getColumnDimension($col)->setWidth($width);
         }
+
+        // Set page layout to fit to 1 page wide and 1 page tall
         $sheet->getPageSetup()->setOrientation(PageSetup::ORIENTATION_LANDSCAPE);
+        $sheet->getPageSetup()->setFitToWidth(1);
+        $sheet->getPageSetup()->setFitToHeight(1);
 
         $rowNumber = 2;
         $dataCount = 0;
@@ -99,21 +98,21 @@ if ($format === 'xlsx') {
                 $row['log_date'] ?? '-',
                 $row['time_in'] ?? '-',
                 $row['time_out'] ?? '-',
-                $row['age'] ?? '-',
-                $row['sex_name'] ?? '-',
+                $row['office_name'] ?? '-',
+                $row['purpose'] ?? '-',
+                $row['barangay_name'] ?? '-',
                 $row['duration'] ?? '-',
             ], NULL, "A$rowNumber");
             $rowNumber++;
             $dataCount++;
+            
+            if ($dataCount % 10 === 0) {
+                $sheet->mergeCells("A$rowNumber:H$rowNumber");
+                $sheet->setCellValue("A$rowNumber", '<' . str_repeat('-', 120) . ' BREAK ' . str_repeat('-', 120) . '>');
+                $sheet->getStyle("A$rowNumber")->getFont()->setBold(true);
+                $rowNumber++;
+            }
         }
-
-        if ($dataCount % 10 === 0) {
-            $sheet->mergeCells("A$rowNumber:G$rowNumber");
-            $sheet->setCellValue("A$rowNumber", str_repeat('-', 50));
-            $sheet->getStyle("A$rowNumber")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-            $rowNumber++;
-        }
-
 
         $lastColumn = $sheet->getHighestColumn();
         $lastRow = $sheet->getHighestRow();
@@ -133,6 +132,7 @@ if ($format === 'xlsx') {
         error_log('XLSX Generation Error: ' . $e->getMessage());
         die('Error generating Excel file.');
     }
+// START FOR EXPORTING IN PDF FILE FOR BOTH TODAY,1MONTH REPORT
 } else {
     require '../../../../vendor/tecnickcom/tcpdf/tcpdf.php';
 
@@ -141,11 +141,17 @@ if ($format === 'xlsx') {
         public function Header()
         {
             global $title, $subtitle;
-            $this->SetFont('times', 'B', 20);
-            $this->Cell(0, 10, $title, 0, 1, 'C');
-            $this->SetFont('times', '', 12);
-            $this->Cell(0, 10, $subtitle, 0, 1, 'C');
-            $this->Ln(4);
+            if ($this->PageNo() == 1) {
+                $this->Ln(5);
+                $this->SetFont('helvetica', 'B', 20);
+                $this->Cell(0, 15, $title, 0, 1, 'C', false, '', 0, false, 'T', 'M');
+                $this->SetFont('helvetica', '', 10);
+                $date = date('F j, Y, g:i A');
+                $this->Cell(0, 0, 'Report Generated : ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
+                $this->Ln(8);
+                $this->Image('../../../../assets/images/CYDO-LOGO.png', 92, 5, 15);
+                $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', 190, 5, 15);
+            }
         }
 
         public function Footer()
@@ -162,25 +168,62 @@ if ($format === 'xlsx') {
     $pdf->SetMargins(10, 20, 10);
     $pdf->AddPage();
 
-    $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Age', 'Sex', 'Duration'];
-    $colWidths = [80, 30, 30, 30, 20, 20, 70];
+    $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION'];
+    $data = [];
+    $maxWidths = array_fill(0, count($headers), 0);
 
-    $pdf->SetFont('times', '', 10);
-    $pdf->SetFillColor(230, 230, 230);
+    $fixedWidths = [
+        'NAME' => 70,
+        'OFFICE' => 70
+    ];
+
+    while ($row = $result->fetch_assoc()) {
+        $rowData = [
+            strtoupper($row['full_name']),
+            $row['log_date'] ?? '-',
+            $row['time_in'] ?? '-',
+            $row['time_out'] ?? '-',
+            $row['office_name'] ?? '-',
+            $row['purpose'] ?? '-',
+            $row['barangay_name'] ?? '-',
+            $row['duration'] ?? '-'
+        ];
+        $data[] = $rowData;
+
+        foreach ($rowData as $i => $value) {
+            if (!isset($fixedWidths[$headers[$i]])) {
+                $maxWidths[$i] = max($maxWidths[$i], $pdf->GetStringWidth($value) + 6);
+            }
+        }
+    }
 
     foreach ($headers as $i => $header) {
-        $pdf->Cell($colWidths[$i], 10, $header, 1, 0, 'C', true);
+        if (!isset($fixedWidths[$header])) {
+            $maxWidths[$i] = max($maxWidths[$i], $pdf->GetStringWidth($header) + 6);
+        }
+    }
+
+    $pdf->SetFillColor(0, 0, 0);
+    $pdf->SetTextColor(255, 255, 255);
+    $pdf->SetFont('', 'B', 9);
+    foreach ($headers as $i => $header) {
+        $width = isset($fixedWidths[$header]) ? $fixedWidths[$header] : $maxWidths[$i];
+        $pdf->MultiCell($width, 9, $header, 1, 'C', true, 0);
     }
     $pdf->Ln();
 
-    while ($row = $result->fetch_assoc()) {
-        $pdf->Cell($colWidths[0], 10, strtoupper($row['full_name'] ?? '-'), 1);
-        $pdf->Cell($colWidths[1], 10, $row['log_date'] ?? '-', 1);
-        $pdf->Cell($colWidths[2], 10, $row['time_in'] ?? '-', 1);
-        $pdf->Cell($colWidths[3], 10, $row['time_out'] ?? '-', 1);
-        $pdf->Cell($colWidths[4], 10, $row['age'] ?? '-', 1);
-        $pdf->Cell($colWidths[5], 10, $row['sex_name'] ?? '-', 1);
-        $pdf->Cell($colWidths[6], 10, $row['duration'] ?? '-', 1, 1);
+    $pdf->SetFillColor(245, 245, 245);
+    $pdf->SetTextColor(0, 0, 0);
+    $pdf->SetFont('', '');
+    $fill = false;
+    foreach ($data as $rowData) {
+        foreach ($rowData as $i => $value) {
+            $alignment = ($i === 0) ? 'L' : 'C';
+            $width = isset($fixedWidths[$headers[$i]]) ? $fixedWidths[$headers[$i]] : $maxWidths[$i];
+            $pdf->MultiCell($width, 10, $value, 1, $alignment, $fill, 0);
+        }
+        $pdf->Ln();
+        $fill = !$fill;
     }
 
     $pdf->Output("$filename.pdf", 'D');
