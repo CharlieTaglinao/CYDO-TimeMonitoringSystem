@@ -1,12 +1,27 @@
-
 body {
-    background-color: #343a40;
+    background-color: #fff; /* Set background color to white */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
 }
+
+footer {
+    background-color: #0033ff;
+    color: #ecf0f1;
+    text-align: center;
+    font-style: italic;
+    padding: 20px 10px; 
+    font-size: 1.2rem; 
+    font-family: 'Arial', sans-serif; 
+    position: fixed; 
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
+    letter-spacing: 0.5px; 
+}
+
 
 .card-title {
     font-size: 1.25rem;
@@ -104,10 +119,52 @@ select.form-select {
 }
 
 #date-time-container{
-    margin: 10rem 0 2rem 0;
+    margin:0 0 4rem 0;
+}
+.date{
+    font-size: 4rem;
+}
+.clock{
+    font-size: 3rem;
 }
 
 .receipt{
    height: 400px;
    max-height: 100%;
 }
+
+.office-title-text{
+    margin: 8.3rem 5px 0 0;
+    
+}
+/* Full header bar */
+.header-bar {
+    background-color: #409c6c; 
+    height: 70px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Right Decoration */
+.right-decor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transform: skewy(-40deg); 
+    background-color: inherit;
+}
+
+/* White slices */
+.slice {
+    background-color: white;
+    height: 15px;
+    width: 100%;
+    margin-bottom: 5px;
+}
+

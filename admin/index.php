@@ -73,15 +73,18 @@ include 'fetch-visitors.php';
                         </div>
 
 
-
-                        <div class="flex-end">
-                            <a class="btn btn-success" id="export-csv" href="process/export/export-csv.php">
-                                XLSX</a>
-                            <a class="btn btn-primary" id="export-pdf" href="process/export/export-pdf.php">
-                                PDF</a>
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                EXPORT A DATA
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item" id="export-csv" href="process/export/export-csv.php">XLSX</a></li>
+                                <li> <a class="dropdown-item" id="export-pdf" href="process/export/export-pdf.php">PDF</a></li>
+                                <li><a class="dropdown-item" id="export-code" href="process/export/export-code.php">GET
+                                CODES</a></li>
+                            </ul>
                         </div>
-
-
                     </div>
 
 
@@ -226,7 +229,6 @@ include 'fetch-visitors.php';
             </div>
         </div>
     </div>
-
     <script src="assets/js/script.js"></script>
 </body>
 

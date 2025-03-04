@@ -1,22 +1,61 @@
 <?php include 'includes/header.php'; ?>
 <?php session_start(); ?>
 
-<body class="bg-dark d-flex justify-content-center" style="height: 100vh;">
+<body style="height: 100vh;" class="flex-column">
+
+    <div class="w-100">
+        <div class="container-fluid w-100">
+            <div class="cydo-logo">
+                <div class="row">
+                    <div class="col-md-3">
+                        <img src="assets/images/CYDO-LOGO.png" alt="CYDO LOGO" style="max-width: 250px;">
+                    </div>
+                    <div class="col-md-8 d-flex">
+                    <h1 style="font-size: 2.8rem; z-index:1000; left: 430px;" class="card-title text-light position-absolute">CITY YOUTH DEVELOPMENT OFFICE
+                    </h1> 
+                    <div class="header-bar "> 
+                    <div class="mb-2">
+                            
+                        </div>  
+                        <div class="right-decor">
+                            <div class="slice"></div>
+                            <div class="slice"></div>
+                            <div class="slice"></div>
+                            <div class="slice"></div>
+                        </div>
+                    </div> 
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+           
+        </div>
+    </div>
+
+
+
+
     <div class="container text-center">
+        <!-- Logo in the upper-right corner -->
+
+
+        <!-- Login button -->
         <div class="position-absolute top-0 end-0 p-3">
             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
                 <i class="fa fa-user"></i>
             </button>
         </div>
-        <div class="position-absolute top-0 start-50 translate-middle-x mt-5">
-            <div class="mb-2">
-                <img src="assets/images/CYDO-LOGO.png" alt="CYDO LOGO" style="max-width: 150px;">
-            </div>
-            <h1 style="font-size: 2.8rem;" class="card-title text-light">CITY YOUTH DEVELOPMENT OFFICE</h1>
-        </div>
+
+        <!-- Centered title -->
 
 
-        <div id="date-time-container" class="text-light">
+
+        <div id="date-time-container" class="text-dark text-center">
             <h2 id="date" class="date"></h2>
             <h2 id="clock" class="clock"></h2>
         </div>
@@ -271,6 +310,10 @@
             <?php unset($_SESSION['showQRModal']); ?>
         <?php endif; ?>
     </script>
+
+    <footer>
+        Let's Join Forces for a progressive of City of General Trias
+    </footer>
 
 </body>
 

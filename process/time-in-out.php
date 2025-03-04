@@ -132,9 +132,12 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
-    $updateLogQuery = "UPDATE time_logs SET time_out = ? WHERE code = ? AND time_out IS NULL";
+    $updateLogQuery = "UPDATE time_logs SET time_out = ?, code = null WHERE code = ? AND time_out IS NULL";
     $updateLogStmt = $conn->prepare($updateLogQuery);
     $updateLogStmt->bind_param("ss", $logTime, $code);
+
+
+    
 
     if ($updateLogStmt->execute()) {
         $_SESSION['message'] = "Successfully Time OUT at $logTime";
