@@ -1,5 +1,6 @@
+
+/* Ensure the body takes up the full height and centers content */
 body {
-    background-color: #fff; /* Set background color to white */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -8,10 +9,12 @@ body {
     margin: 0;
 }
 
+/* Adjust the header container for smaller screens */
 .header-container {
     margin-bottom: 2rem;
 }
 
+/* Ensure the footer sticks to the bottom and is responsive */
 footer {
     background-color: #0033ff;
     color: #ecf0f1;
@@ -27,12 +30,14 @@ footer {
     letter-spacing: 0.5px; 
 }
 
+/* Card title adjustments for better readability */
 .card-title {
     font-size: 1.25rem;
     color: #fff; 
     font-weight: bold;
 }
 
+/* Card styling adjustments */
 .card {
     background-color: #495057;
     border: none;
@@ -46,10 +51,12 @@ footer {
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* Card body adjustments */
 .card-body {
     padding: 1rem;
 }
 
+/* Modal content adjustments for better visibility */
 .modal-content {
     border-radius: 12px;
     box-shadow: 0px 10px 30px rgba(0, 0, 0, 0.3);
@@ -69,11 +76,13 @@ footer {
     color: #fff;
 }
 
+/* Input and select adjustments for focus state */
 input.form-control:focus, select.form-select:focus {
     border-color: #40A4FF; 
     box-shadow: 0 0 5px #40A4FF;
 }
 
+/* Button styling adjustments */
 button {
     border: none;
     border-radius: 8px;
@@ -102,12 +111,14 @@ button.btn-danger:hover {
     box-shadow: 0px 8px 16px rgba(220, 53, 69, 0.3);
 }
 
+/* Image adjustments */
 img {
     max-width: 200px;
     margin-right: 10px; /* Adjust the logo to move 10px to the right */
     border-radius: 10px;
 }
 
+/* Alert adjustments */
 .alert {
     border-radius: 8px;
     padding: 1rem;
@@ -119,10 +130,12 @@ img {
     opacity: 0.8;
 }
 
+/* Select adjustments */
 select.form-select {
     border-radius: 8px;
 }
 
+/* Date and time container adjustments */
 #date-time-container {
     margin: 0 0 4rem 0;
 }
@@ -141,19 +154,21 @@ select.form-select {
     max-height: 100%;
 }
 
+/* Logo adjustments */
 .LOGO-CYDO {
     max-width: 250px;
     position: absolute;
     left: 80px;
 }
 
+/* Text adjustments */
 .TEXT-CYDO{
     font-size: 3.4rem; 
     z-index:1;
     padding-left: 10px;
 }
 
-/* Full header bar */
+/* Full header bar adjustments */
 .header-bar {
     background-color: #409c6c; 
     height: 70px;
@@ -165,7 +180,7 @@ select.form-select {
     overflow: hidden;
 }
 
-/* Right Decoration */
+/* Right decoration adjustments */
 .right-decor {
     position: absolute;
     top: 0;
@@ -179,132 +194,11 @@ select.form-select {
     background-color: inherit;
 }
 
-/* White slices */
+/* White slices adjustments */
 .slice {
     background-color: white;
     height: 15px;
-
     width: 100%;
     margin-bottom: 5px;
 }
-/* Maximum width 374.98px */
-@media (max-width: 425.98px) {
-    .header-bar {
-        display: none;
-        width: 0;
-        height: 0;
-    }
 
-    .TEXT-CYDO {
-        position: relative;
-        left: -5px;
-        bottom: 20px;
-        font-size: 25px;
-        text-align: center;
-        color: black !important;
-    }
-
-    .LOGO-CYDO {
-        width: 150px;
-        height: 150px;
-        position: relative;
-        top: 150px;
-        left: -0px;
-        margin: 0 auto;
-    }
-
-    .date {
-        font-size: 35px;
-        position: relative;
-        top: 50px;
-    }
-
-    .clock {
-        font-size: 30px;
-        position: relative;
-        top: 60px;
-    }
-
-    .time-in-card, .time-out-card {
-        position: relative;
-        top: 35px;
-        width: 50%;
-        margin: 10px auto;
-    }
-
-    .time-out-card {
-        bottom: 10px;
-    }
-
-    footer {
-        height: 60px;
-    }
-
-    footer p {
-        text-align: center;
-        font-size: 14px;
-        position: relative;
-        bottom: 7px;
-    }
-}
-/* Maximum width 374.98px */
-@media (min-width: 768px) and (max-width: 1024.98px) {
-    .header-bar{
-        position: relative;
-        bottom: 10px;
-        left: 10px;
-    }
-
-
-    .TEXT-CYDO {
-        position: absolute;
-        left: 210px;
-        bottom: 75px;
-        font-size: 23px;
-        text-align: center;
-        color: white !important;
-    }
-
-    .LOGO-CYDO {
-        width: 150px;
-        height: 150px;
-        position: relative;
-        top: -5px;
-        left: 10px;
-        margin: 0 auto;
-    }
-
-    .date {
-        font-size: 50px;
-        position: relative;
-        bottom: 40px;
-    }
-
-    .clock {
-        font-size: 40px;
-        position: relative;
-        bottom: 20px;
-    }
-
-    .time-in-card, .time-out-card {
-        position: relative; 
-        top: 35px;
-
-        margin: 10px auto;
-    }
-
-    .time-out-card {
-        bottom: 10px;
-    }
-
-    footer {
-        height: 60px;
-    }
-
-    footer p {
-        text-align: center;
-        font-size: 14px;
-        position: relative;
-        bottom: 7px;
-    }
-}

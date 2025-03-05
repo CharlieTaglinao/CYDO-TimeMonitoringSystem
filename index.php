@@ -59,14 +59,14 @@
             <div class="col-md-6 offset-md-3">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="card text-center" data-bs-toggle="modal" data-bs-target="#timeInModal">
+                        <div class="time-in-card card text-center" data-bs-toggle="modal" data-bs-target="#timeInModal">
                             <div class="card-body">
                                 <h5 class="card-title">TIME IN</h5>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="card text-center" data-bs-toggle="modal" data-bs-target="#timeOutModal">
+                        <div class="time-out-card card text-center" data-bs-toggle="modal" data-bs-target="#timeOutModal">
                             <div class="card-body">
                                 <h5 class="card-title">TIME OUT</h5>
                             </div>
@@ -298,7 +298,7 @@
     </script>
 
     <footer>
-        Let's Join Forces for a progressive of City of General Trias
+       <p> Let's Join Forces for a progressive of City of General Trias</p>
     </footer>
 
     
