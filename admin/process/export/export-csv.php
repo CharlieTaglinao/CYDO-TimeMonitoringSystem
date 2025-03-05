@@ -89,7 +89,7 @@ try {
                 $row['purpose'] ?? '-',
                 $row['barangay'] ?? '-',
                 $duration,
-                $row['code'] ?? 'CODE USED'
+                $row['code'] ?? 'OUT'
             ], NULL, "A$rowNumber");
             $rowNumber++;
             $dataCount++;

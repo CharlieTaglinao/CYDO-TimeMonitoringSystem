@@ -1,5 +1,5 @@
 <?php include 'includes/header.php';
-include 'includes/loader.php'; ?>
+// include 'includes/loader.php'; ?>
 <?php session_start(); ?>
 
 <body style="height: 100vh;" class="d-flex flex-column">

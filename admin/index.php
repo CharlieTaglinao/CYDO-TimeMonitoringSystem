@@ -79,10 +79,12 @@ include 'fetch-visitors.php';
                                 EXPORT A DATA
                             </button>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" id="export-csv" href="process/export/export-csv.php">XLSX</a></li>
-                                <li> <a class="dropdown-item" id="export-pdf" href="process/export/export-pdf.php">PDF</a></li>
+                                <li><a class="dropdown-item" id="export-csv"
+                                        href="process/export/export-csv.php">XLSX</a></li>
+                                <li> <a class="dropdown-item" id="export-pdf"
+                                        href="process/export/export-pdf.php">PDF</a></li>
                                 <li><a class="dropdown-item" id="export-code" href="process/export/export-code.php">GET
-                                CODES</a></li>
+                                        CODES</a></li>
                             </ul>
                         </div>
                     </div>
@@ -188,7 +190,6 @@ include 'fetch-visitors.php';
                         <ul class="pagination" id="pagination">
                             <?php
                             $pagesToShow = 3;
-
                             $startPage = max(1, $page - (($page - 1) % $pagesToShow));
                             $endPage = min($totalPages, $startPage + $pagesToShow - 1);
 
@@ -222,9 +223,7 @@ include 'fetch-visitors.php';
                         </ul>
                     </nav>
 
-
-
-                    <p>Page <?php echo $page; ?> of <?php echo $totalPages; ?></p>
+                    <p id="page-info">Page <?php echo $page; ?> of <?php echo $totalPages; ?></p>
                 </div>
             </div>
         </div>

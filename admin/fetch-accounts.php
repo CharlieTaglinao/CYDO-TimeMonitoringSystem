@@ -36,7 +36,7 @@ $totalPages = ceil($totalRows / $limit);
 $accountQuery = "SELECT * FROM account WHERE username LIKE '%$search%' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
 $accountResult = $conn->query($accountQuery);
 
-if (isset($_GET['search'])) {
+if (isset($_GET['search']) && !isset($_GET['pagination'])) {
     if ($accountResult->num_rows > 0) {
         while ($row = $accountResult->fetch_assoc()) {
             $role = $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown');
@@ -63,8 +63,43 @@ if (isset($_GET['search'])) {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='6'>No records found</td></tr>";
+        echo "<tr><td colspan='4'>No records found</td></tr>";
     }
+    echo "<input type='hidden' id='total-rows' value='$totalRows'>";
+    echo "<script>
+        document.getElementById('pagination').innerHTML = '".generatePaginationLinks($totalPages, $page)."';
+        document.getElementById('page-info').textContent = 'Page $page of $totalPages';
+    </script>";
     exit;
+}
+
+if (isset($_GET['pagination'])) {
+    echo generatePaginationLinks($totalPages, $page);
+    exit;
+}
+
+function generatePaginationLinks($totalPages, $currentPage) {
+    $pagesToShow = 3;
+    $startPage = max(1, $currentPage - (($currentPage - 1) % $pagesToShow));
+    $endPage = min($totalPages, $startPage + $pagesToShow - 1);
+    $paginationLinks = '';
+
+    if ($currentPage > 1) {
+        $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage - 1) . '">Previous</a></li>';
+    }
+
+    for ($i = $startPage; $i <= $endPage; $i++) {
+        $paginationLinks .= '<li class="page-item ' . ($i == $currentPage ? 'active' : '') . '"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+    }
+
+    if ($endPage < $totalPages) {
+        $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($endPage + 1) . '">...</a></li>';
+    }
+
+    if ($currentPage < $totalPages) {
+        $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage + 1) . '">Next</a></li>';
+    }
+
+    return $paginationLinks;
 }
 ?>

@@ -132,7 +132,6 @@ if ($format === 'xlsx') {
         error_log('XLSX Generation Error: ' . $e->getMessage());
         die('Error generating Excel file.');
     }
-// START FOR EXPORTING IN PDF FILE FOR BOTH TODAY,1MONTH REPORT
 } else {
     require '../../../../vendor/tecnickcom/tcpdf/tcpdf.php';
 
@@ -167,66 +166,53 @@ if ($format === 'xlsx') {
     $pdf->SetTitle($title);
     $pdf->SetMargins(10, 20, 10);
     $pdf->AddPage();
+    $pdf->SetFont('helvetica', '', 8);
+
+    $pdf->Ln(20); // Add space to avoid overlap with header
 
     $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION'];
-    $data = [];
-    $maxWidths = array_fill(0, count($headers), 0);
+    $widths = [62, 25, 20, 20, 65, 40, 25, 20];
 
-    $fixedWidths = [
-        'NAME' => 70,
-        'OFFICE' => 70
-    ];
-
-    while ($row = $result->fetch_assoc()) {
-        $rowData = [
-            strtoupper($row['full_name']),
-            $row['log_date'] ?? '-',
-            $row['time_in'] ?? '-',
-            $row['time_out'] ?? '-',
-            $row['office_name'] ?? '-',
-            $row['purpose'] ?? '-',
-            $row['barangay_name'] ?? '-',
-            $row['duration'] ?? '-'
-        ];
-        $data[] = $rowData;
-
-        foreach ($rowData as $i => $value) {
-            if (!isset($fixedWidths[$headers[$i]])) {
-                $maxWidths[$i] = max($maxWidths[$i], $pdf->GetStringWidth($value) + 6);
-            }
-        }
-    }
-
-    foreach ($headers as $i => $header) {
-        if (!isset($fixedWidths[$header])) {
-            $maxWidths[$i] = max($maxWidths[$i], $pdf->GetStringWidth($header) + 6);
-        }
-    }
-
-    $pdf->SetFillColor(0, 0, 0);
-    $pdf->SetTextColor(255, 255, 255);
-    $pdf->SetFont('', 'B', 9);
-    foreach ($headers as $i => $header) {
-        $width = isset($fixedWidths[$header]) ? $fixedWidths[$header] : $maxWidths[$i];
-        $pdf->MultiCell($width, 9, $header, 1, 'C', true, 0);
+    // Header row
+    $pdf->SetFillColor(0, 0, 0); // Set background color to black
+    $pdf->SetTextColor(255, 255, 255); // Set font color to white
+    $pdf->SetFont('', 'B');
+    foreach ($headers as $key => $header) {
+        $pdf->Cell($widths[$key], 10, $header, 1, 0, 'C', true);
     }
     $pdf->Ln();
 
-    $pdf->SetFillColor(245, 245, 245);
+    // Reset text color for data rows
     $pdf->SetTextColor(0, 0, 0);
+
+    // Data rows
     $pdf->SetFont('', '');
+    $pdf->SetFillColor(245, 245, 245);
     $fill = false;
-    foreach ($data as $rowData) {
-        foreach ($rowData as $i => $value) {
-            $alignment = ($i === 0) ? 'L' : 'C';
-            $width = isset($fixedWidths[$headers[$i]]) ? $fixedWidths[$headers[$i]] : $maxWidths[$i];
-            $pdf->MultiCell($width, 10, $value, 1, $alignment, $fill, 0);
+
+    while ($row = $result->fetch_assoc()) {
+        $data = [
+            strtoupper($row['full_name']),
+            isset($row['log_date']) ? $row['log_date'] : '-',
+            isset($row['time_in']) ? $row['time_in'] : '-',
+            isset($row['time_out']) ? $row['time_out'] : '-',
+            $row['office_name'] ?? '-',
+            $row['purpose'] ?? '-',
+            $row['barangay_name'] ?? '-',
+            isset($row['time_in'], $row['time_out'])
+                ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%h:%i:%s')
+                : '-'
+        ];
+        foreach ($data as $key => $value) {
+            $alignment = $key == 0 ? 'L' : 'C';
+            $pdf->Cell($widths[$key], 10, $value, 1, 0, $alignment, $fill);
         }
         $pdf->Ln();
         $fill = !$fill;
     }
 
-    $pdf->Output("$filename.pdf", 'D');
+    $filename = 'Visitor-Reports_' . date('Y-m-d_H-i-s') . '.pdf';
+    $pdf->Output($filename, 'D');
 }
 
 ?>

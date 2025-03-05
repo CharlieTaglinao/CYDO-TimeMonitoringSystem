@@ -1,15 +1,13 @@
 <?php include 'header.php'; ?>
 
 <body>
-  <!-- Background overlay -->
   <div class="background-overlay"></div>
 
-  <!-- Loader and Image Holder -->
   <div class="loader"></div>
 
-  <!-- <div class="image-holder">
+  <div class="image-holder">
     <img class="loader-logo" src="assets/images/CYDO-LOGO.png" alt="Loading">
-  </div> -->
+  </div>
 
 </body>
 </html>

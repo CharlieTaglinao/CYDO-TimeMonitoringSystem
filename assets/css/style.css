@@ -149,7 +149,7 @@ select.form-select {
 
 .TEXT-CYDO{
     font-size: 3.4rem; 
-    z-index:1000;
+    z-index:1;
     padding-left: 10px;
 }
 

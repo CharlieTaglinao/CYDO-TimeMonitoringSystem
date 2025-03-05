@@ -1,10 +1,10 @@
 <?php
+// Fetch Visitor Records
 require '../../../vendor/autoload.php';
 require '../../../includes/database.php';
 
 date_default_timezone_set('Asia/Manila');
 
-// Fetch Visitor Records
 $query = "
     SELECT 
         CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS `Full Name`, 
@@ -21,7 +21,6 @@ $query = "
         INNER JOIN barangays ON visitors.barangay_id = barangays.id";
 
 $result = $conn->query($query);
-
 if (!$result) {
     die("Error: " . $conn->error);
 }
@@ -29,16 +28,15 @@ if (!$result) {
 // Initialize TCPDF
 class CustomPDF extends TCPDF {
     public function Header() {
-        if ($this->PageNo() == 1) { 
-            $this->Ln(5);
+        if ($this->PageNo() == 1) {
             $this->SetFont('helvetica', 'B', 20);
-            $this->Cell(0, 15, 'Visitor Records Report', 0, 1, 'C', false, '', 0, false, 'T', 'M');
-            $this->SetFont('helvetica', '', 10); 
-            $date = date('F j, Y, g:i A'); 
-            $this->Cell(0, 0, 'Report Generated : ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
-            $this->Ln(8); 
-            $this->Image('../../../../assets/images/CYDO-LOGO.png', 92, 5, 15); 
-            $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', 190, 5, 15); 
+            $this->Cell(0, 15, 'Visitor Records Report', 0, 1, 'C');
+            $this->SetFont('helvetica', '', 10);
+            $date = date('F j, Y, g:i A');
+            $this->Cell(0, 10, 'Report Generated : ' . $date, 0, 1, 'C');
+            $this->Ln(8);
+            $this->Image('../../../assets/images/CYDO-LOGO.png', 92, 5, 15);
+            $this->Image('../../../assets/images/GENTRI-LOGO.jpeg', 191, 5, 15);
         }
     }
 
@@ -49,83 +47,57 @@ class CustomPDF extends TCPDF {
     }
 }
 
-$pdf = new CustomPDF('L'); 
+
+$pdf = new CustomPDF('L');
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetTitle('Visitor Report');
-$pdf->SetSubject('Visitor Report');
-$pdf->SetKeywords('TCPDF, PDF, visitor, report');
-
 $pdf->AddPage();
 $pdf->SetFont('helvetica', '', 8);
 
-$pdf->Ln(20);
+$pdf->Ln(20); 
 
-$pdf->SetFillColor(245, 245, 245);
-$pdf->SetTextColor(0);
-$pdf->SetFont('', 'B');
-
+// Column headers
 $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION'];
-$data = [];
-$maxWidths = array_fill(0, count($headers), 0);
+$widths = [62, 25, 20, 20, 65, 40, 25, 20]; 
 
-// Set fixed widths for specific columns
-$fixedWidths = [
-    'NAME' => 70,
-    'OFFICE' => 70
-];
+// Header row
+$pdf->SetFillColor(0, 0, 0); 
+$pdf->SetTextColor(255, 255, 255); 
+$pdf->SetFont('', 'B');
+foreach ($headers as $key => $header) {
+    $pdf->Cell($widths[$key], 10, $header, 1, 0, 'C', true);
+}
+$pdf->Ln();
+
+// Reset text color for data rows
+$pdf->SetTextColor(0, 0, 0);
+
+// Data rows
+$pdf->SetFont('', '');
+$pdf->SetFillColor(245, 245, 245);
+$fill = false;
 
 while ($row = $result->fetch_assoc()) {
-    $rowData = [
+    $data = [
         strtoupper($row['Full Name']),
         isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-',
         isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-',
         isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-',
-        isset($row['office_name']) ? $row['office_name'] : '-',
-        isset($row['purpose']) ? $row['purpose'] : '-',
-        isset($row['barangay_name']) ? $row['barangay_name'] : '-',
-        isset($row['time_in'], $row['time_out']) 
-            ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%h:%i:%s') : '-'
+        $row['office_name'] ?? '-',
+        $row['purpose'] ?? '-',
+        $row['barangay_name'] ?? '-',
+        isset($row['time_in'], $row['time_out'])
+            ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%h:%i:%s')
+            : '-'
     ];
-    $data[] = $rowData;
-
-    foreach ($rowData as $i => $value) {
-        if (!isset($fixedWidths[$headers[$i]])) {
-            $maxWidths[$i] = max($maxWidths[$i], $pdf->GetStringWidth($value) + 6);
-        }
-    }
-}
-
-foreach ($headers as $i => $header) {
-    if (!isset($fixedWidths[$header])) {
-        $maxWidths[$i] = max($maxWidths[$i], $pdf->GetStringWidth($header) + 6);
-    }
-}
-
-$pdf->SetFillColor(0, 0, 0);
-$pdf->SetTextColor(255, 255, 255);
-$pdf->SetFont('', 'B', 9);
-foreach ($headers as $i => $header) {
-    $width = isset($fixedWidths[$header]) ? $fixedWidths[$header] : $maxWidths[$i];
-    $pdf->MultiCell($width, 9, $header, 1, 'C', true, 0);
-}
-$pdf->Ln();
-
-$pdf->SetFillColor(245, 245, 245);
-$pdf->SetTextColor(0, 0, 0);
-$pdf->SetFont('', '');
-$fill = false;
-foreach ($data as $rowData) {
-    foreach ($rowData as $i => $value) {
-        $alignment = ($i === 0) ? 'L' : 'C';
-        $width = isset($fixedWidths[$headers[$i]]) ? $fixedWidths[$headers[$i]] : $maxWidths[$i];
-        $pdf->MultiCell($width, 10, $value, 1, $alignment, $fill, 0);
+    foreach ($data as $key => $value) {
+        $alignment = $key == 0 ? 'L' : 'C';
+        $pdf->Cell($widths[$key], 10, $value, 1, 0, $alignment, $fill);
     }
     $pdf->Ln();
     $fill = !$fill;
 }
 
-$timestamp = date('Y-m-d_H-i-s'); 
-$filename = "Visitor-Reports_{$timestamp}.pdf";
-
+$filename = 'Visitor-Reports_' . date('Y-m-d_H-i-s') . '.pdf';
 $pdf->Output($filename, 'D');
 ?>

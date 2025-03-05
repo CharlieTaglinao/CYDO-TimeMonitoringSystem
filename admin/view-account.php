@@ -104,7 +104,6 @@ include 'fetch-accounts.php';
                         <ul class="pagination" id="pagination">
                             <?php
                             $pagesToShow = 3;
-
                             $startPage = max(1, $page - (($page - 1) % $pagesToShow));
                             $endPage = min($totalPages, $startPage + $pagesToShow - 1);
 
@@ -137,7 +136,7 @@ include 'fetch-accounts.php';
                             <?php endif; ?>
                         </ul>
                     </nav>
-                    <p>Page <?php echo $page; ?> of <?php echo $totalPages; ?></p>
+                    <p id="page-info">Page <?php echo $page; ?> of <?php echo $totalPages; ?></p>
                 </div>
             </div>
         </div>
