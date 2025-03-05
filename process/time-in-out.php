@@ -116,7 +116,6 @@ if (isset($_POST['timeIn'])) {
         header("Location: ../index.php");
         exit();
     }
-
     $validateCodeQuery = "SELECT id FROM time_logs WHERE code = ? AND time_out IS NULL";
     $validateCodeStmt = $conn->prepare($validateCodeQuery);
     $validateCodeStmt->bind_param("s", $code);
