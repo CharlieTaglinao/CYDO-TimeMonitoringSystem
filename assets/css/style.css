@@ -4,13 +4,11 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100vh; /* Set the height to 100vh */
     margin: 0;
+    overflow: hidden; /* Prevent scrolling */
 }
 
-.header-container {
-    margin-bottom: 2rem;
-}
 
 footer {
     background-color: #0033ff;
@@ -187,8 +185,9 @@ select.form-select {
     width: 100%;
     margin-bottom: 5px;
 }
-/* Maximum width 374.98px */
-@media (max-width: 425.98px) {
+
+
+@media (min-width: 320px) and (max-width: 479.98px) {
     .header-bar {
         display: none;
         width: 0;
@@ -196,19 +195,14 @@ select.form-select {
     }
 
     .TEXT-CYDO {
-        position: relative;
-        left: -5px;
-        bottom: 20px;
-        font-size: 25px;
-        text-align: center;
-        color: black !important;
+        display: none;
     }
 
     .LOGO-CYDO {
-        width: 150px;
-        height: 150px;
+        width: 250px;
+        height: 250px;
         position: relative;
-        top: 150px;
+        top: 50px;
         left: -0px;
         margin: 0 auto;
     }
@@ -216,18 +210,18 @@ select.form-select {
     .date {
         font-size: 35px;
         position: relative;
-        top: 50px;
+        top: -10px;
     }
 
     .clock {
         font-size: 30px;
         position: relative;
-        top: 60px;
+        top: -5px;
     }
 
     .time-in-card, .time-out-card {
         position: relative;
-        top: 35px;
+        top: -20px;
         width: 50%;
         margin: 10px auto;
     }
@@ -244,52 +238,46 @@ select.form-select {
         text-align: center;
         font-size: 14px;
         position: relative;
-        bottom: 7px;
-    }
-}
-/* Maximum width 374.98px */
-@media (min-width: 768px) and (max-width: 1024.98px) {
-    .header-bar{
-        position: relative;
-        bottom: 10px;
-        left: 10px;
+        bottom: 8px;
     }
 
+}
+@media (min-width: 480px) and (max-width: 767.98px) {
+    .header-bar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
 
     .TEXT-CYDO {
-        position: absolute;
-        left: 210px;
-        bottom: 75px;
-        font-size: 23px;
-        text-align: center;
-        color: white !important;
+        display: none;
     }
 
     .LOGO-CYDO {
-        width: 150px;
-        height: 150px;
+        width: 250px;
+        height: 250px;
         position: relative;
-        top: -5px;
-        left: 10px;
+        top: 70px;
+        left: -0px;
         margin: 0 auto;
     }
 
     .date {
-        font-size: 50px;
+        font-size: 40px;
         position: relative;
-        bottom: 40px;
+        top: -10px;
     }
 
     .clock {
-        font-size: 40px;
+        font-size: 30px;
         position: relative;
-        bottom: 20px;
+        top: -5px;
     }
 
     .time-in-card, .time-out-card {
-        position: relative; 
-        top: 35px;
-
+        position: relative;
+        top: -20px;
+        width: 50%;
         margin: 10px auto;
     }
 
@@ -305,6 +293,73 @@ select.form-select {
         text-align: center;
         font-size: 14px;
         position: relative;
-        bottom: 7px;
+        bottom: -2px;
+    }
+}
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .header-container{
+        position: relative;
+        top: -160px;
+    }
+    .TEXT-CYDO {
+
+        position: absolute;
+        color: white !important;
+        font-size: 22.5px;
+    }
+    .slice{
+        opacity: .80;
+
+    }
+
+    .LOGO-CYDO {
+        width: 150px;
+        height: 150px;
+        position: relative;
+        top: 5  px;
+        left: -0px;
+        margin: 0 auto;
+    }
+
+    .date {
+        font-size: 50px;
+        position: relative;
+        top: -10px;
+    }
+
+    .clock {
+        font-size: 40px;
+        position: relative;
+        top: -5px;
+    }
+
+
+
+    footer {
+        height: 60px;
+    }
+
+    footer p {
+        text-align: center;
+        font-size: 14px;
+        position: relative;
+        bottom: -2px;
+    }
+
+}
+@media (min-width: 1200px) {
+    .TEXT-CYDO{
+        position: absolute;
+        font-size: 41px;
+    }
+
+    footer{
+        height: 60px;
+    }
+
+    footer p{
+        text-align: center;
+        position: relative;
+        bottom: 2px;
     }
 }
