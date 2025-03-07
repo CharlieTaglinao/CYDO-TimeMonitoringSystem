@@ -39,9 +39,9 @@ include 'fetch-visitors.php';
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Weekly Visitors</h5>
+                                <h5 class="card-title">Monthly Visitors</h5>
                                 <h4 class="card-text text-secondary" id="current-visitors">
-                                    <?php echo $totalWeeklyVisitor; ?>
+                                    <?php echo $totalMonthlyVisitor; ?>
                                 </h4>
                             </div>
                         </div>
@@ -98,6 +98,7 @@ include 'fetch-visitors.php';
                                 <th>Time In</th>
                                 <th>Time Out</th>
                                 <th>Duration</th>
+                                <th>Status</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -129,11 +130,12 @@ include 'fetch-visitors.php';
                                             }
                                             ?>
                                         </td>
+                                        <td><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
                                         <td>
                                             <button class="btn btn-success view-details"
                                                 data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
                                                 data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
-                                                data-code="<?php echo $row['code']; ?>"
+                                                data-code="<?php echo $row['code'] ? $row['code'] : 'Already Used.'; ?>"
                                                 data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
                                                 data-bs-target="#visitorDetailsModal">
                                                 View Details
@@ -167,8 +169,8 @@ include 'fetch-visitors.php';
                             <div class="modal-body">
                                 <p><strong>Age:</strong> <span id="modal-age"></span></p>
                                 <p><strong>Sex:</strong> <span id="modal-sex"></span></p>
-                                <p><strong>Code:</strong> <span id="modal-code"></span></p>
                                 <p><strong>Purpose:</strong> <span id="modal-purpose"></span></p>
+                                <p><strong>Code:</strong> <span id="modal-code"style="color: blue;"></span></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

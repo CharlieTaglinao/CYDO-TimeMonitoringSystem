@@ -21,18 +21,18 @@ if ($type === 'month') {
     $endDate = date('Y-m-t');
     $title = "Visitor Records Report";
     $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
-    $filename = "Visitor_1_Month_Report_" . date('Y-m');
+    $filename = date('F-1-Y', strtotime($startDate)) . '-to-' . date('F-t-Y', strtotime($endDate)) . '-Visitors-Report';
 } else if ($type === 'custom' && $customStartDate && $customEndDate) {
     $startDate = $customStartDate;
     $endDate = $customEndDate;
     $title = "Visitor Records Report";
     $subtitle = date('F j, Y', strtotime($startDate)) . " to " . date('F j, Y', strtotime($endDate));
-    $filename = "Visitor_Custom_Range_Report_" . date('Ymd', strtotime($startDate)) . "_to_" . date('Ymd', strtotime($endDate));
+    $filename = date('F-j-Y', strtotime($startDate)) . '-to-' . date('F-j-Y', strtotime($endDate)) . '-Visitors-Report';
 } else {
     $startDate = $endDate = date('Y-m-d');
     $title = "Visitor Records Report";
     $subtitle = date('F j, Y', strtotime($startDate));
-    $filename = "Visitor_Today_Report_" . $startDate;
+    $filename = date('F-j-Y', strtotime($startDate)) . '-Visitors-Report';
 }
 
 $query = "
@@ -44,7 +44,8 @@ $query = "
         TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
         office.office_name,
         purpose.purpose,
-        barangays.barangay_name
+        barangays.barangay_name,
+        time_logs.status
     FROM 
         time_logs
     INNER JOIN visitors ON time_logs.client_id = visitors.id
@@ -69,18 +70,18 @@ if ($format === 'xlsx') {
     try {
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION'];
+        $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
         $sheet->fromArray($headers, NULL, 'A1');
 
         // Style headers
-        $sheet->getStyle('A1:H1')->applyFromArray([
+        $sheet->getStyle('A1:I1')->applyFromArray([
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1c1c1c']],
             'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
         ]);
 
         // Adjust column widths
-        $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 35, 'F' => 20, 'G' => 20, 'H' => 15];
+        $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 35, 'F' => 20, 'G' => 20, 'H' => 15, 'I' => 20];
         foreach ($columns as $col => $width) {
             $sheet->getColumnDimension($col)->setWidth($width);
         }
@@ -94,20 +95,29 @@ if ($format === 'xlsx') {
         $dataCount = 0;
         while ($row = $result->fetch_assoc()) {
             $sheet->fromArray([
-                $row['full_name'] ?? '-',
-                $row['log_date'] ?? '-',
-                $row['time_in'] ?? '-',
-                $row['time_out'] ?? '-',
-                $row['office_name'] ?? '-',
-                $row['purpose'] ?? '-',
-                $row['barangay_name'] ?? '-',
-                $row['duration'] ?? '-',
+                wordwrap($row['full_name'] ?? '-', 15, "\n", true),
+                wordwrap($row['log_date'] ?? '-', 15, "\n", true),
+                wordwrap($row['time_in'] ?? '-', 15, "\n", true),
+                wordwrap($row['time_out'] ?? '-', 15, "\n", true),
+                wordwrap($row['office_name'] ?? '-', 15, "\n", true),
+                wordwrap($row['purpose'] ?? '-', 15, "\n", true),
+                wordwrap($row['barangay_name'] ?? '-', 15, "\n", true),
+                wordwrap($row['duration'] ?? '-', 15, "\n", true),
+                wordwrap($row['status'] ?? 'User Logout', 15, "\n", true)
             ], NULL, "A$rowNumber");
+
+            // Apply red color to status if "Auto Logout" and green if "User Logout"
+            if ($row['status'] == 'Auto Logout') {
+                $sheet->getStyle("I$rowNumber")->getFont()->getColor()->setRGB('FF0000');
+            } else {
+                $sheet->getStyle("I$rowNumber")->getFont()->getColor()->setRGB('008000');
+            }
+
             $rowNumber++;
             $dataCount++;
             
             if ($dataCount % 10 === 0) {
-                $sheet->mergeCells("A$rowNumber:H$rowNumber");
+                $sheet->mergeCells("A$rowNumber:I$rowNumber");
                 $sheet->setCellValue("A$rowNumber", '<' . str_repeat('-', 120) . ' BREAK ' . str_repeat('-', 120) . '>');
                 $sheet->getStyle("A$rowNumber")->getFont()->setBold(true);
                 $rowNumber++;
@@ -148,8 +158,8 @@ if ($format === 'xlsx') {
                 $date = date('F j, Y, g:i A');
                 $this->Cell(0, 0, 'Report Generated : ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
                 $this->Ln(8);
-                $this->Image('../../../../assets/images/CYDO-LOGO.png', 92, 5, 15);
-                $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', 190, 5, 15);
+                $this->Image('../../../../assets/images/CYDO-LOGO.png', 94, 10, 15);
+                $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', 191, 10, 15);
             }
         }
 
@@ -164,19 +174,20 @@ if ($format === 'xlsx') {
     $pdf = new CustomPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
     $pdf->SetCreator(PDF_CREATOR);
     $pdf->SetTitle($title);
-    $pdf->SetMargins(10, 20, 10);
+    // Adjust margins to reduce left and right margins
+    $pdf->SetMargins(8, 20, 5); 
     $pdf->AddPage();
     $pdf->SetFont('helvetica', '', 8);
 
     $pdf->Ln(20); // Add space to avoid overlap with header
 
-    $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION'];
-    $widths = [62, 25, 20, 20, 65, 40, 25, 20];
+    $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
+    $widths = [59, 22, 19, 19, 63, 34, 25, 20, 20]; 
 
     // Header row
     $pdf->SetFillColor(0, 0, 0); // Set background color to black
     $pdf->SetTextColor(255, 255, 255); // Set font color to white
-    $pdf->SetFont('', 'B');
+    $pdf->SetFont('helvetica', 'B');
     foreach ($headers as $key => $header) {
         $pdf->Cell($widths[$key], 10, $header, 1, 0, 'C', true);
     }
@@ -186,11 +197,20 @@ if ($format === 'xlsx') {
     $pdf->SetTextColor(0, 0, 0);
 
     // Data rows
-    $pdf->SetFont('', '');
+    $pdf->SetFont('helvetica', '');
     $pdf->SetFillColor(245, 245, 245);
     $fill = false;
 
     while ($row = $result->fetch_assoc()) {
+        // Check if a new page is needed
+        if ($pdf->GetY() > 180) {
+            $pdf->AddPage();
+        }
+
+        $duration = isset($row['time_in'], $row['time_out'])
+            ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%H:%I:%S')
+            : '00:00:00';
+
         $data = [
             strtoupper($row['full_name']),
             isset($row['log_date']) ? $row['log_date'] : '-',
@@ -199,19 +219,25 @@ if ($format === 'xlsx') {
             $row['office_name'] ?? '-',
             $row['purpose'] ?? '-',
             $row['barangay_name'] ?? '-',
-            isset($row['time_in'], $row['time_out'])
-                ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%h:%i:%s')
-                : '-'
+            $duration
         ];
         foreach ($data as $key => $value) {
             $alignment = $key == 0 ? 'L' : 'C';
-            $pdf->Cell($widths[$key], 10, $value, 1, 0, $alignment, $fill);
+            $pdf->MultiCell($widths[$key], 10, $value, 1, $alignment, $fill, 0, '', '', true);
         }
+        // Apply red color to status if "Auto Logout" and green if "User Logout"
+        if ($row['status'] == 'Auto Logout') {
+            $pdf->SetTextColor(255, 0, 0); // Red
+        } else {
+            $pdf->SetTextColor(0, 128, 0); // Green
+        }
+        $pdf->MultiCell($widths[8], 10, wordwrap($row['status'] ?? 'User Logout', 15, "\n", true), 1, 'C', $fill, 0, '', '', true);
+        $pdf->SetTextColor(0, 0, 0); // Reset text color
         $pdf->Ln();
         $fill = !$fill;
     }
 
-    $filename = 'Visitor-Reports_' . date('Y-m-d_H-i-s') . '.pdf';
+    $filename = $filename . '.pdf';
     $pdf->Output($filename, 'D');
 }
 

@@ -54,17 +54,17 @@ footer {
 }
 
 .modal-header {
-    background-color: #212529;
+    background-color: #fff;
     border-bottom: 1px solid #495057;
 }
 
 .modal-title {
-    color: #fff;
+    color: #000;
 }
 
 .modal-body {
-    background-color: #212529;
-    color: #fff;
+    background-color: #fff;
+    color: #000 ;
 }
 
 input.form-control:focus, select.form-select:focus {

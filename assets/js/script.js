@@ -57,31 +57,58 @@ document.addEventListener('DOMContentLoaded', () => {
             emailField.disabled = false;
         }
     });
+
+    // Check for mobile device and request camera access
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        console.log("Mobile device detected. Requesting camera access...");
+        Instascan.Camera.getCameras()
+            .then(function (cameras) {
+                if (cameras.length > 0) {
+                    console.log("Cameras found on mobile device:", cameras);
+                    scanner.start(cameras[0]);
+                } else {
+                    alert("No camera found on mobile device");
+                }
+            })
+            .catch(function (e) {
+                console.error("Error getting cameras on mobile device:", e);
+            });
+    }
 });
 
-
-
-    // Initialize the scanner
-    let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
+// Initialize the scanner
+let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
+if (document.getElementById("preview")) {
     Instascan.Camera.getCameras()
         .then(function (cameras) {
             if (cameras.length > 0) {
+                console.log("Cameras found:", cameras);
+                // Start the scanner with the first available camera
                 scanner.start(cameras[0]);
             } else {
                 alert("No camera found");
             }
         })
         .catch(function (e) {
-            console.error(e);
+            console.error("Error getting cameras:", e);
         });
+} else {
+    console.error("Video element not found");
+}
 
-    // Add a listener for the scan event
-    scanner.addListener("scan", function (c) {
-        document.getElementById("code").value = c;
-        document.getElementById("btnTimeOut").click();
+// Add a listener for the scan event
+scanner.addListener("scan", function (c) {
+    document.getElementById("code").value = c;
 
-        let beepAudio = document.getElementById("beep");
-        beepAudio.play();
+    // Play the beep sound
+    let beepAudio = document.getElementById("beep");
+    console.log("Beep audio element:", beepAudio); 
+    beepAudio.play().then(() => {
+        console.log("Beep sound played successfully");
+        setTimeout(function() {
+            document.getElementById("btnTimeOut").click();
+        }, 700); //since 1 second yung audio file kaya nag lagay tayo dito ng timeout na kahit .7s na delay para maplay muna yung audio bago masubmit 
+    }).catch((error) => {
+        console.error("Error playing beep sound:", error);
     });
-
-   
+});

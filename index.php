@@ -1,9 +1,16 @@
-<?php include 'includes/header.php';
-// include 'includes/loader.php'; ?>
 <?php session_start(); ?>
+<?php 
+include 'includes/header.php';
+// include 'includes/loader.php'; 
+if (isset($_GET['visitor_code'])) {
+    $_SESSION['randomCode'] = $_GET['visitor_code'];
+}
+?>
 
 <body class="d-flex flex-column">
     <div class="w-100">
+        <!-- Add the beep audio element -->
+        <audio id="beep" src="assets/audio/beep.mp3"></audio>
         <div class="header-container container-fluid w-100 " style="position: relative; bottom: 120px;">
             <div class="cydo-logo">
                 <div class="row">
@@ -24,7 +31,6 @@
                 </div>          
             </div>
         </div>
-        <audio id="beep" src="assets/audio/beep.mp3" preload="auto"></audio>
         <div class="container text-center">
             <!-- Login button -->
             <div class="position-absolute top-0 end-0 p-3">
@@ -85,8 +91,11 @@
                         <h4><?php echo $_SESSION['randomCode'] ?></h4>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Print</button>
+                        <form action="admin/process/export/print-receipt.php" method="GET">
+                            <input type="hidden" name="visitor_code" id="visitor_code" value="<?php echo $_SESSION['randomCode']; ?>">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Print</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -136,7 +145,7 @@
                                     </div>
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="noEmail" name="noEmail">
-                                        <label class="form-check-label text-light" for="noEmail">
+                                        <label class="lbl-noemail form-check-label text-dark" for="noEmail">
                                             I don't have an email
                                         </label>
                                     </div>
@@ -284,6 +293,21 @@
                 qrModal.show();
                 <?php unset($_SESSION['showQRModal']); ?>
             <?php endif; ?>
+
+            // Auto log out script
+            function checkAutoLogout() {
+                var now = new Date();
+                if (now.getHours() === 13 && now.getMinutes() === 9) {
+                    fetch('process/auto-log-out.php')
+                        .then(response => response.text())
+                        .then(data => {
+                            console.log(data);
+                            location.reload();
+                        });
+                }
+            }
+
+            setInterval(checkAutoLogout, 10000); // Check every minute
         </script>
 
         <footer>

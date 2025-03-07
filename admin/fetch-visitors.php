@@ -19,10 +19,10 @@ $currentVisitorsQuery = "SELECT (COUNT(client_id) - (SELECT COUNT(client_id)
 $currentVisitorsResult = $conn->query($currentVisitorsQuery);
 $currentVisitors = $currentVisitorsResult->fetch_assoc()['current_visitors'];
 
-// Count weekly visitors
-$totalWeeklyVisitorsQuery = "SELECT COUNT(client_id) AS total_week FROM time_logs WHERE YEARWEEK(time_in, 1) = YEARWEEK(CURDATE(), 1)";
-$totalWeeklyVisitorsResult = $conn->query($totalWeeklyVisitorsQuery);
-$totalWeeklyVisitor = $totalWeeklyVisitorsResult->fetch_assoc()['total_week'];
+// Count monthly visitors
+$totalMonthlyVisitorsQuery = "SELECT COUNT(client_id) AS total_month FROM time_logs WHERE YEAR(time_in) = YEAR(CURDATE()) AND MONTH(time_in) = MONTH(CURDATE())";
+$totalMonthlyVisitorsResult = $conn->query($totalMonthlyVisitorsQuery);
+$totalMonthlyVisitor = $totalMonthlyVisitorsResult->fetch_assoc()['total_month'];
 
 // Set pagination variables
 $limit = 7; 
@@ -51,6 +51,7 @@ $visitorsQuery = "
         sex.sex_name,
         time_logs.time_in, 
         time_logs.time_out, 
+        time_logs.status,
         time_logs.code, 
         purpose.purpose
     FROM visitors

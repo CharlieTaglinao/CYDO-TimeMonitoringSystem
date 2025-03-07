@@ -18,14 +18,14 @@ try {
     $sheet = $spreadsheet->getActiveSheet();
 
     // headers
-    $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Office', 'Purpose', 'Barangay', 'Duration', 'Code'];
+    $headers = ['Name', 'Date', 'Time In', 'Time Out', 'Office', 'Purpose', 'Barangay', 'Duration', 'Code', 'Status'];
     $sheet->fromArray($headers, NULL, 'A1');
 
-    $sheet->getStyle('A1:I1')->getFill()
+    $sheet->getStyle('A1:J1')->getFill()
         ->setFillType(Fill::FILL_SOLID)
         ->getStartColor()->setRGB('1c1c1c');
 
-    $sheet->getStyle('A1:I1')->getFont()
+    $sheet->getStyle('A1:J1')->getFont()
         ->setBold(true)
         ->setSize(12)
         ->setColor(new Color('FFFFFF'))
@@ -42,11 +42,12 @@ try {
     $sheet->getColumnDimension('B')->setWidth(15);
     $sheet->getColumnDimension('C')->setWidth(12);
     $sheet->getColumnDimension('D')->setWidth(12);
-    $sheet->getColumnDimension('E')->setWidth(30);
+    $sheet->getColumnDimension('E')->setWidth(35);
     $sheet->getColumnDimension('F')->setWidth(20);
     $sheet->getColumnDimension('G')->setWidth(12);
     $sheet->getColumnDimension('H')->setWidth(12);
     $sheet->getColumnDimension('I')->setWidth(12);
+    $sheet->getColumnDimension('J')->setWidth(20);
 
     // Fetch data from DB
     $GetDataQuery = "
@@ -61,7 +62,8 @@ try {
             t.code,
             o.office_name AS office,
             p.purpose AS purpose,
-            b.barangay_name AS barangay
+            b.barangay_name AS barangay,
+            t.status
         FROM visitors v
         INNER JOIN time_logs t ON v.id = t.client_id
         INNER JOIN sex s ON v.sex_id = s.id
@@ -89,15 +91,24 @@ try {
                 $row['purpose'] ?? '-',
                 $row['barangay'] ?? '-',
                 $duration,
-                $row['code'] ?? 'OUT'
+                $row['code'] ?? 'OUT',
+                $row['status'] ?? 'User Logout'
             ], NULL, "A$rowNumber");
+
+            // Apply red color to status if not "User Logout"
+            if ($row['status'] == 'Auto Logout') {
+                $sheet->getStyle("J$rowNumber")->getFont()->getColor()->setRGB('FF0000');
+            }else{
+                $sheet->getStyle("J$rowNumber")->getFont()->getColor()->setRGB('008000');
+            }
+
             $rowNumber++;
             $dataCount++;
 
             if ($dataCount % 10 === 0) {
-                $sheet->fromArray(['-', '-', '-', '-', '-', '-', '-', '-', '-'], NULL, "A$rowNumber");
-                $sheet->mergeCells("A$rowNumber:I$rowNumber");
-                $sheet->getStyle("A$rowNumber:I$rowNumber")->applyFromArray([
+                $sheet->fromArray(['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'], NULL, "A$rowNumber");
+                $sheet->mergeCells("A$rowNumber:J$rowNumber");
+                $sheet->getStyle("A$rowNumber:J$rowNumber")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'font' => ['bold' => true],
                 ]);
@@ -106,7 +117,7 @@ try {
         }
     }
 
-    $sheet->getStyle("A1:I$rowNumber")
+    $sheet->getStyle("A1:J$rowNumber")
         ->getAlignment()
         ->setHorizontal(Alignment::HORIZONTAL_CENTER)
         ->setVertical(Alignment::VERTICAL_CENTER);

@@ -4,10 +4,10 @@ date_default_timezone_set('Asia/Manila');
 
 include '../includes/database.php';
 
-$firstName = strtoupper(trim($_POST['firstName'] ?? ''));
-$middleName = strtoupper(trim($_POST['middleName'] ?? ''));
-$lastName = strtoupper(trim($_POST['lastName'] ?? ''));
-$email = trim($_POST['email'] ?? '');
+$firstName = strtoupper($_POST['firstName'] ?? '');
+$middleName = strtoupper($_POST['middleName'] ?? '');
+$lastName = strtoupper($_POST['lastName'] ?? '');
+$email = $_POST['email'] ?? '';
 $officename = strtoupper(trim($_POST['office']));
 $barangayname = strtoupper(trim($_POST['barangay']));
 $purpose = strtoupper(trim($_POST['purpose'] ?? ''));
@@ -40,7 +40,7 @@ if (isset($_POST['timeIn'])) {
     // Check if client is already timed in
     $clientId = null;
 
-    $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name = ? AND last_name = ?";
+    $checkFullNameQuery = "SELECT id FROM visitors WHERE REPLACE(first_name, ' ', '') = ? AND REPLACE(middle_name, ' ', '') = ? AND REPLACE(last_name, ' ', '') = ?";
     $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
     $checkFullNameStmt->bind_param("sss", $firstName, $middleName, $lastName);
     $checkFullNameStmt->execute();
@@ -95,7 +95,7 @@ if (isset($_POST['timeIn'])) {
     $updatePurposeIdStmt->execute();
 
     // Insert new time log
-    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code) VALUES (?, ?, ?)";
+    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code,status) VALUES (?, ?, ?, 'On Site')";
     $insertLogStmt = $conn->prepare($insertLogQuery);
     $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
 
@@ -131,14 +131,17 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
-    $updateLogQuery = "UPDATE time_logs SET time_out = ?, code = null WHERE code = ? AND time_out IS NULL";
+    $updateLogQuery = "UPDATE time_logs SET time_out = ?, code = null, status = 'User Logout' WHERE code = ? AND time_out IS NULL";
     $updateLogStmt = $conn->prepare($updateLogQuery);
     $updateLogStmt->bind_param("ss", $logTime, $code);
 
-
-    
-
     if ($updateLogStmt->execute()) {
+        // Delete the used code file in the qrcodes folder
+        $qrCodeFile = "../qrcodes/$code.png";
+        if (file_exists($qrCodeFile)) {
+            unlink($qrCodeFile);
+        }
+
         $_SESSION['message'] = "Successfully Time OUT at $logTime";
         $_SESSION['message_type'] = 'success';
     } else {
