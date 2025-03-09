@@ -311,3 +311,28 @@ $('.view-details').on('click', function() {
     let visitorCode = $(this).data('code');  
     $('#visitor_code').val(visitorCode); 
 });
+
+// Disable print button and remove the div for the code  if code is null or empty and
+document.addEventListener("DOMContentLoaded", function () {
+    const viewDetailsButtons = document.querySelectorAll(".view-details");
+    viewDetailsButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const code = this.getAttribute("data-code");
+        const printButton = document.getElementById("print-button");
+        const codeDiv = document.getElementById("modal-code").parentElement;
+        if (!code) {
+          printButton.classList.remove("btn-primary");
+          printButton.classList.add("btn-danger");
+          printButton.textContent = "Print Unavailable";
+          printButton.disabled = true;
+          codeDiv.style.display = "none";
+        } else {
+          printButton.classList.remove("btn-danger");
+          printButton.classList.add("btn-primary");
+          printButton.textContent = "Print";
+          printButton.disabled = false;
+          codeDiv.style.display = "block";
+        }
+      });
+    });
+  });

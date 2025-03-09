@@ -1,4 +1,4 @@
-    <?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php'; ?>
 
     <body class="bg-light">
         <div class="d-flex">
@@ -11,7 +11,14 @@
 
 
                 <div id="modalContainer"></div>
-
+                <?php if (isset($_SESSION['message'])): ?>
+                <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show mt-3" role="alert">
+                    <?php echo $_SESSION['message'];
+                    unset($_SESSION['message']);
+                    unset($_SESSION['message_type']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
                     <div class="mt-4">
                         <h3>Visitor Reports</h3>
                         <div class="mb-3">
@@ -87,3 +94,4 @@
 
         <script src="assets/js/script.js"></script>
     </body>
+</html>

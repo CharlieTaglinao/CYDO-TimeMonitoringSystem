@@ -29,18 +29,20 @@ $limit = 7;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1; 
 $offset = ($page - 1) * $limit; 
 
-// Count total rows with search filter
+// Count total rows with search filter and date range
 $totalRowsQuery = "
     SELECT COUNT(*) AS total 
     FROM visitors 
     INNER JOIN time_logs ON visitors.id = time_logs.client_id
     WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+    AND ('$startDate' = '' OR DATE(time_logs.time_in) >= '$startDate')
+    AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
 ";
 $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit); 
 
-// Fetch paginated records with search filter
+// Fetch paginated records with search filter and date range
 $visitorsQuery = "
     SELECT DISTINCT
         visitors.first_name, 
@@ -60,6 +62,8 @@ $visitorsQuery = "
     INNER JOIN (SELECT client_id, MAX(id) as latest_purpose_id FROM purpose GROUP BY client_id) as latest_purposes ON visitors.id = latest_purposes.client_id
     INNER JOIN purpose ON latest_purposes.latest_purpose_id = purpose.id 
     WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+    AND ('$startDate' = '' OR DATE(time_logs.time_in) >= '$startDate')
+    AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
     ORDER BY time_logs.time_in DESC 
     LIMIT $limit OFFSET $offset";
 
@@ -83,6 +87,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             }
 
             echo "</td>
+                <td>" . $row['status'] . "</td>
                 
                 <td>
                     <button class='btn btn-success view-details'
@@ -99,7 +104,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='6'>No records found</td></tr>";
+        echo "<tr><td colspan='7'>No records found</td></tr>";
     }
     echo "<input type='hidden' id='total-rows' value='$totalRows'>";
     echo "<script>

@@ -8,6 +8,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 
+session_start();
+
 date_default_timezone_set('Asia/Manila');
 ob_start();
 
@@ -15,6 +17,13 @@ $type = isset($_GET['type']) ? $_GET['type'] : 'today';
 $format = isset($_GET['format']) ? $_GET['format'] : 'pdf';
 $customStartDate = isset($_POST['startDate']) ? $_POST['startDate'] : null;
 $customEndDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
+
+if ($type === 'custom' && (!$customStartDate || !$customEndDate)) {
+    $_SESSION['message'] = 'Please provide both start and end dates for custom reports.';
+    $_SESSION['message_type'] = 'danger';
+    header('Location: ../../../report.php');
+    exit;
+}
 
 if ($type === 'month') {
     $startDate = date('Y-m-01');
@@ -59,11 +68,17 @@ $query = "
 $result = $conn->query($query);
 if (!$result) {
     error_log('Query Error: ' . $conn->error);
-    die('Error fetching records. Please contact the administrator.');
+    $_SESSION['message'] = 'Error fetching records. Please contact the administrator.';
+    $_SESSION['message_type'] = 'danger';
+    header('Location: ../../../../report.php');
+    exit;
 }
 
 if ($result->num_rows === 0) {
-    die('No records found for the selected period.');
+    $_SESSION['message'] = 'No records found for the selected period.';
+    $_SESSION['message_type'] = 'warning';
+    header('Location: ../../../../report.php');
+    exit;
 }
 
 if ($format === 'xlsx') {

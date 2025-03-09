@@ -19,22 +19,23 @@ $customEndDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
 if ($type === 'month') {
     $startDate = date('Y-m-01');
     $endDate = date('Y-m-t');
-    $title = "Visitor Records Report";
+    $title = "Time logs Report";
     $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
     $filename = date('F-1-Y', strtotime($startDate)) . '-to-' . date('F-t-Y', strtotime($endDate)) . '-Visitors-Report';
 } else if ($type === 'custom' && $customStartDate && $customEndDate) {
     $startDate = $customStartDate;
     $endDate = $customEndDate;
-    $title = "Visitor Records Report";
+    $title = "Time logs Report";
     $subtitle = date('F j, Y', strtotime($startDate)) . " to " . date('F j, Y', strtotime($endDate));
     $filename = date('F-j-Y', strtotime($startDate)) . '-to-' . date('F-j-Y', strtotime($endDate)) . '-Visitors-Report';
 } else {
     $startDate = $endDate = date('Y-m-d');
-    $title = "Visitor Records Report";
+    $title = "Time logsReport";
     $subtitle = date('F j, Y', strtotime($startDate));
     $filename = date('F-j-Y', strtotime($startDate)) . '-Visitors-Report';
 }
 
+// Update the query to fetch all data without filtering by date
 $query = "
     SELECT 
         CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
@@ -52,8 +53,6 @@ $query = "
     INNER JOIN office ON visitors.office_id = office.id
     INNER JOIN purpose ON visitors.purpose_id = purpose.client_id
     INNER JOIN barangays ON visitors.barangay_id = barangays.id
-    WHERE 
-        DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
     ";
 
 $result = $conn->query($query);
@@ -63,7 +62,7 @@ if (!$result) {
 }
 
 if ($result->num_rows === 0) {
-    die('No records found for the selected period.');
+    die('No records found.');
 }
 
 require '../../../vendor/tecnickcom/tcpdf/tcpdf.php';
@@ -97,19 +96,18 @@ class CustomPDF extends TCPDF
 $pdf = new CustomPDF('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 $pdf->SetCreator(PDF_CREATOR);
 $pdf->SetTitle($title);
-// Adjust margins to reduce left and right margins
 $pdf->SetMargins(8, 20, 5); 
 $pdf->AddPage();
 $pdf->SetFont('helvetica', '', 8);
 
-$pdf->Ln(20); // Add space to avoid overlap with header
+$pdf->Ln(20); 
 
 $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
 $widths = [59, 22, 19, 19, 63, 34, 25, 20, 20]; 
 
 // Header row
-$pdf->SetFillColor(0, 0, 0); // Set background color to black
-$pdf->SetTextColor(255, 255, 255); // Set font color to white
+$pdf->SetFillColor(0, 0, 0);
+$pdf->SetTextColor(255, 255, 255); 
 $pdf->SetFont('helvetica', 'B');
 foreach ($headers as $key => $header) {
     $pdf->Cell($widths[$key], 10, $header, 1, 0, 'C', true);

@@ -6,7 +6,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST">
+                <form method="POST" action="index.php?page=1">
                     <div class="mb-3">
                         <label for="startDate" class="form-label">Start Date</label>
                         <input type="date" class="form-control" id="startDate" name="startDate">

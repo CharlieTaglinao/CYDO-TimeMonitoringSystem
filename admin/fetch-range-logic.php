@@ -18,7 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 time_logs.time_in, 
                 time_logs.time_out, 
                 time_logs.code, 
-                purpose.purpose
+                purpose.purpose,
+                time_logs.status
             FROM visitors
                 INNER JOIN time_logs ON visitors.id = time_logs.client_id
                 INNER JOIN sex ON visitors.sex_id = sex.id
@@ -52,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo '-';
                 }
                 echo "</td>
+                    <td>" . $row['status'] . "</td>
                     <td>
                         <button class='btn btn-success view-details'
                             data-name='" . strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']) . "'
@@ -67,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='6'>No records found</td></tr>";
+            echo "<tr><td colspan='7'>No records found</td></tr>";
         }
     } else {
         echo "<tr><td colspan='6'>Invalid date range</td></tr>";

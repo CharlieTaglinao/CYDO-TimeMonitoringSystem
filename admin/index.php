@@ -5,6 +5,7 @@ if (isset($_GET['visitor_code'])) {
 }
 
 include 'fetch-visitors.php';
+// include 'includes/loader.php';
 ?>
 
 
@@ -50,7 +51,14 @@ include 'fetch-visitors.php';
 
                 <div id="modalContainer"></div>
 
-
+                <?php if (isset($_SESSION['message'])): ?>
+                <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show mt-3" role="alert">
+                    <?php echo $_SESSION['message'];
+                    unset($_SESSION['message']);
+                    unset($_SESSION['message_type']); ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
                 <div class="mt-4">
                     <h3>Visitor Records</h3>
                     <div class="d-flex justify-content-between mb-3">
@@ -62,13 +70,17 @@ include 'fetch-visitors.php';
                             </div>
 
                             <div class="col-3">
-                                <form method="POST">
+                                <form method="POST" action="index.php?page=1">
                                     <input type="hidden" name="all" id="all">
                                     <button class="form-control" id="allBtn">All</button>
                                 </form>
                             </div>
                             <div class="col-4">
-                                <button class="form-control" id="customRangeBtn">Custom range</button>
+                                <form method="POST" action="index.php?page=1">
+                                    <input type="hidden" name="startDate" id="startDate" value="<?php echo $startDate; ?>">
+                                    <input type="hidden" name="endDate" id="endDate" value="<?php echo $endDate; ?>">
+                                    <button class="form-control" id="customRangeBtn">Custom range</button>
+                                </form>
                             </div>
                         </div>
 
@@ -81,8 +93,13 @@ include 'fetch-visitors.php';
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                                 <li><a class="dropdown-item" id="export-csv"
                                         href="process/export/export-csv.php">XLSX</a></li>
-                                <li> <a class="dropdown-item" id="export-pdf"
-                                        href="process/export/export-pdf.php">PDF</a></li>
+                                <li>
+                                    <form method="POST" action="process/export/export-pdf.php">
+                                        <input type="hidden" name="startDate" value="<?php echo $startDate; ?>">
+                                        <input type="hidden" name="endDate" value="<?php echo $endDate; ?>">
+                                        <button class="dropdown-item" id="export-pdf">PDF</button>
+                                    </form>
+                                </li>
                                 <li><a class="dropdown-item" id="export-code" href="process/export/export-code.php">GET
                                         CODES</a></li>
                             </ul>
@@ -135,7 +152,7 @@ include 'fetch-visitors.php';
                                             <button class="btn btn-success view-details"
                                                 data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
                                                 data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
-                                                data-code="<?php echo $row['code'] ? $row['code'] : 'Already Used.'; ?>"
+                                                data-code="<?php echo $row['code']; ?>"
                                                 data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
                                                 data-bs-target="#visitorDetailsModal">
                                                 View Details
@@ -169,19 +186,15 @@ include 'fetch-visitors.php';
                             <div class="modal-body">
                                 <p><strong>Age:</strong> <span id="modal-age"></span></p>
                                 <p><strong>Sex:</strong> <span id="modal-sex"></span></p>
+                                <p><strong>Code:</strong> <span id="modal-code"></span></p>
                                 <p><strong>Purpose:</strong> <span id="modal-purpose"></span></p>
-                                <p><strong>Code:</strong> <span id="modal-code"style="color: blue;"></span></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-
                                 <form action="process/export/print-receipt.php" method="GET">
                                     <input type="hidden" name="visitor_code" id="visitor_code">
-                                    <button type="submit" class="btn btn-primary">Print</button>
+                                    <button type="submit" class="btn btn-primary" id="print-button">Print</button>
                                 </form>
-
-
-
                             </div>
                         </div>
                     </div>
