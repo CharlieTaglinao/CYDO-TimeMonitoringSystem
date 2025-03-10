@@ -37,8 +37,8 @@ if (isset($_SESSION['username'])) {
             </div>
         </div>
 
-        <a href="monitor-visitor.php" class="nav-link text-white">Monitor</a>
-        <a href="report.php" class="nav-link text-white">Reports</a>
+        <a href="monitor-visitor" class="nav-link text-white">Monitor</a>
+        <a href="report" class="nav-link text-white">Reports</a>
 
         <hr>
         

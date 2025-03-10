@@ -27,14 +27,14 @@ footer {
 
 .card-title {
     font-size: 1.25rem;
-    color: #fff; 
+    color: black; 
     font-weight: bold;
 }
 
 .card {
-    background-color: #495057;
-    border: none;
-    border-radius: 12px;
+    background-color: #fff; 
+    border: 1px dashed black; 
+    border-radius: 4px;
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
 }

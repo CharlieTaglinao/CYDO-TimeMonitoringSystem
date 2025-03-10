@@ -27,25 +27,32 @@
                                 <div class="container bg-light p-4 rounded">
                                     <div class="row g-4">
                                         <!-- Today's Report -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
-                                            <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=today&format=xlsx">Today's Report (XLSX)</a>
+                                            <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=today&format=xlsx">Today's Report</a>
 
                                             </div>
                                         </div>
 
                                         <!-- 1 Month Report -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
-                                            <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=month&format=xlsx">1 Month Report (XLSX)</a>
+                                            <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=month&format=xlsx">1 Month Report</a>
                                             </div>
                                         </div>
 
                                         <!-- Custom Report -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
                                                 <a class="btn btn-success w-100" id="customRangeExportXLSXBtn">
                                                     Custom    
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
+                                                <a class="btn btn-success w-100" id="customOfficeExportXLSXBtn">
+                                                    By Office    
                                                 </a>
                                             </div>
                                         </div>
@@ -60,24 +67,31 @@
                                 <div class="container bg-light p-4 rounded">
                                     <div class="row g-4">
                                         <!-- Today's Report -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
                                             <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=today&format=pdf">Today's Report (PDF)</a>
                                             </div>
                                         </div>
 
                                         <!-- 1 Month Report -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
                                             <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=month&format=pdf">1 Month Report (PDF)</a>
                                             </div>
                                         </div>
 
                                         <!-- Custom Report -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
                                                 <a class="btn btn-success w-100" id="customRangeExportPDFBtn">
                                                     Custom    
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
+                                                <a class="btn btn-success w-100" id="customOfficeExportPDFBtn">
+                                                    By Office    
                                                 </a>
                                             </div>
                                         </div>
@@ -85,6 +99,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        
 
                     </div>
 

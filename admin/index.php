@@ -85,24 +85,8 @@ include 'fetch-visitors.php';
                         </div>
 
 
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                EXPORT A DATA
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                <li><a class="dropdown-item" id="export-csv"
-                                        href="process/export/export-csv.php">XLSX</a></li>
-                                <li>
-                                    <form method="POST" action="process/export/export-pdf.php">
-                                        <input type="hidden" name="startDate" value="<?php echo $startDate; ?>">
-                                        <input type="hidden" name="endDate" value="<?php echo $endDate; ?>">
-                                        <button class="dropdown-item" id="export-pdf">PDF</button>
-                                    </form>
-                                </li>
-                                <li><a class="dropdown-item" id="export-code" href="process/export/export-code.php">GET
-                                        CODES</a></li>
-                            </ul>
+                        <div class="btn">
+                                <a class="btn btn-secondary" id="export-code" href="process/export/export-code.php">GET CODES</a>
                         </div>
                     </div>
 

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const logoutButton = document.getElementById("logout-button");
 
     if (logoutButton) {
-        logoutButton.addEventListener("click", function (e) {
+        logoutButton.addEventListener("click", async function (e) {
             e.preventDefault();
 
             Swal.fire({
@@ -15,14 +15,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 cancelButtonColor: "#a9a9a9",
                 confirmButtonText: "Yes",
                 cancelButtonText: "Cancel"
-            }).then((result) => {
+            }).then(async (result) => {
                 if (result.isConfirmed) {
+                    document.body.innerHTML += '<div class="background-overlay"></div><div class="loader"></div><div class="image-holder"></div>';
+                    await new Promise(resolve => setTimeout(resolve, 500));
                     window.location.href = "process/logout.php";
                 }
             });
         });
     }
-
 });
 
 // SWAL FOR DELETE BUTTON IN VIEW ACCOUNT FORMS
@@ -260,6 +261,33 @@ $(document).ready(function () {
     });
 });
 
+// Custom range by office for XLSX export in Visitor Reports section
+$(document).ready(function () {
+    $("#customOfficeExportXLSXBtn").click(function (e) {
+        e.preventDefault();
+
+        // Load modal 
+        $.get("custom-office-XLSX-modal.php", function (data) {
+            $("#modalContainer").html(data);
+            $("#customOfficeExportXLSXModal").modal("show");
+        });
+    });
+});
+
+
+// Custom range by office for PDF export in Visitor Reports section
+$(document).ready(function () {
+    $("#customOfficeExportPDFBtn").click(function (e) {
+        e.preventDefault();
+
+        // Load modal 
+        $.get("custom-office-PDF-modal.php", function (data) {
+            $("#modalContainer").html(data);
+            $("#customOfficeExportPDFModal").modal("show");
+        });
+    });
+});
+
 // Custom range for PDF export in Visitor Reports section
 $(document).ready(function () {
     $("#customRangeExportPDFBtn").click(function (e) {
@@ -336,3 +364,14 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   });
+
+
+// show loader for once the browser load to prevent flickering
+document.body.innerHTML += '<div class="background-overlay"></div><div class="loader"></div><div class="image-holder"></div>';
+window.addEventListener('load', async () => {
+    await new Promise(resolve => setTimeout(resolve, 300)); 
+    document.querySelector('.background-overlay').style.display = 'none';
+    document.querySelector('.loader').style.display = 'none';
+    document.querySelector('.image-holder').style.display = 'none';
+});
+

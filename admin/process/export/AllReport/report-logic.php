@@ -17,6 +17,7 @@ $type = isset($_GET['type']) ? $_GET['type'] : 'today';
 $format = isset($_GET['format']) ? $_GET['format'] : 'pdf';
 $customStartDate = isset($_POST['startDate']) ? $_POST['startDate'] : null;
 $customEndDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
+$customOffice = isset($_POST['customOffice']) ? $_POST['customOffice'] : null;
 
 if ($type === 'custom' && (!$customStartDate || !$customEndDate)) {
     $_SESSION['message'] = 'Please provide both start and end dates for custom reports.';
@@ -31,6 +32,12 @@ if ($type === 'month') {
     $title = "Visitor Records Report";
     $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
     $filename = date('F-1-Y', strtotime($startDate)) . '-to-' . date('F-t-Y', strtotime($endDate)) . '-Visitors-Report';
+} else if ($type === 'custom' && $customStartDate && $customEndDate && $customOffice) {
+    $startDate = $customStartDate;
+    $endDate = $customEndDate;
+    $title = "Visitor Records Report by Office";
+    $subtitle = date('F j, Y', strtotime($startDate)) . " to " . date('F j, Y', strtotime($endDate));
+    $filename = date('F-j-Y', strtotime($startDate)) . '-to-' . date('F-j-Y', strtotime($endDate)) . '-Visitors-Report-Office-' . $customOffice;
 } else if ($type === 'custom' && $customStartDate && $customEndDate) {
     $startDate = $customStartDate;
     $endDate = $customEndDate;
@@ -64,6 +71,10 @@ $query = "
     WHERE 
         DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
     ";
+
+if ($customOffice) {
+    $query .= " AND visitors.office_id = '$customOffice'";
+}
 
 $result = $conn->query($query);
 if (!$result) {

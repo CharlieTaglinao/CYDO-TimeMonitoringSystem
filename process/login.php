@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($username) || empty($password)) {
         $_SESSION['message'] = 'Please fill in all fields.';
         $_SESSION['message_type'] = 'danger';
-        header('Location: ../index.php');
+        header('Location: ../index');
         exit();
     }
 
@@ -39,34 +39,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Redirect based on role
                 if ($user['role_name'] === 'admin') {
-                    header('Location: ../admin/index.php');
+                    header('Location: ../admin/index');
                 } elseif ($user['role_name'] === 'staff') {
-                    header('Location: ../staff/index.php');
+                    header('Location: ../staff/index');
                 } else {
-                    header('Location: ../index.php');
+                    header('Location: ../index');
                 }
 
                 exit();
             } else {
                 $_SESSION['message'] = 'Invalid password.';
                 $_SESSION['message_type'] = 'danger';
-                header('Location: ../index.php');
+                header('Location: ../index');
                 exit();
             }
         } else {
             $_SESSION['message'] = 'User not found.';
             $_SESSION['message_type'] = 'danger';
-            header('Location: ../index.php');
+            header('Location: ../index');
             exit();
         }
     } catch (Exception $e) {
         $_SESSION['message'] = 'An error occurred: ' . htmlspecialchars($e->getMessage());
         $_SESSION['message_type'] = 'danger';
-        header('Location: ../index.php');
+        header('Location: ../index');
         exit();
     }
 } else {
-    header('Location: ../index.php');
+    header('Location: ../index');
     exit();
 }
 ?>

@@ -40,7 +40,7 @@ if (isset($_POST['timeIn'])) {
     // Check if client is already timed in
     $clientId = null;
 
-    $checkFullNameQuery = "SELECT id FROM visitors WHERE REPLACE(first_name, ' ', '') = ? AND REPLACE(middle_name, ' ', '') = ? AND REPLACE(last_name, ' ', '') = ?";
+    $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name= ? AND last_name = ?";
     $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
     $checkFullNameStmt->bind_param("sss", $firstName, $middleName, $lastName);
     $checkFullNameStmt->execute();

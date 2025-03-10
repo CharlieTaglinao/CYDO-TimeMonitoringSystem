@@ -13,6 +13,7 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
     z-index: 1001; 
+
 }
 
 .image-holder {
@@ -21,9 +22,9 @@
     left: 50%;
     transform: translate(-50%, -50%); 
     z-index: 1002; /* para nasa unahan ng bg overlay */
-}
-
-.loader-logo {
+    background-image: url('../../../assets/images/CYDO-LOGO.png');
+    background-size: contain;
+    background-repeat: no-repeat;
     width: 100px;
     height: 100px;
 }
