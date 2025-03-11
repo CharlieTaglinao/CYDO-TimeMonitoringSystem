@@ -1,6 +1,7 @@
 <?php
 include 'includes/header.php';
 include 'fetch-accounts.php';
+include 'permission/permissionEditDeleteAccount.php';
 ?>
 
 <body class="bg-light">

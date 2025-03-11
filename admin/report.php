@@ -1,4 +1,7 @@
-<?php include 'includes/header.php'; ?>
+<?php include 'includes/header.php';
+     include 'permission/permissionDownloadReport.php'; 
+     
+?>
 
     <body class="bg-light">
         <div class="d-flex">
@@ -102,6 +105,34 @@
 
                         
 
+                    </div>
+
+
+                    <div class="mt-4">
+                        <h3>User Reports</h3>
+                        <div class="mb-3">
+                            <div class="container bg-dark text-center py-3 rounded">
+                                <h4 class="text-light">PDF FORMAT</h4>
+                                <div class="container bg-light p-4 rounded">
+                                    <div class="row g-4">
+                                        <!-- Today's Report -->
+                                        <div class="col-md-6">
+                                            <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
+                                            <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=today&format=xlsx">Download All</a>
+
+                                            </div>
+                                        </div>
+
+                                        <!-- 1 Month Report -->
+                                        <div class="col-md-6">
+                                            <div class="download-card bg-white border shadow-sm d-flex flex-column align-items-center justify-content-center p-3 rounded">
+                                            <a class="btn btn-success w-100" href="process/export/AllReport/report-logic.php?type=month&format=xlsx">By role</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>  
                     </div>
 
                 </div>

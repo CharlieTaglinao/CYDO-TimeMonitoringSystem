@@ -1,5 +1,8 @@
-<?php include 'includes/header.php'; ?>
-<?php include 'fetch-monitor-visitor.php'; ?>
+<?php
+include 'includes/header.php';
+include 'fetch-monitor-visitor.php'; 
+include 'permission/permissionMonitorVisitor.php';?>
+
 
 <body class="bg-light">
     <div class="d-flex">
@@ -13,24 +16,24 @@
                     <div class="col-md-4 mb-3">
                         <div class="card shadow-sm border-light rounded-lg">
                             <div class="card-body">
-                                <h5 class="card-title">In-site</h5>
-                                <h4 class="card-text text-secondary"><?php echo $totalInsite; ?></h4>
+                                <h5 class="card-title fw-bold">In-site</h5>
+                                <h4 class="card-text fw-normal"><?php echo $totalInsite; ?></h4>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="card shadow-sm border-light rounded-lg">
                             <div class="card-body">
-                                <h5 class="card-title">Already Out</h5>
-                                <h4 class="card-text text-secondary"><?php echo $totalAlreadyOut; ?></h4>
+                                <h5 class="card-title fw-bold">Already Out</h5>
+                                <h4 class="card-text fw-normal"><?php echo $totalAlreadyOut; ?></h4>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-4 mb-3">
                         <div class="card shadow-sm border-light rounded-lg">
                             <div class="card-body">
-                                <h5 class="card-title">Overall Visitors</h5>
-                                <h4 class="card-text text-secondary"><?php echo $totalVisitorsToday; ?></h4>
+                                <h5 class="card-title fw-bold">Overall Visitors</h5>
+                                <h4 class="card-text fw-normal"><?php echo $totalVisitorsToday; ?></h4>
                             </div>
                         </div>
                     </div>

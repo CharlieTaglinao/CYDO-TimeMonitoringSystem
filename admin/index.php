@@ -1,4 +1,5 @@
 <?php
+include 'permission/permissionMonitorDashboard.php';
 
 if (isset($_GET['visitor_code'])) {
     $_SESSION['randomCode'] = $_GET['visitor_code'];
@@ -6,10 +7,9 @@ if (isset($_GET['visitor_code'])) {
 
 include 'fetch-visitors.php';
 // include 'includes/loader.php';
+
+include 'includes/header.php';
 ?>
-
-
-<?php include 'includes/header.php'; ?>
 
 <body class="bg-light">
     <div class="d-flex">
@@ -19,37 +19,40 @@ include 'fetch-visitors.php';
         <div class="flex-grow-1 p-4">
             <div class="container mt-4">
                 <div class="row text-center">
+
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Today's Visitors</h5>
-                                <h4 class="card-text text-secondary"><?php echo $totalVisitorsToday; ?></h4>
+                                <h5 class="card-title fw-bold">Today's Visitors</h5>
+                                <h4 class="card-text fw-normal"><?php echo $totalVisitorsToday; ?></h4>
                             </div>
                         </div>
                     </div>
+
+
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Current Visitors</h5>
-                                <h4 class="card-text text-secondary" id="current-visitors">
+                                <h5 class="card-title fw-bold">Current Visitors</h5>
+                                <h4 class="card-text fw-normal" id="current-visitors">
                                     <?php echo $currentVisitors; ?>
                                 </h4>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-4">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Monthly Visitors</h5>
-                                <h4 class="card-text text-secondary" id="current-visitors">
+                                <h5 class="card-title fw-bold">Monthly Visitors</h5>
+                                <h4 class="card-text fw-normal" id="current-visitors">
                                     <?php echo $totalMonthlyVisitor; ?>
                                 </h4>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="modalContainer"></div>
+                </div>
 
                 <?php if (isset($_SESSION['message'])): ?>
                 <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show mt-3" role="alert">
@@ -58,7 +61,8 @@ include 'fetch-visitors.php';
                     unset($_SESSION['message_type']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            <?php endif; ?>
+                <?php endif; ?>
+
                 <div class="mt-4">
                     <h3>Visitor Records</h3>
                     <div class="d-flex justify-content-between mb-3">
@@ -84,12 +88,10 @@ include 'fetch-visitors.php';
                             </div>
                         </div>
 
-
                         <div class="btn">
-                                <a class="btn btn-secondary" id="export-code" href="process/export/export-code.php">GET CODES</a>
+                            <a class="btn btn-secondary" id="export-code" href="process/export/export-code.php">GET CODES</a>
                         </div>
                     </div>
-
 
                     <table class="table table-bordered">
                         <thead class="table-dark">
@@ -142,17 +144,12 @@ include 'fetch-visitors.php';
                                                 View Details
                                             </button>
                                         </td>
-
-
-
-                                        </td>
                                     </tr>
                                     <?php
                                 endwhile;
                             }
                             ?>
                         </tbody>
-
                     </table>
                 </div>
 

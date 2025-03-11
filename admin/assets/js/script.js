@@ -179,6 +179,56 @@ function updateAccountPagination() {
 
 
 
+//------------------------------------------------------------------//
+// START OF FETCH AND UPDATE PAGINATION FOR USER'S PERMISSION TABLE 
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input-user-permission");
+    const permissionTable = document.getElementById("user-permission-table");
+
+    if (searchInput) {
+        searchInput.addEventListener("input", (event) => {
+            const query = event.target.value;
+            fetch(`../../process/fetch-user-permission.php?search=${encodeURIComponent(query)}`)
+                .then((response) => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
+                })
+                .then((data) => {
+                    permissionTable.innerHTML = data;
+                    updateUserPermissionPagination();
+                })
+                .catch((error) => console.error("Error fetching data:", error));
+        });
+    }
+});
+
+// Function to update user permission pagination dynamically
+function updateUserPermissionPagination() {
+    const query = document.getElementById("search-input-user-permission").value;
+    fetch(`../../process/fetch-user-permission.php?search=${encodeURIComponent(query)}&pagination=true`)
+        .then((response) => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.text();
+        })
+        .then((data) => {
+            document.getElementById("pagination").innerHTML = data;
+            const totalRows = parseInt(document.getElementById("total-rows").value);
+            const totalPages = Math.ceil(totalRows / 8);
+            const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
+            document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+        })
+        .catch((error) => console.error("Error fetching pagination data:", error));
+}
+
+// END OF FETCH AND UPDATE PAGINATION FOR USER'S PERMISSION  TABLE
+//------------------------------------------------------------------//
+
+
+
+
+
+
+
 // Fetch insite data by search
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("searchInsite");
@@ -369,7 +419,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // show loader for once the browser load to prevent flickering
 document.body.innerHTML += '<div class="background-overlay"></div><div class="loader"></div><div class="image-holder"></div>';
 window.addEventListener('load', async () => {
-    await new Promise(resolve => setTimeout(resolve, 300)); 
+    await new Promise(resolve => setTimeout(resolve, 400)); 
     document.querySelector('.background-overlay').style.display = 'none';
     document.querySelector('.loader').style.display = 'none';
     document.querySelector('.image-holder').style.display = 'none';
