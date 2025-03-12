@@ -51,11 +51,11 @@ if (isset($_POST['timeIn'])) {
         $checkFullNameStmt->fetch();
     } else {
         // Insert new visitor
-    $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, office_id, barangay_id, age) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    $insertStmt = $conn->prepare($insertQuery);
-    $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $officename, $barangayname, $age);
-    $insertStmt->execute();
-    $clientId = $conn->insert_id;
+        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, office_id, barangay_id, age, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $insertStmt = $conn->prepare($insertQuery);
+        $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $officename, $barangayname, $age);
+        $insertStmt->execute();
+        $clientId = $conn->insert_id;
 
         // Insert email
         $emailValue = $checkBoxNotAvailEmail ? 'This visitor has no email' : $email;
@@ -91,7 +91,7 @@ if (isset($_POST['timeIn'])) {
     // Update Purpose_id
     $updatePurposeIdQuery = "UPDATE visitors SET visitors.purpose_id = ? WHERE visitors.id = ?";
     $updatePurposeIdStmt = $conn->prepare($updatePurposeIdQuery);
-    $updatePurposeIdStmt->bind_param("ii",$clientId,$clientId);
+    $updatePurposeIdStmt->bind_param("ii", $clientId, $clientId);
     $updatePurposeIdStmt->execute();
 
     // Insert new time log

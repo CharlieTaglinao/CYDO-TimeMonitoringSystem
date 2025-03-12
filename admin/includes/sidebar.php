@@ -1,7 +1,6 @@
 <?php
 
 
-
 if (isset($_SESSION['username'])) {
     $user_login = $_SESSION['username'];
 } else {
@@ -25,6 +24,7 @@ function has_permission($permission_id, $user_permissions) {
 }
 
 ?>
+
 <div id="sidebar" class="bg-dark text-white p-3" style="width: 250px; height: auto; min-height: 100vh;">
     <div class="btn mb-3 w-100">
         <a href="index">
@@ -86,7 +86,6 @@ function has_permission($permission_id, $user_permissions) {
                     <nav class="nav flex-column ms-3">
                         <a href="add-permission" class="nav-link text-white">Add Permission</a>
                         <a href="view-permission" class="nav-link text-white" id="viewPermissionsBtn">View Permissions</a>
-                        <a href="view-account" class="nav-link text-white">View Roles</a>
                     </nav>
                 </div>
             </div>

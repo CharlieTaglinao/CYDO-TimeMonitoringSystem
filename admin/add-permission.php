@@ -67,7 +67,7 @@
                                                 <p class='card-subtitle mb-2 text-sm fw-lighter'>ID: " . $shortId . "</p>
                                                 <div class='form-check form-switch'>
                                                     <input class='form-check-input' type='checkbox' id='permission" . $row['permission_id'] . "' name='permissions[]' value='" . $row['permission_id'] . "'>
-                                                    <label class='form-check-label' for='permission" . $row['permission_id'] . "'>Toggle</label>
+                                                    <label class='form-check-label' for='permission" . $row['permission_id'] . "'>OFF / ON</label>
                                                 </div>
                                             </div>
                                         </div>

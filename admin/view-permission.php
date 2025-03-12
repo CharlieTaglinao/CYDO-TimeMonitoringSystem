@@ -119,7 +119,6 @@ include 'includes/header.php';
             </div>
         </div>
     </div>
-    <script src="assets/js/script.js"></script>
 </body>
 
 </html>

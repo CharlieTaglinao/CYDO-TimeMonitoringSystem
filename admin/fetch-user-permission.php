@@ -10,7 +10,7 @@ $offset = ($page - 1) * $limit;
 
 // Count total rows with search filter
 $totalRowsQuery = "
-    SELECT COUNT(*) AS total 
+    SELECT COUNT(username) AS total 
     FROM account 
     WHERE username LIKE '%$search%'
 ";
@@ -31,6 +31,25 @@ $permissionResult = $conn->query($permissionQuery);
 
 if (isset($_GET['pagination'])) {
     echo generatePaginationLinks($totalPages, $page);
+    exit;
+}
+
+// Return the search results as HTML
+if (isset($_GET['search']) && !isset($_GET['pagination'])) {
+    while ($row = $permissionResult->fetch_assoc()) {
+        $permissions = explode(',', $row['permissions']); // Convert permissions to array
+        echo '<tr>';
+        echo '<td>' . $row['username'] . '</td>';
+        echo '<td>' . (in_array('T9rPHeL7ectsYwT6Ih2AswTeZ', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('8sAygcnqpOXP8aAAG7IAWI4Cg', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('GfsdZkrEFuNhmIUmxIm8e7fS8', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('906IZi3K8od7FBS518t5I31jY', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('JyCQULxjmYOycJFVOyceWb8BA', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('c5pwoB1uPkzwwZgFokRZZ85fE', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('qD0mEzTMK6Toi4u8aR1Pdusag', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . (in_array('ubmssiHKw9GEPDulEVpDtOudM', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '</tr>';
+    }
     exit;
 }
 

@@ -78,6 +78,56 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+//------------------------------------------------------------------//
+// START OF FETCH AND UPDATE PAGINATION FOR USER PERMISSION TABLE 
+
+// Fetch visitors data by search
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input-user-permission");
+    const userPermissionTable = document.getElementById("user-permission-table");
+
+    if (searchInput) {
+        searchInput.addEventListener("input", (event) => {
+            const query = event.target.value;
+            fetch(`fetch-user-permission.php?search=${encodeURIComponent(query)}`)
+                .then((response) => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
+                })
+                .then((data) => {
+                    userPermissionTable.innerHTML = data;
+                    updatePermissionPagination();
+                })
+                .catch((error) => console.error("Error fetching data:", error));
+        });
+    }
+});
+
+// Function to update visitor pagination dynamically
+function updatePermissionPagination() {
+    const query = document.getElementById("search-input-user-permission").value;
+    fetch(`fetch-user-permission.php?search=${encodeURIComponent(query)}&pagination=true`)
+        .then((response) => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.text();
+        })
+        .then((data) => {
+            document.getElementById("pagination").innerHTML = data;
+            const totalRowsElement = document.getElementById("total-rows");
+            if (totalRowsElement) {
+                const totalRows = parseInt(totalRowsElement.value);
+                const totalPages = Math.ceil(totalRows / 13);
+                const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
+                document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+            }
+        })
+        .catch((error) => console.error("Error fetching pagination data:", error));
+}
+
+// END OF FETCH AND UPDATE PAGINATION FOR USER PERMISSION TABLE
+//------------------------------------------------------------------//
+
+
 
 
 //------------------------------------------------------------------//
@@ -176,57 +226,6 @@ function updateAccountPagination() {
 
 // END OF FETCH AND UPDATE PAGINATION FOR VISITORS TABLE
 //------------------------------------------------------------------//
-
-
-
-//------------------------------------------------------------------//
-// START OF FETCH AND UPDATE PAGINATION FOR USER'S PERMISSION TABLE 
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("search-input-user-permission");
-    const permissionTable = document.getElementById("user-permission-table");
-
-    if (searchInput) {
-        searchInput.addEventListener("input", (event) => {
-            const query = event.target.value;
-            fetch(`../../process/fetch-user-permission.php?search=${encodeURIComponent(query)}`)
-                .then((response) => {
-                    if (!response.ok) throw new Error("Network response was not ok");
-                    return response.text();
-                })
-                .then((data) => {
-                    permissionTable.innerHTML = data;
-                    updateUserPermissionPagination();
-                })
-                .catch((error) => console.error("Error fetching data:", error));
-        });
-    }
-});
-
-// Function to update user permission pagination dynamically
-function updateUserPermissionPagination() {
-    const query = document.getElementById("search-input-user-permission").value;
-    fetch(`../../process/fetch-user-permission.php?search=${encodeURIComponent(query)}&pagination=true`)
-        .then((response) => {
-            if (!response.ok) throw new Error("Network response was not ok");
-            return response.text();
-        })
-        .then((data) => {
-            document.getElementById("pagination").innerHTML = data;
-            const totalRows = parseInt(document.getElementById("total-rows").value);
-            const totalPages = Math.ceil(totalRows / 8);
-            const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
-            document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
-        })
-        .catch((error) => console.error("Error fetching pagination data:", error));
-}
-
-// END OF FETCH AND UPDATE PAGINATION FOR USER'S PERMISSION  TABLE
-//------------------------------------------------------------------//
-
-
-
-
-
 
 
 // Fetch insite data by search
@@ -360,29 +359,31 @@ setTimeout(function () {
     }
 }, 3000);
 
-// Listen for click event on "View Details" button
-document.querySelectorAll('.view-details').forEach(button => {
-    button.addEventListener('click', function () {
-        // Get data attributes from the clicked button
-        const name = this.getAttribute('data-name');
-        const age = this.getAttribute('data-age');
-        const sex = this.getAttribute('data-sex');
-        const code = this.getAttribute('data-code');
-        const purpose = this.getAttribute('data-purpose');
+document.addEventListener('DOMContentLoaded', function () {
+    const viewDetailsButtons = document.querySelectorAll('.view-details');
+    viewDetailsButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            const name = this.getAttribute('data-name');
+            const age = this.getAttribute('data-age');
+            const sex = this.getAttribute('data-sex');
+            const code = this.getAttribute('data-code');
+            const purpose = this.getAttribute('data-purpose');
 
-        // Populate modal with visitor data
-        document.getElementById('modal-name').textContent = name;
-        document.getElementById('modal-age').textContent = age;
-        document.getElementById('modal-sex').textContent = sex;
-        document.getElementById('modal-code').textContent = code;
-        document.getElementById('modal-purpose').textContent = purpose;
-        document.getElementById('visitor_code').value = code;
+            document.getElementById('modal-name').textContent = name;
+            document.getElementById('modal-age').textContent = age;
+            document.getElementById('modal-sex').textContent = sex;
+            document.getElementById('modal-code').textContent = code;
+            document.getElementById('modal-purpose').textContent = purpose;
+            document.getElementById('visitor_code').value = code;
 
+            
         // Dynamically generate QR code for the visitor code
         const qrImage = document.getElementById('qr-code');
         qrImage.src = '../../../includes/generate-qr-code.php?visitor_code=' + encodeURIComponent(code);
+        });
     });
 });
+
 
 // Assuming you are using jQuery to set the value in the modal
 $('.view-details').on('click', function() {
@@ -423,5 +424,143 @@ window.addEventListener('load', async () => {
     document.querySelector('.background-overlay').style.display = 'none';
     document.querySelector('.loader').style.display = 'none';
     document.querySelector('.image-holder').style.display = 'none';
+});
+
+
+// Start of chart js
+
+// Function to initialize Chart.js
+function initializeChart(chartId, chartType, chartData, chartOptions) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    new Chart(ctx, {
+        type: chartType,
+        data: chartData,
+        options: chartOptions
+    });
+}
+
+// Function to initialize Chart.js with 3D effect
+function initialize3DChart(chartId, chartData, chartOptions, chartTitle) {
+    const ctx = document.getElementById(chartId).getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: {
+            ...chartOptions,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#4B4B4B'
+                    }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleColor: '#FFFFFF',
+                    bodyColor: '#FFFFFF',
+                    borderColor: '#4B4B4B',
+                    borderWidth: 1
+                },
+                title: {
+                    display: true,
+                    text: chartTitle,
+                    color: '#4B4B4B',
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#4B4B4B'
+                    }
+                },
+                y: {
+                    grid: {
+                        display: false
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#4B4B4B'
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Function to create 3D line graphs using the fetched data
+document.addEventListener("DOMContentLoaded", function () {
+    const visitorChartData = {
+        labels: visitorData.labels,
+        datasets: [{
+            label: 'Visitors',
+            data: visitorData.values,
+            backgroundColor: 'rgba(64, 156, 108, 0.2)',
+            borderColor: 'rgba(64, 156, 108, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    const userChartData = {
+        labels: userData.labels,
+        datasets: [{
+            label: 'Users',
+            data: userData.values,
+            backgroundColor: 'rgba(0, 51, 255, 0.2)',
+            borderColor: 'rgba(0, 51, 255, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    const cydoChartData = {
+        labels: cydoData.labels,
+        datasets: [{
+            label: 'CYDO',
+            data: cydoData.values,
+            backgroundColor: 'rgba(255, 79, 76, 0.2)',
+            borderColor: 'rgba(255, 79, 76, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    const pdaoChartData = {
+        labels: pdaoData.labels,
+        datasets: [{
+            label: 'PDAO',
+            data: pdaoData.values,
+            backgroundColor: 'rgba(255, 253, 14, 0.2)',
+            borderColor: 'rgba(255, 253, 14, 1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    const chartOptions = {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    };
+
+    initialize3DChart('visitorChart', visitorChartData, chartOptions, 'Total Visitors');
+    initialize3DChart('userChart', userChartData, chartOptions, 'Total Users');
+    initialize3DChart('cydoChart', cydoChartData, chartOptions, 'Incoming CYDO Visitors');
+    initialize3DChart('pdaoChart', pdaoChartData, chartOptions, 'Incoming PDAO Visitors');
 });
 

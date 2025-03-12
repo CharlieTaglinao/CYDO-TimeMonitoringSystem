@@ -4,9 +4,10 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Set the height to 100vh */
+    height: 100vh; 
     margin: 0;
-    overflow: hidden; /* Prevent scrolling */
+    overflow: hidden; 
+
 }
 
 
@@ -32,16 +33,15 @@ footer {
 }
 
 .card {
-    background-color: #fff; 
-    border: 1px dashed black; 
-    border-radius: 4px;
+    background-color: transparent; 
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
 }
 
 .card:hover {
     transform: scale(1.05);
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 1s ease-in-out, background-color 0.3s ease-in-out;
+    background-color: rgba(0, 131, 253, 0.1); 
 }
 
 .card-body {

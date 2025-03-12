@@ -142,6 +142,4 @@ include 'permission/permissionEditDeleteAccount.php';
             </div>
         </div>
     </div>
-
-    <script src="assets/js/script.js"></script>
 </body>
