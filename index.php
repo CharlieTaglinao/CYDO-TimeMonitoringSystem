@@ -110,13 +110,14 @@ if (isset($_GET['visitor_code'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="process/time-in-out.php" method="POST">
+                        <form action="process/time-in-out.php" method="POST" class="needs-validation" novalidate>
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
                                         <label for="firstName" class="form-label">First Name</label>
                                         <input type="text" class="form-control" id="firstName" name="firstName"
-                                            placeholder="Ex. Juan">
+                                            placeholder="Ex. Juan" required>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
 
@@ -125,6 +126,7 @@ if (isset($_GET['visitor_code'])) {
                                         <label for="middleName" class="form-label">Middle Name</label>
                                         <input type="text" class="form-control" id="middleName" name="middleName"
                                             placeholder="Ex. Santos">
+                                            <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -134,20 +136,17 @@ if (isset($_GET['visitor_code'])) {
                                     <div class="mb-3">
                                         <label for="lastName" class="form-label">Last Name</label>
                                         <input type="text" class="form-control" id="lastName" name="lastName"
-                                            placeholder="Ex. Dela Cruz">
+                                            placeholder="Ex. Dela Cruz" required>
+    
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
                                         <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Ex. abcdefg@gmail.com">
-                                    </div>
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="noEmail" name="noEmail">
-                                        <label class="lbl-noemail form-check-label text-dark" for="noEmail">
-                                            I don't have an email
-                                        </label>
+                                            placeholder="Ex. abcdefg@gmail.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -155,17 +154,19 @@ if (isset($_GET['visitor_code'])) {
                                 <div class="col-6">
                                     <div class="mb-3">
                                         <label class="form-label" for="office">Office</label>
-                                        <select class="form-select" name="office" id="office">
+                                        <select class="form-select" name="office" id="office" required>
                                             <option value="" selected disabled>Select an Office</option>
                                             <option value="1">City Youth Development Office</option>
                                             <option value="2">Person with Disablity Affairs Office</option>
                                         </select>
+    
+                                        <div class="invalid-feedback">Please select an office.</div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
                                         <label class="form-label" for="barangay">Barangay</label>
-                                        <select class="form-select" name="barangay" id="barangay">
+                                        <select class="form-select" name="barangay" id="barangay" required>
                                             <option value="" selected disabled>Select a Barangay</option>
                                             <option value="1">Alingaro</option>
                                             <option value="2">Arnaldo</option>
@@ -201,6 +202,8 @@ if (isset($_GET['visitor_code'])) {
                                             <option value="32">Vibora</option>
                                             <option value="33">1896</option>
                                         </select>
+    
+                                        <div class="invalid-feedback">Please select a barangay.</div>
                                     </div>
                                 </div>
                             </div>
@@ -209,13 +212,17 @@ if (isset($_GET['visitor_code'])) {
                                     <div class="mb-3">
                                         <label for="purpose" class="form-label">Purpose</label>
                                         <input type="text" class="form-control" id="purpose" name="purpose"
-                                            placeholder="Ex. Personal Matters">
+                                            placeholder="Ex. Personal Matters" required>
+    
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
                                         <label for="age" class="form-label">Age</label>
-                                        <input type="text" class="form-control" id="age" name="age" placeholder="Ex. 21">
+                                        <input type="text" class="form-control" id="age" name="age" placeholder="Ex. 21" required>
+    
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -224,10 +231,13 @@ if (isset($_GET['visitor_code'])) {
                                 <div class="col">
                                     <div class="mb-3">
                                         <label for="sex" class="form-label">Sex</label>
-                                        <select name="sex" class="form-select" id="sex">
+                                        <select name="sex" class="form-select" id="sex" required>
+                                            <option value="" selected disabled>Select </option>
                                             <option value="1">MALE</option>
                                             <option value="2">FEMALE</option>
                                         </select>
+    
+                                        <div class="invalid-feedback">Please select your sex.</div>
                                     </div>
                                 </div>
                             </div>
@@ -270,14 +280,16 @@ if (isset($_GET['visitor_code'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="process/login.php" method="POST">
+                        <form action="process/login.php" method="POST" class="needs-validation" novalidate>
                             <div class="mb-3">
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
+                                <div class="invalid-feedback">Please provide a username.</div>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
+                                <div class="invalid-feedback">Please provide a password.</div>
                             </div>
                             <button type="submit" class="btn btn-primary">Login</button>
                         </form>
@@ -297,7 +309,7 @@ if (isset($_GET['visitor_code'])) {
             // Auto log out script
             function checkAutoLogout() {
                 var now = new Date();
-                if (now.getHours() === 13 && now.getMinutes() === 9) {
+                if (now.getHours() === 23 && now.getMinutes() === 59) {
                     fetch('process/auto-log-out.php')
                         .then(response => response.text())
                         .then(data => {

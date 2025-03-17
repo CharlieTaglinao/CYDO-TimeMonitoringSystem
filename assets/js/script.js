@@ -45,18 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
 
-    const noEmailCheckbox = document.getElementById("noEmail");
-    const emailField = document.getElementById("email");
-
     dateElement.textContent = today.toLocaleDateString(undefined, options);
-    noEmailCheckbox.addEventListener("change", function () {
-        if (this.checked) {
-            emailField.value = "This visitor has no email.";
-            emailField.disabled = true;
-        } else {
-            emailField.disabled = false;
-        }
-    });
 
     // Check for mobile device and request camera access
     if (/Mobi|Android/i.test(navigator.userAgent)) {
@@ -74,6 +63,105 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error getting cameras on mobile device:", e);
             });
     }
+    // Live validation for form fields
+    // Dynamic feedback text
+    const feedbackMessages = {
+        firstName: "Please provide a first name.",
+        middleName: "Please provide a middle name.",
+        lastName: "Please provide a last name.",
+        email: "Please provide a valid e-mail address.",
+        purpose: "Please provide a purpose.",
+        age: "Please provide a valid age between 1 and 150."
+    };
+
+    
+    const forms = document.querySelectorAll('.needs-validation');
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('input', function (event) {
+            const target = event.target;
+            const feedbackElement = target.nextElementSibling;
+            if (target.checkValidity()) {
+                target.classList.add('is-valid');
+                target.classList.remove('is-invalid');
+                feedbackElement.textContent = "";
+            } else {
+                target.classList.add('is-invalid');
+                target.classList.remove('is-valid');
+                feedbackElement.textContent = feedbackMessages[target.id] || "Invalid input.";
+            }
+        }, false);
+
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                Array.prototype.slice.call(form.elements).forEach(function (element) {
+                    if (!element.checkValidity() && element.required) {
+                        element.classList.add('is-invalid');
+                        const feedbackElement = element.nextElementSibling;
+                        feedbackElement.textContent = feedbackMessages[element.id] || "Invalid input.";
+                    }
+                });
+            }
+        }, false);
+    });
+
+    const emailField = document.getElementById('email');
+    const emailFeedback = document.querySelector('.valid-feedback.optional-email');
+    const middleNameField = document.getElementById('middleName');
+    const middleNameFeedback = document.querySelector('.valid-feedback.optional-middle-name');
+    emailField.addEventListener('input', function () {
+        const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
+        if (emailField.value === "") {
+            emailFeedback.style.display = "block";
+            emailField.classList.remove('is-invalid');
+            emailField.classList.remove('is-valid');
+        } else if (emailPattern.test(emailField.value)) {
+            emailFeedback.style.display = "none";
+            emailField.classList.remove('is-invalid');
+        } else {
+            emailFeedback.style.display = "none";
+            emailField.classList.add('is-invalid');
+            emailField.classList.remove('is-valid');
+        }
+    });
+
+    middleNameField.addEventListener('input', function () {
+        const middleNamePattern = /^[a-zA-Z\s]*$/;
+        if (middleNameField.value === "") {
+            middleNameFeedback.style.display = "block";
+            middleNameField.classList.remove('is-invalid');
+            middleNameField.classList.remove('is-valid');
+        } else if (middleNamePattern.test(middleNameField.value)) {
+            middleNameFeedback.style.display = "none";
+            middleNameField.classList.remove('is-invalid');
+        } else {
+            middleNameFeedback.style.display = "none";
+            middleNameField.classList.add('is-invalid');
+            middleNameField.classList.remove('is-valid');
+        }
+    });
+
+    // Age validation
+    const ageField = document.getElementById('age');
+    ageField.addEventListener('input', function () {
+        const ageValue = parseInt(ageField.value, 10);
+        if (isNaN(ageValue) || ageValue < 1 || ageValue > 150) {
+            ageField.setCustomValidity("Invalid age");
+        } else {
+            ageField.setCustomValidity("");
+        }
+    });
+
+    // Remove 'is-valid' class if both middle name and email are null
+    document.querySelectorAll('form').forEach(form => {
+        form.addEventListener('input', function () {
+            if (middleNameField.value === "" && emailField.value === "") {
+                middleNameField.classList.remove('is-valid');
+                emailField.classList.remove('is-valid');
+            }
+        });
+    });
 });
 
 // Initialize the scanner

@@ -1,9 +1,9 @@
 <?php
-// Include necessary files and initialize database connection
 include '../includes/database.php';
+$selectedYear = isset($_POST['year']) ? $_POST['year'] : date('Y');
 
 // Fetch data for visitors
-$visitorQuery = "SELECT DATE_FORMAT(time_in, '%Y-%m') as date, DATE_FORMAT(time_in, '%b') as month, COUNT(*) as count FROM time_logs GROUP BY DATE_FORMAT(time_in, '%Y-%m')";
+$visitorQuery = "SELECT DATE_FORMAT(time_in, '%Y-%m') as date, DATE_FORMAT(time_in, '%b') as month, COUNT(*) as count FROM time_logs WHERE YEAR(time_in) = '$selectedYear' GROUP BY DATE_FORMAT(time_in, '%Y-%m')";
 $visitorResult = $conn->query($visitorQuery);
 $visitorData = ['labels' => [], 'values' => []];
 while ($row = $visitorResult->fetch_assoc()) {
@@ -12,7 +12,7 @@ while ($row = $visitorResult->fetch_assoc()) {
 }
 
 // Fetch data for users
-$userQuery = "SELECT DATE_FORMAT(created_at, '%Y-%m') as date, DATE_FORMAT(created_at, '%b') as month, COUNT(*) as count FROM account GROUP BY DATE_FORMAT(created_at, '%Y-%m')";
+$userQuery = "SELECT DATE_FORMAT(created_at, '%Y-%m') as date, DATE_FORMAT(created_at, '%b') as month, COUNT(*) as count FROM account WHERE YEAR(created_at) = '$selectedYear' GROUP BY DATE_FORMAT(created_at, '%Y-%m')";
 $userResult = $conn->query($userQuery);
 $userData = ['labels' => [], 'values' => []];
 while ($row = $userResult->fetch_assoc()) {
@@ -21,7 +21,7 @@ while ($row = $userResult->fetch_assoc()) {
 }
 
 // Fetch data for CYDO visitors
-$cydoQuery = "SELECT DATE_FORMAT(created_at, '%Y-%m') as date, DATE_FORMAT(created_at, '%b') as month, COUNT(*) as count FROM visitors WHERE office_id = 1 GROUP BY DATE_FORMAT(created_at, '%Y-%m')";
+$cydoQuery = "SELECT DATE_FORMAT(time_in, '%Y-%m') as date, DATE_FORMAT(time_in, '%b') as month, COUNT(*) as count FROM time_logs WHERE office_id = 1 AND YEAR(time_in) = '$selectedYear' GROUP BY DATE_FORMAT(time_in, '%Y-%m')";
 $cydoResult = $conn->query($cydoQuery);
 $cydoData = ['labels' => [], 'values' => []];
 while ($row = $cydoResult->fetch_assoc()) {
@@ -30,7 +30,7 @@ while ($row = $cydoResult->fetch_assoc()) {
 }
 
 // Fetch data for PDAO visitors
-$pdaoQuery = "SELECT DATE_FORMAT(created_at, '%Y-%m') as date, DATE_FORMAT(created_at, '%b') as month, COUNT(*) as count FROM visitors WHERE office_id = 2 GROUP BY DATE_FORMAT(created_at, '%Y-%m')";
+$pdaoQuery = "SELECT DATE_FORMAT(time_in, '%Y-%m') as date, DATE_FORMAT(time_in, '%b') as month, COUNT(*) as count FROM time_logs WHERE office_id = 2 AND YEAR(time_in) = '$selectedYear' GROUP BY DATE_FORMAT(time_in, '%Y-%m')";
 $pdaoResult = $conn->query($pdaoQuery);
 $pdaoData = ['labels' => [], 'values' => []];
 while ($row = $pdaoResult->fetch_assoc()) {

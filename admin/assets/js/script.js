@@ -443,7 +443,7 @@ function initializeChart(chartId, chartType, chartData, chartOptions) {
 function initialize3DChart(chartId, chartData, chartOptions, chartTitle) {
     const ctx = document.getElementById(chartId).getContext('2d');
     new Chart(ctx, {
-        type: 'line',
+        type: 'bar',
         data: chartData,
         options: {
             ...chartOptions,
@@ -488,7 +488,10 @@ function initialize3DChart(chartId, chartData, chartOptions, chartTitle) {
                     },
                     beginAtZero: true,
                     ticks: {
-                        color: '#4B4B4B'
+                        color: '#4B4B4B',
+                        callback: function(value) {
+                            return Number.isInteger(value) ? value : null;
+                        }
                     }
                 }
             }
@@ -553,7 +556,15 @@ document.addEventListener("DOMContentLoaded", function () {
     const chartOptions = {
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: {
+                    stepSize: function(context) {
+                        const max = context.chart.scales.y.max;
+                        if (max <= 10) return 1;
+                        if (max <= 20) return 2;
+                        return 5;
+                    }
+                }
             }
         }
     };

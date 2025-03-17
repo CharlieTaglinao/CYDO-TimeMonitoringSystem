@@ -18,7 +18,7 @@ while ($row = $result->fetch_assoc()) {
 $_SESSION['user_permissions'] = $userPermissions;
 
 
-$permissionQuery = "SELECT permission_id FROM permission WHERE permission_name = 'Add Role'";
+$permissionQuery = "SELECT permission_id FROM permission WHERE permission_name = 'Add Permission'";
 $permissionResult = $conn->query($permissionQuery);
 $accessDashboardPermissionId = $permissionResult->fetch_assoc()['permission_id'];
 

@@ -1,6 +1,6 @@
 <?php include 'includes/header.php'; 
     include 'fetch-permission.php'; 
-    include 'permission/permissionAddRole.php';
+    include 'permission/permissionAddPermission.php';
 ?>
 
 <body class="bg-light">

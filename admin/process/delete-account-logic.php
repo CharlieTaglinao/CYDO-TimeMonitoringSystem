@@ -14,6 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
 
     
     if ($result->num_rows > 0) {
+        $deletePermissionsQuery = "DELETE FROM user_permissions WHERE user_id = ?";
+        $stmt = $conn->prepare($deletePermissionsQuery);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        
         $deleteQuery = "DELETE FROM account WHERE id = ?";
         $stmt = $conn->prepare($deleteQuery);
         $stmt->bind_param("i", $id);

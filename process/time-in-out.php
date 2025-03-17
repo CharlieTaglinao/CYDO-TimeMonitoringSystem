@@ -14,7 +14,6 @@ $purpose = strtoupper(trim($_POST['purpose'] ?? ''));
 $sex = strtoupper(trim($_POST['sex'] ?? ''));
 $age = (int) ($_POST['age'] ?? 0);
 $code = strtoupper(trim($_POST['code'] ?? ''));
-$checkBoxNotAvailEmail = isset($_POST['noEmail']) ? $_POST['noEmail'] : false;
 
 
 $_SESSION['first_name'] = $firstName;
@@ -27,13 +26,6 @@ function generateRandomCode($length = 6)
 }
 
 if (isset($_POST['timeIn'])) {
-    // Validation
-    if (!$firstName || !$middleName || !$lastName || !$purpose || !$age) {
-        $_SESSION['message'] = "All required fields must be filled out.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
-    }
 
     $logTime = date('Y-m-d H:i:s');
 
@@ -57,11 +49,10 @@ if (isset($_POST['timeIn'])) {
         $insertStmt->execute();
         $clientId = $conn->insert_id;
 
-        // Insert email
-        $emailValue = $checkBoxNotAvailEmail ? 'This visitor has no email' : $email;
+        
         $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
         $insertEmailStmt = $conn->prepare($insertEmailQuery);
-        $insertEmailStmt->bind_param("is", $clientId, $emailValue);
+        $insertEmailStmt->bind_param("is", $clientId, $email);
         $insertEmailStmt->execute();
     }
 
@@ -95,9 +86,9 @@ if (isset($_POST['timeIn'])) {
     $updatePurposeIdStmt->execute();
 
     // Insert new time log
-    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code,status) VALUES (?, ?, ?, 'On Site')";
+    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code,office_id,status) VALUES (?, ?, ?, ?, 'On Site')";
     $insertLogStmt = $conn->prepare($insertLogQuery);
-    $insertLogStmt->bind_param("iss", $clientId, $logTime, $randomCode);
+    $insertLogStmt->bind_param("issi", $clientId, $logTime, $randomCode,$officename);
 
     if ($insertLogStmt->execute()) {
         $_SESSION['showQRModal'] = true;

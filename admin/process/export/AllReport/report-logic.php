@@ -144,7 +144,7 @@ if ($format === 'xlsx') {
             
             if ($dataCount % 10 === 0) {
                 $sheet->mergeCells("A$rowNumber:I$rowNumber");
-                $sheet->setCellValue("A$rowNumber", '<' . str_repeat('-', 120) . ' BREAK ' . str_repeat('-', 120) . '>');
+                $sheet->setCellValue("A$rowNumber",' ' );
                 $sheet->getStyle("A$rowNumber")->getFont()->setBold(true);
                 $rowNumber++;
             }

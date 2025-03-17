@@ -25,12 +25,12 @@ if (isset($_GET['visitor_code'])) {
                 <h3>Analytics</h3>
             </div>
 
-            <form action="">
-                <select class="form-select col-6" name="" id="">
+            <form action="analytics.php" method="post" id="yearForm">
+                <select class="form-select col-6" name="year" id="yearSelect" onchange="document.getElementById('yearForm').submit();">
                     <option value="" selected disabled>Select a year</option>
                     <?php
                     $currentYear = date("Y");
-                    for ($year = 2024; $year <= $currentYear; $year++) {
+                    for ($year = 2020; $year <= $currentYear; $year++) {
                         echo "<option value=\"$year\">$year</option>";
                     }
                     ?>
