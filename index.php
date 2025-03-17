@@ -270,7 +270,7 @@ if (isset($_GET['visitor_code'])) {
                 </div>
             </div>
         </div>
-
+ 
         <!-- Login Modal -->
         <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
             <div class="modal-dialog">

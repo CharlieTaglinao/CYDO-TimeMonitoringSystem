@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
-
+ 
 // Initialize the scanner
 let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
 if (document.getElementById("preview")) {
