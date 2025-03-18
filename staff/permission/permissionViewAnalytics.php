@@ -18,16 +18,16 @@ while ($row = $result->fetch_assoc()) {
 $_SESSION['user_permissions'] = $userPermissions;
 
 
-$permissionQuery = "SELECT permission_id FROM permission WHERE permission_name = 'Monitor Dashboard'";
+$permissionQuery = "SELECT permission_id FROM permission WHERE permission_name = 'View Analytics'";
 $permissionResult = $conn->query($permissionQuery);
 $accessDashboardPermissionId = $permissionResult->fetch_assoc()['permission_id'];
 
-// if (!in_array($accessDashboardPermissionId, $_SESSION['user_permissions'])) {
-//     session_unset();
-//     session_destroy();
-//     header('Location: ../security/no-access.html'); 
-//     exit;
-// }
+if (!in_array($accessDashboardPermissionId, $_SESSION['user_permissions'])) {
+    session_unset();
+    session_destroy();
+    header('Location: ../security/no-access.html'); 
+    exit;
+}
 
 
 ?>

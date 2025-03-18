@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastName: "Please provide a last name.",
         email: "Please provide a valid e-mail address.",
         purpose: "Please provide a purpose.",
-        age: "Please provide a valid age between 1 and 150."
+        age: "Please provide a valid age"
     };
 
     
@@ -164,39 +164,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
  
-// Initialize the scanner
-let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
-if (document.getElementById("preview")) {
-    Instascan.Camera.getCameras()
-        .then(function (cameras) {
-            if (cameras.length > 0) {
-                console.log("Cameras found:", cameras);
-                // Start the scanner with the first available camera
-                scanner.start(cameras[0]);
-            } else {
-                alert("No camera found");
-            }
-        })
-        .catch(function (e) {
-            console.error("Error getting cameras:", e);
+document.getElementById('time-out-button-card').addEventListener('click', function () {
+    // Initialize the scanner
+    let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
+    if (document.getElementById("preview")) {
+        Instascan.Camera.getCameras()
+            .then(function (cameras) {
+                if (cameras.length > 0) {
+                    console.log("Cameras found:", cameras);
+                    // Start the scanner with the first available camera
+                    scanner.start(cameras[0]);
+                } else {
+                    alert("No camera found");
+                }
+            })
+            .catch(function (e) {
+                console.error("Error getting cameras:", e);
+            });
+    } else {
+        console.error("Video element not found");
+    }
+
+    // Add a listener for the scan event
+    scanner.addListener("scan", function (c) {
+        document.getElementById("code").value = c;
+
+        // Play the beep sound
+        let beepAudio = document.getElementById("beep");
+        console.log("Beep audio element:", beepAudio); 
+        beepAudio.play().then(() => {
+            console.log("Beep sound played successfully");
+            setTimeout(function() {
+                document.getElementById("btnTimeOut").click();
+            }, 700); //since 1 second yung audio file kaya nag lagay tayo dito ng timeout na kahit .7s na delay para maplay muna yung audio bago masubmit 
+        }).catch((error) => {
+            console.error("Error playing beep sound:", error);
         });
-} else {
-    console.error("Video element not found");
-}
+    });
 
-// Add a listener for the scan event
-scanner.addListener("scan", function (c) {
-    document.getElementById("code").value = c;
-
-    // Play the beep sound
-    let beepAudio = document.getElementById("beep");
-    console.log("Beep audio element:", beepAudio); 
-    beepAudio.play().then(() => {
-        console.log("Beep sound played successfully");
-        setTimeout(function() {
-            document.getElementById("btnTimeOut").click();
-        }, 700); //since 1 second yung audio file kaya nag lagay tayo dito ng timeout na kahit .7s na delay para maplay muna yung audio bago masubmit 
-    }).catch((error) => {
-        console.error("Error playing beep sound:", error);
+    // Close the camera when the modal is closed
+    const modalElement = document.getElementById('timeOutModal');
+    modalElement.addEventListener('hidden.bs.modal', function () {
+        scanner.stop();
+        console.log("Camera stopped as modal closed");
     });
 });
+

@@ -57,14 +57,14 @@ if (isset($_GET['visitor_code'])) {
                 <div class="col-md-6 offset-md-3">
                     <div class="row">
                         <div class="col-md-6">
-                            <div class="time-in-card card text-center" data-bs-toggle="modal" data-bs-target="#timeInModal">
+                            <div class="time-in-card card text-center" id="time-in-button-card" data-bs-toggle="modal" data-bs-target="#timeInModal">
                                 <div class="card-body">
                                     <h5 class="card-title">TIME IN</h5>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="time-out-card card text-center" data-bs-toggle="modal" data-bs-target="#timeOutModal">
+                            <div class="time-out-card card text-center" id="time-out-button-card" data-bs-toggle="modal" data-bs-target="#timeOutModal">
                                 <div class="card-body">
                                     <h5 class="card-title">TIME OUT</h5>
                                 </div>
@@ -237,7 +237,7 @@ if (isset($_GET['visitor_code'])) {
                                             <option value="2">FEMALE</option>
                                         </select>
     
-                                        <div class="invalid-feedback">Please select your sex.</div>
+                                        <div class="invalid-feedback"></div>
                                     </div>
                                 </div>
                             </div>
@@ -319,11 +319,28 @@ if (isset($_GET['visitor_code'])) {
                 }
             }
 
-            setInterval(checkAutoLogout, 10000); // Check every minute
+            setInterval(checkAutoLogout, 60000); // Check every minute
+
+            document.getElementById('firstName').addEventListener('input', function() {
+                var firstName = this.value;
+                if (firstName.length > 2) {
+                    fetch('fetch_visitor_data.php?first_name=' + firstName)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data) {
+                                document.getElementById('middleName').value = data.middle_name;
+                                document.getElementById('lastName').value = data.last_name;
+                                document.getElementById('email').value = data.email;
+                                document.getElementById('age').value = data.age;
+                                document.getElementById('sex').value = data.sex_id;
+                            }
+                        });
+                }
+            });
         </script>
 
         <footer>
-            <p>Let's Join Forces for a more Progressive City of General Trias</p>
+           <div class="footer-text"><p class="text-dark LJF-text">Let's Join Forces <span class="text-success LJF-text2">For a More Progressive City of General Trias</span></p></div>  
         </footer>
 
     </body>

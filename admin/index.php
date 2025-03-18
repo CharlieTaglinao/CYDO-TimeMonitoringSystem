@@ -1,12 +1,13 @@
 <?php
+
 include 'permission/permissionMonitorDashboard.php';
 
 if (isset($_GET['visitor_code'])) {
     $_SESSION['randomCode'] = $_GET['visitor_code'];
 }
 
+// Include fetch-visitors.php before the header
 include 'fetch-visitors.php';
-// include 'includes/loader.php';
 
 include 'includes/header.php';
 ?>
@@ -74,15 +75,16 @@ include 'includes/header.php';
                             </div>
 
                             <div class="col-3">
-                                <form method="POST" action="index.php?page=1">
+                                <form method="POST" action="index.php">
                                     <input type="hidden" name="all" id="all">
                                     <button class="form-control" id="allBtn">All</button>
                                 </form>
                             </div>
                             <div class="col-4">
-                                <form method="POST" action="index.php?page=1">
+                                <form method="GET" action="index.php">
                                     <input type="hidden" name="startDate" id="startDate" value="<?php echo $startDate; ?>">
                                     <input type="hidden" name="endDate" id="endDate" value="<?php echo $endDate; ?>">
+                                    <input type="hidden" name="page" value="1">
                                     <button class="form-control" id="customRangeBtn">Custom range</button>
                                 </form>
                             </div>

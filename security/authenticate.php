@@ -7,23 +7,20 @@
  * @param string $requiredRole 
  */
 
-function checkUserRole($requiredRole) {
+function checkUserRole($requiredRoles) {
     if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
         session_unset();
         session_destroy();
         header("Location: ../index.php?showLoginModal=true");
-        
+        exit();
     }
 
-    if ($_SESSION['role'] !== $requiredRole) {
+    if (!in_array($_SESSION['role'], $requiredRoles)) {
         header("Location: ../security/no-access.html");
         exit();
     }
 }
 
-function RoleAsAdmin() {
-    checkUserRole('admin');
-}
-function RoleAsStaff(){
-    checkUserRole('staff');
+function isAuthenticated() {
+    checkUserRole(['admin', 'staff']);
 }

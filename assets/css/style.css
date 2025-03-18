@@ -12,18 +12,30 @@ body {
 
 
 footer {
-    background-color: #0033ff;
+    background-color: #001a83;
     color: #ecf0f1;
     text-align: center;
     font-style: italic;
     padding: 20px 10px; 
-    font-size: 1.2rem; 
+    font-size: 2rem; 
+    font-weight: 900;
     font-family: 'Arial', sans-serif; 
     position: fixed; 
     bottom: 0;
     width: 100%;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1); 
     letter-spacing: 0.5px; 
+}
+
+.LJF-text{
+    -webkit-text-stroke: 1px white;
+}
+.LJF-text2{
+    -webkit-text-stroke: 1px white;
+}
+.footer-text{
+    position: relative;
+    top: -10px;
 }
 
 .card-title {
@@ -153,7 +165,7 @@ select.form-select {
 
 /* Full header bar */
 .header-bar {
-    background-color: #409c6c; 
+    background-color: #108444; 
     height: 70px;
     width: 100%;
     position: relative;

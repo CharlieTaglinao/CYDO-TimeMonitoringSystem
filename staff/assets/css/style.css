@@ -1,0 +1,72 @@
+body {
+  background-color: #f8f9fa;
+  box-sizing: border-box;
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+}
+
+.table th,
+.table td {
+  text-align: center;
+}
+
+.card-body p {
+  font-weight: 700;
+
+}
+
+.card-body {
+  background-color: rgb(206, 206, 206);
+}
+
+.alert-container {
+  position: fixed;
+  top: 0;
+  left: 58%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  width: 100%;
+  max-width: 1200px;
+
+} 
+
+.alert {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1050;
+  max-width: 1200px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.monitor-container{
+  height: 470px;
+  max-width: 600px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+
+/* Targeting the entire page */
+::-webkit-scrollbar {
+  width: 12px; 
+  height: 12px; 
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+  border-radius: 10px; 
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #8f8f8f; 
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
