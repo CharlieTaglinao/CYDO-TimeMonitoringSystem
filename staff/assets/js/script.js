@@ -81,7 +81,7 @@ document.addEventListener("DOMContentLoaded", function () {
 //------------------------------------------------------------------//
 // START OF FETCH AND UPDATE PAGINATION FOR USER PERMISSION TABLE 
 
-// Fetch visitors data by search
+// Fetch user permissions data by search
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("search-input-user-permission");
     const userPermissionTable = document.getElementById("user-permission-table");
@@ -141,13 +141,16 @@ document.addEventListener("DOMContentLoaded", () => {
     if (searchInput) {
         searchInput.addEventListener("input", (event) => {
             const query = event.target.value;
-            fetch(`fetch-visitors.php?search=${encodeURIComponent(query)}`)
+            const startDate = document.getElementById("startDate")?.value || "";
+            const endDate = document.getElementById("endDate")?.value || "";
+
+            fetch(`fetch-visitors.php?search=${encodeURIComponent(query)}&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`)
                 .then((response) => {
                     if (!response.ok) throw new Error("Network response was not ok");
                     return response.text();
                 })
                 .then((data) => {
-                    visitorTable.innerHTML = data;
+                    visitorTable.innerHTML = data; // Update table content
                     updateVisitorPagination();
                 })
                 .catch((error) => console.error("Error fetching data:", error));
@@ -158,7 +161,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // Function to update visitor pagination dynamically
 function updateVisitorPagination() {
     const query = document.getElementById("search-input").value;
-    fetch(`fetch-visitors.php?search=${encodeURIComponent(query)}&pagination=true`)
+    const startDate = document.getElementById("startDate")?.value || "";
+    const endDate = document.getElementById("endDate")?.value || "";
+
+    fetch(`fetch-visitors.php?search=${encodeURIComponent(query)}&pagination=true&startDate=${encodeURIComponent(startDate)}&endDate=${encodeURIComponent(endDate)}`)
         .then((response) => {
             if (!response.ok) throw new Error("Network response was not ok");
             return response.text();
@@ -172,6 +178,7 @@ function updateVisitorPagination() {
         })
         .catch((error) => console.error("Error fetching pagination data:", error));
 }
+
 
 // END OF FETCH AND UPDATE PAGINATION FOR VISITORS TABLE
 //------------------------------------------------------------------//
@@ -368,7 +375,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const sex = this.getAttribute('data-sex');
             const code = this.getAttribute('data-code');
             const purpose = this.getAttribute('data-purpose');
-
+            
             document.getElementById('modal-name').textContent = name;
             document.getElementById('modal-age').textContent = age;
             document.getElementById('modal-sex').textContent = sex;

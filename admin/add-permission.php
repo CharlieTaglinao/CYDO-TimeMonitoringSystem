@@ -31,14 +31,18 @@
                             <select class="form-select" id="userSelect" name="user_id" onchange="showPermissions()">
                                 <option value="">Select a user</option>
                                 <?php
-                                // Fetch users from the database
-                                $usersQuery = "SELECT id, username FROM account";
-                                $usersResult = $conn->query($usersQuery);
-                                if ($usersResult->num_rows > 0) {
-                                    while ($user = $usersResult->fetch_assoc()) {
-                                        echo "<option value='" . $user['id'] . "'>" . $user['username'] . "</option>";
-                                    }
-                                }
+                                 // Fetch users from the database
+                                 $usersQuery = "SELECT id, username, role FROM account";
+                                 $usersResult = $conn->query($usersQuery);
+                                 if ($usersResult->num_rows > 0) {
+                                     while ($user = $usersResult->fetch_assoc()) {
+                                         // Skip role = 1 users if logged-in user has role = 2
+                                         if ($_SESSION['role'] == 2 && $user['role'] == 1) {
+                                             continue;
+                                         }
+                                         echo "<option value='" . $user['id'] . "'>" . $user['username'] . "</option>";
+                                     }
+                                 }
                                 ?>
                             </select>
                         </div>
@@ -48,6 +52,15 @@
                             $categories = [];
                             if ($permissionsResult->num_rows > 0) {
                                 while ($row = $permissionsResult->fetch_assoc()) {
+                                    // Exclude permissions for role = 2
+                                    if ($_SESSION['role'] == 2 && 
+                                        ($row['permission_id'] == '8sAygcnqpOXP8aAAG7IAWI4Cg' || $row['permission_id'] == 'ubmssiHKw9GEPDulEVpDtOudM')) {
+                                        continue;
+                                    }
+                                    // Skip the entire category if role = 2
+                                    if ($_SESSION['role'] == 2 && $row['category'] == 'restricted_category') {
+                                        continue;
+                                    }
                                     $categories[$row['category']][] = $row;
                                 }
                             }

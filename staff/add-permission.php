@@ -32,10 +32,13 @@
                                 <option value="">Select a user</option>
                                 <?php
                                 // Fetch users from the database
-                                $usersQuery = "SELECT id, username FROM account";
+                                $usersQuery = "SELECT id, username, role FROM account";
                                 $usersResult = $conn->query($usersQuery);
                                 if ($usersResult->num_rows > 0) {
                                     while ($user = $usersResult->fetch_assoc()) {
+                                        if ($user['role'] == 1) {
+                                            continue;
+                                        }
                                         echo "<option value='" . $user['id'] . "'>" . $user['username'] . "</option>";
                                     }
                                 }
@@ -48,6 +51,13 @@
                             $categories = [];
                             if ($permissionsResult->num_rows > 0) {
                                 while ($row = $permissionsResult->fetch_assoc()) {
+                                    // Exclude specific permission IDs
+                                    // Excluded only the Add Permission and View User Permission
+                                    // Permission_id of Add Permission - 8sAygcnqpOXP8aAAG7IAWI4Cg
+                                    // Permission_id of View User Permission - ubmssiHKw9GEPDulEVpDtOudM
+                                    if (in_array($row['permission_id'], ['8sAygcnqpOXP8aAAG7IAWI4Cg', 'ubmssiHKw9GEPDulEVpDtOudM'])) {
+                                        continue;
+                                    }
                                     $categories[$row['category']][] = $row;
                                 }
                             }
@@ -89,3 +99,6 @@
 </body>
 
 </html>
+
+
+  

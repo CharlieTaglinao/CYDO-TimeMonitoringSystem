@@ -6,18 +6,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="index.php?page=1">
+                <form method="GET" action="index.php">
                     <div class="mb-3">
                         <label for="startDate" class="form-label">Start Date</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate">
+                        <input type="date" class="form-control" id="startDate" name="startDate" value="<?php echo htmlspecialchars($_GET['startDate'] ?? ''); ?>">
                     </div>
                     <div class="mb-3">
                         <label for="endDate" class="form-label">End Date</label>
-                        <input type="date" class="form-control" id="endDate" name="endDate">
+                        <input type="date" class="form-control" id="endDate" name="endDate" value="<?php echo htmlspecialchars($_GET['endDate'] ?? ''); ?>">
                     </div>
                     <button type="submit" class="btn btn-primary" id="applyDateRange">Apply</button>
                 </form>
-
             </div>
         </div>
     </div>

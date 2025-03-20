@@ -2,8 +2,8 @@
 include '../includes/database.php';
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
-$startDate = $_POST['startDate'] ?? '';
-$endDate = $_POST['endDate'] ?? '';
+$startDate = $_POST['startDate'] ?? $_GET['startDate'] ?? '';
+$endDate = $_POST['endDate'] ?? $_GET['endDate'] ?? '';
 $all = $_POST['all'] ?? '';
 
 // Count today's visitors from the time_logs table
@@ -68,6 +68,7 @@ $visitorsQuery = "
     LIMIT $limit OFFSET $offset";
 
 $visitorsResult = $conn->query($visitorsQuery);
+
 if (isset($_GET['search']) && !isset($_GET['pagination'])) {
     if ($visitorsResult->num_rows > 0) {
         while ($row = $visitorsResult->fetch_assoc()) {
@@ -90,7 +91,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
                 <td>" . $row['status'] . "</td>
                 
                 <td>
-                    <button class='btn btn-success view-details'
+                   <button class='btn btn-success view-details'
                         data-name='" . strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']) . "'
                         data-age='{$row['age']}'
                         data-sex='{$row['sex_name']}'
@@ -100,17 +101,23 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
                         data-bs-target='#visitorDetailsModal'>
                         View Details
                     </button>
+                    <form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
+                        <input type='hidden' name='visitor_code' value='{$row['code']}'>
+                        <button type='submit' class='btn btn-danger'>Time Out</button>
+                    </form>
                 </td>
             </tr>";
         }
     } else {
         echo "<tr><td colspan='7'>No records found</td></tr>";
     }
-    echo "<input type='hidden' id='total-rows' value='$totalRows'>";
-    echo "<script>
-        document.getElementById('pagination').innerHTML = '".generatePaginationLinks($totalPages, $page)."';
-        document.getElementById('page-info').textContent = 'Page $page of $totalPages';
-    </script>";
+    echo "<input type='hidden' id='total-rows' value='$totalRows'>";1
+    ?>
+        <script>
+            document.getElementById('pagination').innerHTML = '<?php echo generatePaginationLinks($totalPages, $page); ?>';
+            document.getElementById('page-info').textContent = 'Page <?php echo $page; ?> of <?php echo $totalPages; ?>';
+        </script>
+    <?php
     exit;
 }
 

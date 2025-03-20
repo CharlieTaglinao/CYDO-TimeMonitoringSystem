@@ -6,6 +6,7 @@ if (isset($_GET['visitor_code'])) {
     $_SESSION['randomCode'] = $_GET['visitor_code'];
 }
 
+// Include fetch-visitors.php before the header
 include 'fetch-visitors.php';
 
 include 'includes/header.php';
@@ -74,15 +75,16 @@ include 'includes/header.php';
                             </div>
 
                             <div class="col-3">
-                                <form method="POST" action="index.php?page=1">
+                                <form method="POST" action="index.php">
                                     <input type="hidden" name="all" id="all">
                                     <button class="form-control" id="allBtn">All</button>
                                 </form>
                             </div>
                             <div class="col-4">
-                                <form method="POST" action="index.php?page=1">
+                                <form method="GET" action="index.php">
                                     <input type="hidden" name="startDate" id="startDate" value="<?php echo $startDate; ?>">
                                     <input type="hidden" name="endDate" id="endDate" value="<?php echo $endDate; ?>">
+                                    <input type="hidden" name="page" value="1">
                                     <button class="form-control" id="customRangeBtn">Custom range</button>
                                 </form>
                             </div>
@@ -106,47 +108,58 @@ include 'includes/header.php';
                             </tr>
                         </thead>
                         <tbody id="visitor-table">
-                            <?php if (!empty($startDate) && !empty($endDate)) {
+                            <?php
+                            if (!empty($startDate) && !empty($endDate)) {
                                 include 'fetch-range-logic.php';
                             } else {
-                                while ($row = $visitorsResult->fetch_assoc()):
+                                if ($visitorsResult->num_rows > 0) {
+                                    while ($row = $visitorsResult->fetch_assoc()):
+                                        ?>
+                                        <tr>
+                                            <td>
+                                                <?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
+                                            </td>
+                                            <td><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?></td>
+                                            <td><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?></td>
+                                            <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?></td>
+                                            <td>
+                                                <?php
+                                                if (isset($row['time_in'], $row['time_out'])) {
+                                                    $timeIn = new DateTime($row['time_in']);
+                                                    $timeOut = new DateTime($row['time_out']);
+                                                    $interval = $timeIn->diff($timeOut);
+                                                    echo $interval->format('%h hours %i minutes %s seconds');
+                                                } else {
+                                                    echo '-';
+                                                }
+                                                ?>
+                                            </td>
+                                            <td><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
+                                            <td>
+                                                <button class="btn btn-success view-details"
+                                                    data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
+                                                    data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
+                                                    data-code="<?php echo $row['code']; ?>"
+                                                    data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
+                                                    data-bs-target="#visitorDetailsModal">
+                                                    View Details
+                                                </button>
+
+                                                <form action="process/force-time-out-visitor.php" method="POST" style="display:inline;">
+                                                    <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
+                                                    <button type="submit" class="btn btn-danger">Time Out</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    endwhile;
+                                } else {
                                     ?>
                                     <tr>
-                                        <td>
-                                            <?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
-                                        </td>
-                                        <td><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?>
-                                        </td>
-                                        <td><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?>
-                                        </td>
-                                        <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?>
-                                        </td>
-                                        <td>
-                                            <?php
-                                            if (isset($row['time_in'], $row['time_out'])) {
-                                                $timeIn = new DateTime($row['time_in']);
-                                                $timeOut = new DateTime($row['time_out']);
-                                                $interval = $timeIn->diff($timeOut);
-                                                echo $interval->format('%h hours %i minutes %s seconds');
-                                            } else {
-                                                echo '-';
-                                            }
-                                            ?>
-                                        </td>
-                                        <td><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
-                                        <td>
-                                            <button class="btn btn-success view-details"
-                                                data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
-                                                data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
-                                                data-code="<?php echo $row['code']; ?>"
-                                                data-purpose="<?php echo $row['purpose']; ?>" data-bs-toggle="modal"
-                                                data-bs-target="#visitorDetailsModal">
-                                                View Details
-                                            </button>
-                                        </td>
+                                        <td colspan="7" class="text-center">End of the list reached.</td>
                                     </tr>
                                     <?php
-                                endwhile;
+                                }
                             }
                             ?>
                         </tbody>
@@ -189,31 +202,37 @@ include 'includes/header.php';
                             $startPage = max(1, $page - (($page - 1) % $pagesToShow));
                             $endPage = min($totalPages, $startPage + $pagesToShow - 1);
 
+                            // Preserve custom range parameters
+                            $queryParams = http_build_query([
+                                'startDate' => $startDate ?? '',
+                                'endDate' => $endDate ?? ''
+                            ]);
+
                             // Display "Previous" button
                             if ($page > 1): ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $page - 1; ?>">Previous</a>
+                                    <a class="page-link" href="?page=<?php echo $page - 1; ?>&<?php echo $queryParams; ?>">Previous</a>
                                 </li>
                             <?php endif; ?>
 
                             <!-- Display the range of pages dynamically -->
                             <?php for ($i = $startPage; $i <= $endPage; $i++): ?>
                                 <li class="page-item <?php echo $i == $page ? 'active' : ''; ?>">
-                                    <a class="page-link" href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    <a class="page-link" href="?page=<?php echo $i; ?>&<?php echo $queryParams; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
 
                             <!-- Show ellipsis if there are more pages -->
                             <?php if ($endPage < $totalPages): ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $endPage + 1; ?>">...</a>
+                                    <a class="page-link" href="?page=<?php echo $endPage + 1; ?>&<?php echo $queryParams; ?>">...</a>
                                 </li>
                             <?php endif; ?>
 
                             <!-- Display "Next" button -->
                             <?php if ($page < $totalPages): ?>
                                 <li class="page-item">
-                                    <a class="page-link" href="?page=<?php echo $page + 1; ?>">Next</a>
+                                    <a class="page-link" href="?page=<?php echo $page + 1; ?>&<?php echo $queryParams; ?>">Next</a>
                                 </li>
                             <?php endif; ?>
                         </ul>

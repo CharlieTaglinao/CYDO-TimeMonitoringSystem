@@ -59,3 +59,4 @@ function toggleRelatedPermissions(checkbox) {
     //     document.querySelector('#permissionsContainer input[value="906IZi3K8od7FBS518t5I31jY"]').checked = false;
     // }
 }
+
