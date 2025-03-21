@@ -1,4 +1,7 @@
 <!-- Add Account Modal -->
+ <!-- asdaasdasdasasdasdasdasdasdasdsddasdasdsd -->
+  <!--to be pull-->
+  <!-- test -->
 <div class="modal fade <?php if (isset($_SESSION['show_modal']) && $_SESSION['show_modal']) echo 'show'; ?>" 
      id="exampleModal" 
      tabindex="-1" 
@@ -13,7 +16,7 @@
             </div>
             
             <div class="modal-body">
-
+ <!-- tessat -->
                 <!-- Form -->
                 <form action="process/add-account-logic.php" method="POST">
                     <div class="mb-3">
