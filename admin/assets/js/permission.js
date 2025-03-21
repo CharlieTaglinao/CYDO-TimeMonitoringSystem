@@ -2,6 +2,33 @@ function showPermissions() {
     var userSelect = document.getElementById('userSelect');
     var permissionsContainer = document.getElementById('permissionsContainer');
     if (userSelect.value) {
+        var selectedOption = userSelect.options[userSelect.selectedIndex];
+        var userRole = selectedOption.getAttribute('data-role');
+
+        if (userRole === '2') {
+            var restrictedPermissions = ['8sAygcnqpOXP8aAAG7IAWI4Cg', 'ubmssiHKw9GEPDulEVpDtOudM'];
+            document.querySelectorAll('#permissionsContainer input[type="checkbox"]').forEach(checkbox => {
+                if (restrictedPermissions.includes(checkbox.value)) {
+                    checkbox.disabled = true;
+                } else {
+                    checkbox.disabled = false;
+                }
+            });
+
+            // Hide specific cards for role = 2
+            document.getElementById('permission_View_User_Permission').style.display = 'none';
+            document.getElementById('permission_Add_Permission').style.display = 'none';
+            
+        } else {
+            document.querySelectorAll('#permissionsContainer input[type="checkbox"]').forEach(checkbox => {
+                checkbox.disabled = false;
+            });
+
+            // Show all cards for other roles
+            document.getElementById('permission_View_User_Permission').style.display = 'block';
+            document.getElementById('permission_Add_Permission').style.display = 'block';
+        }
+
         permissionsContainer.style.display = 'block';
         fetchPermissions(userSelect.value);
     } else {

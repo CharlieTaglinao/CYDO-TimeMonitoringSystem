@@ -36,11 +36,8 @@
                                  $usersResult = $conn->query($usersQuery);
                                  if ($usersResult->num_rows > 0) {
                                      while ($user = $usersResult->fetch_assoc()) {
-                                         // Skip role = 1 users if logged-in user has role = 2
-                                         if ($_SESSION['role'] == 2 && $user['role'] == 1) {
-                                             continue;
-                                         }
-                                         echo "<option value='" . $user['id'] . "'>" . $user['username'] . "</option>";
+                    
+                                         echo "<option value='" . $user['id'] . "' data-role='" . $user['role'] . "'>" . $user['username'] . "</option>";
                                      }
                                  }
                                 ?>
@@ -52,16 +49,15 @@
                             $categories = [];
                             if ($permissionsResult->num_rows > 0) {
                                 while ($row = $permissionsResult->fetch_assoc()) {
-                                    // Exclude permissions for role = 2
-                                    if ($_SESSION['role'] == 2 && 
-                                        ($row['permission_id'] == '8sAygcnqpOXP8aAAG7IAWI4Cg' || $row['permission_id'] == 'ubmssiHKw9GEPDulEVpDtOudM')) {
-                                        continue;
+                                    if ($currentUserRole == 2) {
+                                        $restrictedPermissions = ['8sAygcnqpOXP8aAAG7IAWI4Cg', 'ubmssiHKw9GEPDulEVpDtOudM'];
+                                        if (in_array($row['permission_id'], $restrictedPermissions)) {
+                                            continue;
+                                        }
                                     }
-                                    // Skip the entire category if role = 2
-                                    if ($_SESSION['role'] == 2 && $row['category'] == 'restricted_category') {
-                                        continue;
-                                    }
-                                    $categories[$row['category']][] = $row;
+                                   
+                                    
+                                    $categories[$row['category']][] = $row;   
                                 }
                             }
 
@@ -74,7 +70,7 @@
                                         echo "</div><div class='row'>";
                                     }
                                     echo "<div class='col-md-3 mb-3'>
-                                        <div class='card'>
+                                        <div class='card' id='permission" .'_'. str_replace(' ', '_', $row['permission_name']) . "'>
                                             <div class='card-body text-dark'>
                                                 <h6 class='card-title'>" . strtoupper($row['permission_name']) . "</h6>
                                                 <p class='card-subtitle mb-2 text-sm fw-lighter'>ID: " . $shortId . "</p>
@@ -99,6 +95,9 @@
         </div>
     </div>
     <script src="assets/js/permission.js"></script>
+    <script>
+    
+    </script>
 </body>
 
 </html>

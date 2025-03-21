@@ -20,9 +20,11 @@ $totalPages = ceil($totalRows / $limit);
 
 // Fetch paginated records with search filter
 $permissionQuery = "
-    SELECT account.*, GROUP_CONCAT(user_permissions.permission_id) AS permissions
+    SELECT account.*, GROUP_CONCAT(user_permissions.permission_id) AS permissions,
+    role.role AS role_name
     FROM account
     LEFT JOIN user_permissions ON account.id = user_permissions.user_id
+    INNER JOIN role ON account.role = role.id
     WHERE account.username LIKE '%$search%'
     GROUP BY account.id
     LIMIT $limit OFFSET $offset";
@@ -48,6 +50,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
         echo '<td>' . (in_array('c5pwoB1uPkzwwZgFokRZZ85fE', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
         echo '<td>' . (in_array('qD0mEzTMK6Toi4u8aR1Pdusag', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
         echo '<td>' . (in_array('ubmssiHKw9GEPDulEVpDtOudM', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>') . '</td>';
+        echo '<td>' . $row['role_name'] . '</td>';
         echo '</tr>';
     }
     exit;
