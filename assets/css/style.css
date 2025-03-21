@@ -163,6 +163,11 @@ select.form-select {
     padding-left: 10px;
 }
 
+.asterisk-required-fields{
+    color: red;
+    font-weight: 900;
+}
+
 /* Full header bar */
 .header-bar {
     background-color: #108444; 

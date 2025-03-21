@@ -19,8 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['visitor_code'])) {
     $stmt->execute();
     $stmt->close();
 
-    session_destroy();
-
     header("Location: ../index.php");
     exit();
 

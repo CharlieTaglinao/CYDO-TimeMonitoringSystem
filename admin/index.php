@@ -145,10 +145,12 @@ include 'includes/header.php';
                                                     View Details
                                                 </button>
 
-                                                <form action="process/force-time-out-visitor.php" method="POST" style="display:inline;">
-                                                    <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
-                                                    <button type="submit" class="btn btn-danger">Time Out</button>
-                                                </form>
+                                                <?php if (is_null($row['time_out'])): ?>
+                                                    <form action="process/force-time-out-visitor.php" method="POST" style="display:inline;">
+                                                        <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
+                                                        <button type="submit" class="btn btn-danger">Time Out</button>
+                                                    </form>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                         <?php
@@ -185,6 +187,8 @@ include 'includes/header.php';
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                
                                 <form action="process/export/print-receipt.php" method="GET">
                                     <input type="hidden" name="visitor_code" id="visitor_code">
                                     <button type="submit" class="btn btn-primary" id="print-button">Print</button>

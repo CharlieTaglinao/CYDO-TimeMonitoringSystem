@@ -114,7 +114,7 @@ if (isset($_GET['visitor_code'])) {
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="firstName" class="form-label">First Name</label>
+                                        <label for="firstName" class="form-label">First Name <span class="asterisk-required-fields">*</span></label>
                                         <input type="text" class="form-control" id="firstName" name="firstName"
                                             placeholder="Ex. Juan" required>
                                         <div class="invalid-feedback"></div>
@@ -134,7 +134,7 @@ if (isset($_GET['visitor_code'])) {
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="lastName" class="form-label">Last Name</label>
+                                        <label for="lastName" class="form-label">Last Name <span class="asterisk-required-fields">*</span></label>
                                         <input type="text" class="form-control" id="lastName" name="lastName"
                                             placeholder="Ex. Dela Cruz" required>
     
@@ -153,7 +153,7 @@ if (isset($_GET['visitor_code'])) {
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label class="form-label" for="office">Office</label>
+                                        <label class="form-label" for="office">Office <span class="asterisk-required-fields">*</span></label>
                                         <select class="form-select" name="office" id="office" required>
                                             <option value="" selected disabled>Select an Office</option>
                                             <option value="1">City Youth Development Office</option>
@@ -165,7 +165,7 @@ if (isset($_GET['visitor_code'])) {
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label class="form-label" for="barangay">Barangay</label>
+                                        <label class="form-label" for="barangay">Barangay <span class="asterisk-required-fields">*</span></label>
                                         <select class="form-select" name="barangay" id="barangay" required>
                                             <option value="" selected disabled>Select a Barangay</option>
                                             <option value="1">Alingaro</option>
@@ -210,7 +210,7 @@ if (isset($_GET['visitor_code'])) {
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="purpose" class="form-label">Purpose</label>
+                                        <label for="purpose" class="form-label">Purpose <span class="asterisk-required-fields">*</span></label>
                                         <input type="text" class="form-control" id="purpose" name="purpose"
                                             placeholder="Ex. Personal Matters" required>
     
@@ -219,7 +219,7 @@ if (isset($_GET['visitor_code'])) {
                                 </div>
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="age" class="form-label">Age</label>
+                                        <label for="age" class="form-label">Age <span class="asterisk-required-fields">*</span></label>
                                         <input type="text" class="form-control" id="age" name="age" placeholder="Ex. 21" required>
     
                                         <div class="invalid-feedback"></div>
@@ -230,7 +230,7 @@ if (isset($_GET['visitor_code'])) {
                             <div class="row">
                                 <div class="col">
                                     <div class="mb-3">
-                                        <label for="sex" class="form-label">Sex</label>
+                                        <label for="sex" class="form-label">Sex <span class="asterisk-required-fields">*</span></label>
                                         <select name="sex" class="form-select" id="sex" required>
                                             <option value="" selected disabled>Select </option>
                                             <option value="1">MALE</option>
