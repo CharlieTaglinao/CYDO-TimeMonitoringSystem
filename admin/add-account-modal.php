@@ -1,10 +1,8 @@
 <!-- Add Account Modal -->
  <!-- asdaasdasdasasdasdasdasdasdasdsddasdasdsd -->
   <!--to be pull-->
-<<<<<<< HEAD
   <!-- test -->
-=======
->>>>>>> adc3044f2967202e14a92129a8c4ce8caf1c6914
+   <!-- asdasdasdasdasd -->
 <div class="modal fade <?php if (isset($_SESSION['show_modal']) && $_SESSION['show_modal']) echo 'show'; ?>" 
      id="exampleModal" 
      tabindex="-1" 
