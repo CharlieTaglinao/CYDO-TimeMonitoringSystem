@@ -146,9 +146,9 @@ include 'includes/header.php';
                                                 </button>
 
                                                 <?php if (is_null($row['time_out'])): ?>
-                                                    <form action="process/force-time-out-visitor.php" method="POST" style="display:inline;">
+                                                    <form action="process/force-time-out-visitor.php" method="POST" class="time-out-form" style="display:inline;">
                                                         <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
-                                                        <button type="submit" class="btn btn-danger">Time Out</button>
+                                                        <button type="button" class="btn btn-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
                                                     </form>
                                                 <?php endif; ?>
                                             </td>

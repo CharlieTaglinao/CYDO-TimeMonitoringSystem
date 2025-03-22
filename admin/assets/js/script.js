@@ -60,6 +60,35 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const timeOutButtons = document.querySelectorAll(".time-out-button");
+
+    timeOutButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const visitorCode = this.getAttribute("data-id");
+            const form = this.closest(".time-out-form");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: `You are about to time out visitor with code: ${visitorCode}.`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#0A9548",
+                cancelButtonColor: "#a9a9a9",
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+
+
+
+
 
 // Pop up modal for edit user account
 document.addEventListener("DOMContentLoaded", function () {
@@ -580,4 +609,5 @@ document.addEventListener("DOMContentLoaded", function () {
     initialize3DChart('cydoChart', cydoChartData, chartOptions, 'Incoming CYDO Visitors');
     initialize3DChart('pdaoChart', pdaoChartData, chartOptions, 'Incoming PDAO Visitors');
 });
+
 
