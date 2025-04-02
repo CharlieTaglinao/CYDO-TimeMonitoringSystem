@@ -1,5 +1,5 @@
 <?php
-// asd
+
 include 'permission/permissionMonitorDashboard.php';
 
 if (isset($_GET['visitor_code'])) {

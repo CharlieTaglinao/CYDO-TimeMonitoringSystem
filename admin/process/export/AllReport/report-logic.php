@@ -81,14 +81,14 @@ if (!$result) {
     error_log('Query Error: ' . $conn->error);
     $_SESSION['message'] = 'Error fetching records. Please contact the administrator.';
     $_SESSION['message_type'] = 'danger';
-    header('Location: ../../../../report.php');
+    header('Location: ../../../report.php');
     exit;
 }
 
 if ($result->num_rows === 0) {
     $_SESSION['message'] = 'No records found for the selected period.';
     $_SESSION['message_type'] = 'warning';
-    header('Location: ../../../../report.php');
+    header('Location: ../../../report.php');
     exit;
 }
 
