@@ -87,7 +87,24 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+// Handle "View Details" button clicks
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('view-details')) {
+            const button = e.target;
 
+            // Populate modal with data attributes
+            document.getElementById('modal-name').textContent = button.getAttribute('data-name');
+            document.getElementById('modal-age').textContent = button.getAttribute('data-age');
+            document.getElementById('modal-sex').textContent = button.getAttribute('data-sex');
+            document.getElementById('modal-code').textContent = button.getAttribute('data-code');
+            document.getElementById('modal-purpose').textContent = button.getAttribute('data-purpose');
+
+            // Set hidden input for printing receipt
+            document.getElementById('visitor_code').value = button.getAttribute('data-code');
+        }
+    });
+});
 
 
 // Pop up modal for edit user account
@@ -394,6 +411,8 @@ setTimeout(function () {
         bsAlert.close();
     }
 }, 3000);
+
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const viewDetailsButtons = document.querySelectorAll('.view-details');

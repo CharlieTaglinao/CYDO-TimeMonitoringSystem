@@ -6,10 +6,10 @@ $startDate = $_POST['startDate'] ?? $_GET['startDate'] ?? '';
 $endDate = $_POST['endDate'] ?? $_GET['endDate'] ?? '';
 $all = $_POST['all'] ?? '';
 
-// Count today's visitors from the time_logs table
+// Count today's visitors
 $totalVisitorsTodayQuery = "SELECT COUNT(client_id) AS total_today FROM time_logs WHERE DATE(time_in) = CURDATE()";
 $totalVisitorsTodayResult = $conn->query($totalVisitorsTodayQuery);
-$totalVisitorsToday = $totalVisitorsTodayResult->fetch_assoc()['total_today'];
+$totalVisitorsToday = $totalVisitorsTodayResult->fetch_assoc()['total_today'] ?? 0;
 
 // Count current visitors
 $currentVisitorsQuery = "SELECT (COUNT(client_id) - (SELECT COUNT(client_id) 
@@ -17,19 +17,20 @@ $currentVisitorsQuery = "SELECT (COUNT(client_id) - (SELECT COUNT(client_id)
                         AS current_visitors FROM time_logs 
                         WHERE DATE(time_in) = CURDATE();";
 $currentVisitorsResult = $conn->query($currentVisitorsQuery);
-$currentVisitors = $currentVisitorsResult->fetch_assoc()['current_visitors'];
+$currentVisitors = $currentVisitorsResult->fetch_assoc()['current_visitors'] ?? 0;
 
 // Count monthly visitors
 $totalMonthlyVisitorsQuery = "SELECT COUNT(client_id) AS total_month FROM time_logs WHERE YEAR(time_in) = YEAR(CURDATE()) AND MONTH(time_in) = MONTH(CURDATE())";
 $totalMonthlyVisitorsResult = $conn->query($totalMonthlyVisitorsQuery);
-$totalMonthlyVisitor = $totalMonthlyVisitorsResult->fetch_assoc()['total_month'];
+$totalMonthlyVisitor = $totalMonthlyVisitorsResult->fetch_assoc()['total_month'] ?? 0;
 
-// Set pagination variables
-$limit = 7; 
-$page = isset($_GET['page']) ? (int)$_GET['page'] : 1; 
-$offset = ($page - 1) * $limit; 
+// Pagination setup
+$limit = 7;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = max($page, 1);
+$offset = ($page - 1) * $limit;
 
-// Count total rows with search filter and date range
+// Count total filtered rows
 $totalRowsQuery = "
     SELECT COUNT(*) AS total 
     FROM visitors 
@@ -39,10 +40,10 @@ $totalRowsQuery = "
     AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
 ";
 $totalRowsResult = $conn->query($totalRowsQuery);
-$totalRows = $totalRowsResult->fetch_assoc()['total'];
-$totalPages = ceil($totalRows / $limit); 
+$totalRows = $totalRowsResult->fetch_assoc()['total'] ?? 0;
+$totalPages = max(ceil($totalRows / $limit), 1);
 
-// Fetch paginated records with search filter and date range
+// Fetch paginated visitors
 $visitorsQuery = "
     SELECT DISTINCT
         visitors.first_name, 
@@ -69,79 +70,165 @@ $visitorsQuery = "
 
 $visitorsResult = $conn->query($visitorsQuery);
 
-if (isset($_GET['search']) && !isset($_GET['pagination'])) {
+// Handle AJAX requests for dynamic table updates
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
+    // Fetch paginated visitors for AJAX requests
     if ($visitorsResult->num_rows > 0) {
         while ($row = $visitorsResult->fetch_assoc()) {
+            $fullName = strtoupper(htmlspecialchars($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']));
+            $date = isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-';
+            $timeIn = isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-';
+            $timeOut = isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-';
+
             echo "<tr>
-                <td>" . strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']) . "</td>
-                <td>" . (isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-') . "</td>
-                <td>" . (isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-') . "</td>
-                <td>" . (isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-') . "</td>
+                <td>{$fullName}</td>
+                <td>{$date}</td>
+                <td>{$timeIn}</td>
+                <td>{$timeOut}</td>
                 <td>";
+
             if (isset($row['time_in'], $row['time_out'])) {
-                $timeIn = new DateTime($row['time_in']);
-                $timeOut = new DateTime($row['time_out']);
-                $interval = $timeIn->diff($timeOut);
+                $timeInObj = new DateTime($row['time_in']);
+                $timeOutObj = new DateTime($row['time_out']);
+                $interval = $timeInObj->diff($timeOutObj);
                 echo $interval->format('%h hours %i minutes %s seconds');
             } else {
                 echo '-';
             }
 
             echo "</td>
-                <td>" . $row['status'] . "</td>
-                
+                <td>" . htmlspecialchars($row['status']) . "</td>
                 <td>
                    <button class='btn btn-success view-details'
-                        data-name='" . strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']) . "'
-                        data-age='{$row['age']}'
-                        data-sex='{$row['sex_name']}'
-                        data-code='{$row['code']}'
-                        data-purpose='{$row['purpose']}'
+                        data-name='{$fullName}'
+                        data-age='" . htmlspecialchars($row['age']) . "'
+                        data-sex='" . htmlspecialchars($row['sex_name']) . "'
+                        data-code='" . htmlspecialchars($row['code']) . "'
+                        data-purpose='" . htmlspecialchars($row['purpose']) . "'
                         data-bs-toggle='modal'
                         data-bs-target='#visitorDetailsModal'>
                         View Details
-                    </button>
-                    <form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
-                        <input type='hidden' name='visitor_code' value='{$row['code']}'>
+                    </button>";
+
+            if ($row['time_out'] === null) {
+                echo "<form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
+                        <input type='hidden' name='visitor_code' value='" . htmlspecialchars($row['code']) . "'>
                         <button type='submit' class='btn btn-danger'>Time Out</button>
-                    </form>
-                </td>
+                      </form>";
+            }
+
+            echo "</td>
             </tr>";
         }
     } else {
         echo "<tr><td colspan='7'>No records found</td></tr>";
     }
-    echo "<input type='hidden' id='total-rows' value='$totalRows'>";1
+
+    // Return updated pagination links
+    echo '<script>
+        document.getElementById("pagination").innerHTML = `' . generatePaginationLinks($totalPages, $page) . '`;
+        document.getElementById("page-info").textContent = "Page ' . $page . ' of ' . $totalPages . '";
+    </script>';
+    exit;
+}
+
+// Handle search results
+if (isset($_GET['search']) && !isset($_GET['pagination'])) {
+    if ($visitorsResult->num_rows > 0) {
+        while ($row = $visitorsResult->fetch_assoc()) {
+            $fullName = strtoupper(htmlspecialchars($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']));
+            $date = isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-';
+            $timeIn = isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-';
+            $timeOut = isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-';
+
+
+            echo "<tr>
+                <td>{$fullName}</td>
+                <td>{$date}</td>
+                <td>{$timeIn}</td>
+                <td>{$timeOut}</td>
+                <td>";
+
+            if (isset($row['time_in'], $row['time_out'])) {
+                $timeInObj = new DateTime($row['time_in']);
+                $timeOutObj = new DateTime($row['time_out']);
+                $interval = $timeInObj->diff($timeOutObj);
+                echo $interval->format('%h hours %i minutes %s seconds');
+            } else {
+                echo '-';
+            }
+
+            echo "</td>
+                <td>" . htmlspecialchars($row['status']) . "</td>
+                <td>
+                   <button class='btn btn-success view-details'
+                        data-name='{$fullName}'
+                        data-age='" . htmlspecialchars($row['age']) . "'
+                        data-sex='" . htmlspecialchars($row['sex_name']) . "'
+                        data-code='" . htmlspecialchars($row['code']) . "'
+                        data-purpose='" . htmlspecialchars($row['purpose']) . "'
+                        data-bs-toggle='modal'
+                        data-bs-target='#visitorDetailsModal'>
+                        View Details
+                    </button>";
+
+            if ($row['time_out'] === null) {
+                echo "<form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
+                        <input type='hidden' name='visitor_code' value='" . htmlspecialchars($row['code']) . "'>
+                        <button type='submit' class='btn btn-danger'>Time Out</button>
+                      </form>";
+            }
+
+            echo "</td>
+            </tr>";
+        }
+    } else {
+        echo "<tr><td colspan='7'>No records found</td></tr>";
+    }
+    
+    echo "<input type='hidden' id='total-rows' value='$totalRows'>";
     ?>
-        <script>
-            document.getElementById('pagination').innerHTML = '<?php echo generatePaginationLinks($totalPages, $page); ?>';
-            document.getElementById('page-info').textContent = 'Page <?php echo $page; ?> of <?php echo $totalPages; ?>';
-        </script>
     <?php
     exit;
 }
 
+// Handle pagination separately
 if (isset($_GET['pagination'])) {
     echo generatePaginationLinks($totalPages, $page);
     exit;
 }
 
+// Generate pagination links
 function generatePaginationLinks($totalPages, $currentPage) {
-    $pagesToShow = 3;
-    $startPage = max(1, $currentPage - (($currentPage - 1) % $pagesToShow));
-    $endPage = min($totalPages, $startPage + $pagesToShow - 1);
     $paginationLinks = '';
+    $range = 2; // Number of pages to show before and after the current page
+    $startPage = max(1, $currentPage - $range);
+    $endPage = min($totalPages, $currentPage + $range);
 
     if ($currentPage > 1) {
         $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($currentPage - 1) . '">Previous</a></li>';
     }
 
-    for ($i = $startPage; $i <= $endPage; $i++) {
-        $paginationLinks .= '<li class="page-item ' . ($i == $currentPage ? 'active' : '') . '"><a class="page-link" href="?page=' . $i . '">' . $i . '</a></li>';
+    // Show ellipsis if there are pages before the start range
+    if ($startPage > 1) {
+        $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=1">1</a></li>';
+        if ($startPage > 2) {
+            $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($startPage - 1) . '">...</a></li>';
+        }
     }
 
+    for ($i = $startPage; $i <= $endPage; $i++) {
+        $paginationLinks .= '<li class="page-item ' . ($i == $currentPage ? 'active' : '') . '">
+                                <a class="page-link" href="?page=' . $i . '">' . $i . '</a>
+                             </li>';
+    }
+
+    // Show ellipsis if there are pages after the end range
     if ($endPage < $totalPages) {
-        $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($endPage + 1) . '">...</a></li>';
+        if ($endPage < $totalPages - 1) {
+            $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . ($endPage + 1) . '">...</a></li>';
+        }
+        $paginationLinks .= '<li class="page-item"><a class="page-link" href="?page=' . $totalPages . '">' . $totalPages . '</a></li>';
     }
 
     if ($currentPage < $totalPages) {
