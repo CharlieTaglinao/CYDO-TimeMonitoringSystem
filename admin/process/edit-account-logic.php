@@ -5,6 +5,8 @@ session_start();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);
     $username = trim($_POST['username']);
+    $password = trim($_POST['password']);
+    $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
     $role = intval($_POST['role']);
     
     // Validate input
@@ -16,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Retrieve the existing account details
-    $selectQuery = "SELECT username, role FROM account WHERE id = ?";
+    $selectQuery = "SELECT username,password, role FROM account WHERE id = ?";
     $selectStmt = $conn->prepare($selectQuery);
     $selectStmt->bind_param("i", $id);
     $selectStmt->execute();
@@ -31,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Check if there are any changes
-    if ($existingData['username'] === $username && $existingData['role'] == $role) {
+    if ($existingData['username'] === $username && $existingData['role'] == $role && $existingData['password'] === $hashedpassword) {
         $_SESSION['message'] = "Nothing changes.";
         $_SESSION['message_type'] = "info";
         header("Location: ../view-account.php");
@@ -39,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Update the account details
-    $updateQuery = "UPDATE account SET username = ?, role = ? WHERE id = ?";
+    $updateQuery = "UPDATE account SET username = ?,password = ?, role = ? WHERE id = ?";
     $stmt = $conn->prepare($updateQuery);
-    $stmt->bind_param("sii", $username, $role, $id);
+    $stmt->bind_param("ssii", $username,$hashedpassword, $role, $id);
 
     if ($stmt->execute()) {
         $_SESSION['message'] = "Account updated successfully.";

@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("search-input");
     const visitorTable = document.getElementById("visitor-table");
 
-    if (searchInput) {
+    if (searchInput && visitorTable) {
         searchInput.addEventListener("input", (event) => {
             const query = event.target.value;
             const startDate = document.getElementById("startDate")?.value || "";
@@ -201,6 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .catch((error) => console.error("Error fetching data:", error));
         });
+    } else {
+        console.warn("Search input or visitor table element is missing.");
     }
 });
 
@@ -553,8 +555,13 @@ function initialize3DChart(chartId, chartData, chartOptions, chartTitle) {
     });
 }
 
-// Function to create 3D line graphs using the fetched data
+// Ensure visitorData and other datasets are defined
 document.addEventListener("DOMContentLoaded", function () {
+    if (typeof visitorData === "undefined" || typeof userData === "undefined" || typeof cydoData === "undefined" || typeof pdaoData === "undefined") {
+        console.error("Chart data is not defined. Please ensure visitorData, userData, cydoData, and pdaoData are loaded before initializing charts.");
+        return;
+    }
+
     const visitorChartData = {
         labels: visitorData.labels,
         datasets: [{

@@ -1,7 +1,12 @@
 <?php
 include '../includes/database.php';
+if(!isset($_SESSION)) {
+    session_start();
+
+}
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+$username = $_SESSION['username'];
 
 // Count all admin
 $totalAdminQuery = "SELECT COUNT(id) AS total_admin FROM account WHERE role = 1";
@@ -24,16 +29,17 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Count total rows with search filter
-$totalRowsQuery = "SELECT COUNT(*) AS total FROM account";
+$totalRowsQuery = "SELECT COUNT(*) AS total FROM account WHERE username != '$username' AND role = 2";
 if (!empty($search)) {
-    $totalRowsQuery .= " WHERE username LIKE '%$search%'";
+    $totalRowsQuery .= " AND username LIKE '$search%'"; 
 }
 $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
 // Fetch accounts with optional search
-$accountQuery = "SELECT * FROM account WHERE username LIKE '%$search%' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+
+$accountQuery = "SELECT * FROM account WHERE username LIKE '$search%' AND username != '$username' AND role = 2 ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
 $accountResult = $conn->query($accountQuery);
 
 if (isset($_GET['search']) && !isset($_GET['pagination'])) {

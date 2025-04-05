@@ -8,6 +8,7 @@ require_once '../includes/database.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
+    
 
     
     if (empty($username) || empty($password)) {
@@ -69,4 +70,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     header('Location: ../index');
     exit();
 }
+
 ?>

@@ -35,7 +35,11 @@ $totalRowsQuery = "
     SELECT COUNT(*) AS total 
     FROM visitors 
     INNER JOIN time_logs ON visitors.id = time_logs.client_id
-    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '$search%'
+    OR CONCAT(visitors.first_name, ' ', visitors.last_name) LIKE '$search%'
+    OR visitors.first_name LIKE '$search%'
+    OR visitors.middle_name LIKE '$search%'
+    OR visitors.last_name LIKE '$search%'
     AND ('$startDate' = '' OR DATE(time_logs.time_in) >= '$startDate')
     AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
 ";
@@ -62,7 +66,11 @@ $visitorsQuery = "
     INNER JOIN sex ON visitors.sex_id = sex.id
     INNER JOIN (SELECT client_id, MAX(id) as latest_purpose_id FROM purpose GROUP BY client_id) as latest_purposes ON visitors.id = latest_purposes.client_id
     INNER JOIN purpose ON latest_purposes.latest_purpose_id = purpose.id 
-    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '$search%'
+    OR CONCAT(visitors.first_name, ' ', visitors.last_name) LIKE '$search%'
+    OR visitors.first_name LIKE '$search%'
+    OR visitors.middle_name LIKE '$search%'
+    OR visitors.last_name LIKE '$search%'
     AND ('$startDate' = '' OR DATE(time_logs.time_in) >= '$startDate')
     AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
     ORDER BY time_logs.time_in DESC 
