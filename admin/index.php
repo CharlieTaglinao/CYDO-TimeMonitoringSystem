@@ -12,7 +12,7 @@ include 'fetch-visitors.php';
 include 'includes/header.php';
 ?>
 
-<body class="bg-light">
+<body>
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
@@ -75,13 +75,13 @@ include 'includes/header.php';
                             </div>
 
                             <div class="col-3">
-                                <form method="POST" action="index.php">
+                                <form method="POST" action="index">
                                     <input type="hidden" name="all" id="all">
                                     <button class="form-control" id="allBtn">All</button>
                                 </form>
                             </div>
                             <div class="col-4">
-                                <form method="GET" action="index.php">
+                                <form method="GET" action="index">
                                     <input type="hidden" name="startDate" id="startDate" value="<?php echo $startDate; ?>">
                                     <input type="hidden" name="endDate" id="endDate" value="<?php echo $endDate; ?>">
                                     <input type="hidden" name="page" value="1">

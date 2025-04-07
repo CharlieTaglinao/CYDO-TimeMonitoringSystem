@@ -3,7 +3,7 @@
     include 'permission/permissionAddPermission.php';
 ?>
 
-<body class="bg-light">
+<body>
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>

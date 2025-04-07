@@ -32,14 +32,16 @@ $offset = ($page - 1) * $limit;
 
 // Count total filtered rows
 $totalRowsQuery = "
-    SELECT COUNT(*) AS total 
+    SELECT COUNT(DISTINCT visitors.id) AS total 
     FROM visitors 
     INNER JOIN time_logs ON visitors.id = time_logs.client_id
-    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '$search%'
-    OR CONCAT(visitors.first_name, ' ', visitors.last_name) LIKE '$search%'
-    OR visitors.first_name LIKE '$search%'
-    OR visitors.middle_name LIKE '$search%'
-    OR visitors.last_name LIKE '$search%'
+    WHERE (
+        CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '$search%'
+        OR CONCAT(visitors.first_name, ' ', visitors.last_name) LIKE '$search%'
+        OR visitors.first_name LIKE '$search%'
+        OR visitors.middle_name LIKE '$search%'
+        OR visitors.last_name LIKE '$search%'
+    )
     AND ('$startDate' = '' OR DATE(time_logs.time_in) >= '$startDate')
     AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
 ";

@@ -219,20 +219,19 @@ function updateVisitorPagination() {
         })
         .then((data) => {
             document.getElementById("pagination").innerHTML = data;
-            const totalRows = parseInt(document.getElementById("total-rows").value);
-            const totalPages = Math.ceil(totalRows / 7);
-            const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
-            document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+            const totalRowsElement = document.getElementById("total-rows");
+            if (totalRowsElement) {
+                const totalRows = parseInt(totalRowsElement.value);
+                const totalPages = Math.ceil(totalRows / 7); // Adjust rows per page if needed
+                const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
+                document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+            }
         })
         .catch((error) => console.error("Error fetching pagination data:", error));
 }
 
-
 // END OF FETCH AND UPDATE PAGINATION FOR VISITORS TABLE
 //------------------------------------------------------------------//
-
-
-
 
 
 
@@ -480,12 +479,12 @@ window.addEventListener('load', async () => {
     document.querySelector('.image-holder').style.display = 'none';
 });
 
-// Reload index.php every 10 seconds
+// Reload index.php every 60 seconds
 setInterval(() => {
-    if (window.location.pathname.endsWith("index.php")) {
+    if (window.location.pathname.endsWith("index") || window.location.pathname.endsWith("monitor-visitor")) {
         window.location.reload();
     }
-}, 10000);
+}, 60000);
 
 // Start of chart js
 
@@ -638,6 +637,25 @@ document.addEventListener("DOMContentLoaded", function () {
     initialize3DChart('userChart', userChartData, chartOptions, 'Total Users');
     initialize3DChart('cydoChart', cydoChartData, chartOptions, 'Incoming CYDO Visitors');
     initialize3DChart('pdaoChart', pdaoChartData, chartOptions, 'Incoming PDAO Visitors');
+});
+
+// Dark mode toggle
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("dark-mode-toggle");
+    const body = document.body;
+
+    const savedMode = localStorage.getItem("theme");
+    if (savedMode === "dark") {
+        body.classList.add("dark-mode");
+        toggleButton.textContent = "Light Mode";
+    }
+
+    toggleButton.addEventListener("click", function () {
+        body.classList.toggle("dark-mode");
+        const isDarkMode = body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        toggleButton.textContent = isDarkMode ? "Light Mode" : "Dark Mode";
+    });
 });
 
 

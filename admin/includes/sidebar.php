@@ -93,7 +93,10 @@ function has_permission($permission_id, $user_permissions) {
         <?php } ?>
 
         <hr>
-        
+
+        <button id="dark-mode-toggle" class="btn btn-secondary">Dark Mode</button>
+
         <a href="process/logout.php" class="nav-link" id="logout-button">Logout</a>
     </nav>
+    
 </div>
