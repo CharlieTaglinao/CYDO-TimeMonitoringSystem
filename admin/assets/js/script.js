@@ -480,8 +480,12 @@ window.addEventListener('load', async () => {
     document.querySelector('.image-holder').style.display = 'none';
 });
 
-
-
+// Reload index.php every 10 seconds
+setInterval(() => {
+    if (window.location.pathname.endsWith("index.php")) {
+        window.location.reload();
+    }
+}, 10000);
 
 // Start of chart js
 
@@ -635,5 +639,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initialize3DChart('cydoChart', cydoChartData, chartOptions, 'Incoming CYDO Visitors');
     initialize3DChart('pdaoChart', pdaoChartData, chartOptions, 'Incoming PDAO Visitors');
 });
+
 
 

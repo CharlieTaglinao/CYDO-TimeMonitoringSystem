@@ -34,6 +34,7 @@
                                  // Fetch users from the database
                                  $usersQuery = "SELECT id, username, role FROM account";
                                  $usersResult = $conn->query($usersQuery);
+                                 
                                  if ($usersResult->num_rows > 0) {
                                      while ($user = $usersResult->fetch_assoc()) {
                     

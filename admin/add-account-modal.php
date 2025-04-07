@@ -19,7 +19,6 @@
             </div>
             
             <div class="modal-body">
- <!-- tessat -->
                 <!-- Form -->
                 <form action="process/add-account-logic.php" method="POST">
                     <div class="mb-3">
@@ -32,6 +31,10 @@
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" id="username" name="username" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="text" id="email" name="email" class="form-control">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>
