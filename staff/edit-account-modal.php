@@ -20,6 +20,10 @@
                             <label for="edit-username" class="form-label">Username</label>
                             <input type="text" id="edit-username" name="username" class="form-control">
                         </div>
+                        <div class="mb-3">
+                            <label for="edit-password" class="form-label">Password</label>
+                            <input type="password" id="edit-password" name="password" class="form-control">
+                        </div>
                         <button type="submit" class="btn btn-success w-100">Update</button>
                     </form>
                 </div>

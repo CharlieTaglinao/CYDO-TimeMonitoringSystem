@@ -110,23 +110,36 @@ body {
   padding: 12px 24px;
   border-radius: 30px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 body.dark-mode #dark-mode-toggle {
   background: linear-gradient(135deg, #1e1e1e, #212f3c, #256328); /* Dark mode gradient */
 }
+
 body.dark-mode #dark-mode-toggle:hover {
   background: linear-gradient(135deg, #fff, #3498db, #409c6c); /* Dark mode gradient */
+  box-shadow: 0 4px 4px rgb(255, 255, 255);
 }
 
 #dark-mode-toggle:hover {
   background: linear-gradient(135deg, #1e1e1e, #212f3c, #256328);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 4px rgb(0, 0, 0);
   transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 
@@ -209,7 +222,6 @@ body.dark-mode .pagination .page-item .page-link:hover {
 body.dark-mode .swal2-popup {
   background-color: #2c2c2c;
   color: #ffffff;
-  border: 1px solid #444;
 }
 
 body.dark-mode .swal2-title {
@@ -223,15 +235,13 @@ body.dark-mode .swal2-content {
 body.dark-mode .swal2-confirm {
   background-color: #444;
   color: #ffffff;
-  border: 1px solid #555;
 }
 
 body.dark-mode .swal2-cancel {
   background-color: #555;
   color: #ffffff;
-  border: 1px solid #666;
-}
 
+}
 /* Dark mode styles for cards in add permission */
 body.dark-mode .card-body.text-dark {
   background-color: #2c2c2c;
@@ -253,3 +263,37 @@ body.dark-mode .card p,
 .card .form-check-label {
   color: #ffffff;
 }
+
+
+/* Dark mode styles for Monitor visitor */
+body.dark-mode .card {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: none;
+}
+body.dark-mode .card-body.text-dark {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+body.dark-mode .monitor-container {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+
+body.dark-mode .monitor-container .list-group-item {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+body.dark-mode .monitor-container .list-group small {
+  background-color: #444;
+  color: #ffffff;
+}
+
+body.dark-mode .text-muted {
+  color: #ffffff !important;
+}
+

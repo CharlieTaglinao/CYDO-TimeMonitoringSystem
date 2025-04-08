@@ -86,11 +86,13 @@ function has_permission($permission_id, $user_permissions) {
                     <nav class="nav flex-column ms-3">
                         <a href="add-permission" class="nav-link">Add Permission</a>
                         <a href="view-permission" class="nav-link" id="viewPermissionsBtn">View Permissions</a>
-                        <a href="change-password" class="nav-link">Change Password</a>
                     </nav>
                 </div>
             </div>
         <?php } ?>
+
+        <!-- Change Password for Everyone -->
+        <a href="change-password" class="nav-link">Change Password</a>
 
         <hr>
 

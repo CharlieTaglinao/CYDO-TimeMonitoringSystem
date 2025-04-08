@@ -570,7 +570,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'Visitors',
             data: visitorData.values,
-            backgroundColor: 'rgba(64, 156, 108, 0.2)',
+            backgroundColor: 'rgb(64, 156, 108)',
             borderColor: 'rgba(64, 156, 108, 1)',
             borderWidth: 2,
             fill: true,
@@ -583,7 +583,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'Users',
             data: userData.values,
-            backgroundColor: 'rgba(0, 51, 255, 0.2)',
+            backgroundColor: 'rgb(0, 51, 255)',
             borderColor: 'rgba(0, 51, 255, 1)',
             borderWidth: 2,
             fill: true,
@@ -596,7 +596,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'CYDO',
             data: cydoData.values,
-            backgroundColor: 'rgba(255, 79, 76, 0.2)',
+            backgroundColor: 'rgb(255, 79, 76)',
             borderColor: 'rgba(255, 79, 76, 1)',
             borderWidth: 2,
             fill: true,
@@ -609,8 +609,8 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'PDAO',
             data: pdaoData.values,
-            backgroundColor: 'rgba(255, 253, 14, 0.2)',
-            borderColor: 'rgba(255, 253, 14, 1)',
+            backgroundColor: 'rgb(182, 182, 5)',
+            borderColor: 'rgb(182, 182, 5)',
             borderWidth: 2,
             fill: true,
             tension: 0.4

@@ -30,7 +30,7 @@ if (isset($_GET['visitor_code'])) {
                     <option value="" selected disabled>Select a year</option>
                     <?php
                     $currentYear = date("Y");
-                    for ($year = 2020; $year <= $currentYear; $year++) {
+                    for ($year = 2024; $year <= $currentYear; $year++) {
                         echo "<option value=\"$year\">$year</option>";
                     }
                     ?>

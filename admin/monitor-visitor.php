@@ -93,8 +93,7 @@ include 'permission/permissionMonitorVisitor.php';?>
                                                             <?php echo (new DateTime($row['time_in']))->format('F j, Y'); ?></small><br>
                                                         <small class="text-muted" style="font-weight: 600;">Time in:
                                                             <?php echo (new DateTime($row['time_in']))->format('g:i A'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Purpose:
-                                                            <?php echo $row['purpose']; ?></small>
+                                                        <small class="text-muted" style="font-weight: 600;">Purpose:<?php echo $row['purpose']; ?></small>
                                                     </div>
                                                     <span class="badge bg-success">IN SITE</span>
                                                 </div>

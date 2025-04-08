@@ -2,6 +2,7 @@
 include '../includes/database.php';
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
+$username = $_SESSION['username'];
 
 // Count all admin
 $totalAdminQuery = "SELECT COUNT(id) AS total_admin FROM account WHERE role = 1";
@@ -33,7 +34,8 @@ $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
 // Fetch accounts with optional search
-$accountQuery = "SELECT * FROM account WHERE role = 2 AND username LIKE '%$search%' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+
+$accountQuery = "SELECT * FROM account WHERE role = 2 AND username LIKE '%$search%' AND username != '$username' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
 $accountResult = $conn->query($accountQuery);
 
 if (isset($_GET['search']) && !isset($_GET['pagination'])) {
