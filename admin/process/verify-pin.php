@@ -3,6 +3,12 @@ session_start();
 header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
+
+if (!isset($data['pin'])) {
+    echo json_encode(['success' => false, 'message' => 'PIN is missing.']);
+    exit;
+}
+
 $pin = $data['pin'];
 
 if (isset($_SESSION['verification_pin'], $_SESSION['verification_pin_expiration'])) {

@@ -584,3 +584,35 @@ document.addEventListener("DOMContentLoaded", function () {
     initialize3DChart('pdaoChart', pdaoChartData, chartOptions, 'Incoming PDAO Visitors');
 });
 
+// Dark mode toggle
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("dark-mode-toggle");
+    const body = document.body;
+    const icon = toggleButton.querySelector("i");
+
+    const savedMode = localStorage.getItem("theme");
+    if (savedMode === "dark") {
+        body.classList.add("dark-mode");
+        icon.classList.remove("fa-moon");
+        icon.classList.add("fa-sun");
+        toggleButton.textContent = " Light Mode";
+        toggleButton.prepend(icon);
+    }
+
+    toggleButton.addEventListener("click", function () {
+        body.classList.toggle("dark-mode");
+        const isDarkMode = body.classList.contains("dark-mode");
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        if (isDarkMode) {
+            icon.classList.remove("fa-moon");
+            icon.classList.add("fa-sun");
+            toggleButton.textContent = " Light Mode";
+        } else {
+            icon.classList.remove("fa-sun");
+            icon.classList.add("fa-moon");
+            toggleButton.textContent = " Dark Mode";
+        }
+        toggleButton.prepend(icon);
+    });
+});
+

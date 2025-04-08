@@ -99,6 +99,37 @@ body {
 }
 
 /* Dark mode styles */
+#dark-mode-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  background: linear-gradient(135deg, #fff, #3498db, #409c6c); /* Default to light mode gradient */
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+body.dark-mode #dark-mode-toggle {
+  background: linear-gradient(135deg, #1e1e1e, #212f3c, #256328); /* Dark mode gradient */
+}
+body.dark-mode #dark-mode-toggle:hover {
+  background: linear-gradient(135deg, #fff, #3498db, #409c6c); /* Dark mode gradient */
+}
+
+#dark-mode-toggle:hover {
+  background: linear-gradient(135deg, #1e1e1e, #212f3c, #256328);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+}
+
+
 body.dark-mode {
   background-color: #ff4f4f;
   color: #ffffff;
@@ -154,4 +185,71 @@ body.dark-mode .form-select {
 body.dark-mode .form-control::placeholder {
   color: #ffffff;
   opacity: 0.7; /* Optional: Adjust opacity for better visibility */
+}
+
+/* Dark mode styles for pagination */
+body.dark-mode .pagination .page-item .page-link {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+body.dark-mode .pagination .page-item.active .page-link {
+  background-color: #444;
+  color: #ffffff;
+  border-color: #555;
+}
+
+body.dark-mode .pagination .page-item .page-link:hover {
+  background-color: #555;
+  color: #ffffff;
+}
+
+/* Dark mode styles for SweetAlert */
+body.dark-mode .swal2-popup {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+body.dark-mode .swal2-title {
+  color: #ffffff;
+}
+
+body.dark-mode .swal2-content {
+  color: #ffffff;
+}
+
+body.dark-mode .swal2-confirm {
+  background-color: #444;
+  color: #ffffff;
+  border: 1px solid #555;
+}
+
+body.dark-mode .swal2-cancel {
+  background-color: #555;
+  color: #ffffff;
+  border: 1px solid #666;
+}
+
+/* Dark mode styles for cards in add permission */
+body.dark-mode .card-body.text-dark {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+body.dark-mode .form-select {
+  background-color: #2c2c2c;
+  color: #ffffff;
+  border: 1px solid #444;
+}
+
+body.dark-mode .form-select option {
+  background-color: #2c2c2c;
+  color: #ffffff;
+}
+
+body.dark-mode .card p,
+.card .form-check-label {
+  color: #ffffff;
 }

@@ -1,5 +1,5 @@
 <?php
-
+// asd
 include 'permission/permissionMonitorDashboard.php';
 
 if (isset($_GET['visitor_code'])) {
@@ -12,7 +12,7 @@ include 'fetch-visitors.php';
 include 'includes/header.php';
 ?>
 
-<body class="bg-light">
+<body>
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
@@ -75,13 +75,13 @@ include 'includes/header.php';
                             </div>
 
                             <div class="col-3">
-                                <form method="POST" action="index.php">
+                                <form method="POST" action="index">
                                     <input type="hidden" name="all" id="all">
                                     <button class="form-control" id="allBtn">All</button>
                                 </form>
                             </div>
                             <div class="col-4">
-                                <form method="GET" action="index.php">
+                                <form method="GET" action="index">
                                     <input type="hidden" name="startDate" id="startDate" value="<?php echo $startDate; ?>">
                                     <input type="hidden" name="endDate" id="endDate" value="<?php echo $endDate; ?>">
                                     <input type="hidden" name="page" value="1">
@@ -145,10 +145,12 @@ include 'includes/header.php';
                                                     View Details
                                                 </button>
 
-                                                <form action="process/force-time-out-visitor.php" method="POST" style="display:inline;">
-                                                    <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
-                                                    <button type="submit" class="btn btn-danger">Time Out</button>
-                                                </form>
+                                                <?php if (is_null($row['time_out'])): ?>
+                                                    <form action="process/force-time-out-visitor.php" method="POST" class="time-out-form" style="display:inline;">
+                                                        <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
+                                                        <button type="button" class="btn btn-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
+                                                    </form>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                         <?php
@@ -185,6 +187,8 @@ include 'includes/header.php';
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+                                
                                 <form action="process/export/print-receipt.php" method="GET">
                                     <input type="hidden" name="visitor_code" id="visitor_code">
                                     <button type="submit" class="btn btn-primary" id="print-button">Print</button>

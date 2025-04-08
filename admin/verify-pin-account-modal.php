@@ -20,6 +20,9 @@
                         <input type="text" id="verificationpin" name="verificationpin" class="form-control" required>
                     </div>
                     <div class="mb-3">
+                        <p class="text-muted">The PIN will expire in 5 minutes.</p>
+                    </div>
+                    <div class="mb-3">
                         <label for="password" class="form-label">New Password</label>
                         <input type="password" id="password" name="password" class="form-control" required>
                     </div>

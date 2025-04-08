@@ -25,6 +25,7 @@ $id = intval($data['id']);
 // Generate and store a random 6-digit PIN
 $pin = random_int(100000, 999999);
 $_SESSION['verification_pin'] = $pin;
+$_SESSION['verification_pin_expiration'] = time() + 300; // PIN expires in 5 minutes
 
 // Fetch the user's email address
 $email = fetchUserEmail($id, $conn);

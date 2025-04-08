@@ -25,7 +25,7 @@ function has_permission($permission_id, $user_permissions) {
 
 ?>
 
-<div id="sidebar" class="bg-dark text-white p-3" style="width: 250px; height: auto; min-height: 100vh;">
+<div id="sidebar" class="p-3" style="width: 250px; height: auto; min-height: 100vh;">
     <div class="btn mb-3 w-100">
         <a href="index">
             <img src="../assets/images/CYDO-LOGO.png" alt="" style="max-height: 200px;">
@@ -34,22 +34,22 @@ function has_permission($permission_id, $user_permissions) {
     <h2 class="fs-4"><?php echo "Welcome " . $user_login?></h2>
     <nav class="nav flex-column">
 
-        <a href="index" class="nav-link text-white">Dashboard</a>
+        <a href="index" class="nav-link">Dashboard</a>
         <?php if (has_permission('c5pwoB1uPkzwwZgFokRZZ85fE', $user_permissions)) { ?>
-            <a href="monitor-visitor" class="nav-link text-white">Monitor</a>
+            <a href="monitor-visitor" class="nav-link">Monitor</a>
         <?php } ?>
         <?php if (has_permission('GfsdZkrEFuNhmIUmxIm8e7fS8', $user_permissions)) { ?>
-            <a href="report" class="nav-link text-white">Reports</a>
+            <a href="report" class="nav-link">Reports</a>
         <?php } ?>
         <?php if (has_permission('qD0mEzTMK6Toi4u8aR1Pdusag', $user_permissions)) { ?>
-            <a href="analytics" class="nav-link text-white">Analytics</a>
+            <a href="analytics" class="nav-link">Analytics</a>
         <?php } ?>
 
         <!-- Account Menu with Submenu -->
         <?php if (has_permission('T9rPHeL7ectsYwT6Ih2AswTeZ', $user_permissions) || has_permission('906IZi3K8od7FBS518t5I31jY', $user_permissions)) { ?>
             <div class="nav-item">
                 <a 
-                    class="nav-link text-white dropdown-toggle" 
+                    class="nav-link dropdown-toggle" 
                     data-bs-toggle="collapse" 
                     href="#accountSubmenu" 
                     role="button" 
@@ -60,10 +60,10 @@ function has_permission($permission_id, $user_permissions) {
                 <div class="collapse" id="accountSubmenu">
                     <nav class="nav flex-column ms-3">
                         <?php if (has_permission('T9rPHeL7ectsYwT6Ih2AswTeZ', $user_permissions)) { ?>
-                            <a href="#" class="nav-link text-white" id="addAccountBtn">Add Account</a>
+                            <a href="#" class="nav-link" id="addAccountBtn">Add Account</a>
                         <?php } ?>
                         <?php if (has_permission('906IZi3K8od7FBS518t5I31jY', $user_permissions)) { ?>
-                            <a href="view-account" class="nav-link text-white">View Account</a>
+                            <a href="view-account" class="nav-link">View Account</a>
                         <?php } ?>
                     </nav>
                 </div>
@@ -74,7 +74,7 @@ function has_permission($permission_id, $user_permissions) {
         <?php if (has_permission('8sAygcnqpOXP8aAAG7IAWI4Cg', $user_permissions)) { ?>
             <div class="nav-item">
                 <a 
-                    class="nav-link text-white dropdown-toggle" 
+                    class="nav-link dropdown-toggle" 
                     data-bs-toggle="collapse" 
                     href="#manageRoleSubmenu" 
                     role="button" 
@@ -84,15 +84,19 @@ function has_permission($permission_id, $user_permissions) {
                 </a>
                 <div class="collapse" id="manageRoleSubmenu">
                     <nav class="nav flex-column ms-3">
-                        <a href="add-permission" class="nav-link text-white">Add Permission</a>
-                        <a href="view-permission" class="nav-link text-white" id="viewPermissionsBtn">View Permissions</a>
+                        <a href="add-permission" class="nav-link">Add Permission</a>
+                        <a href="view-permission" class="nav-link" id="viewPermissionsBtn">View Permissions</a>
+                        <a href="change-password" class="nav-link">Change Password</a>
                     </nav>
                 </div>
             </div>
         <?php } ?>
 
         <hr>
-        
-        <a href="process/logout.php" class="nav-link text-white" id="logout-button">Logout</a>
+
+        <button id="dark-mode-toggle"><i class="fas fa-moon"></i> Dark Mode</button>
+
+        <a href="process/logout.php" class="nav-link" id="logout-button">Logout</a>
     </nav>
+    
 </div>

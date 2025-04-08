@@ -15,7 +15,7 @@ if (isset($_GET['visitor_code'])) {
     <?php include 'fetch-analytics-data.php'; ?>
 </head>
 
-<body class="bg-light">
+<body>
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
