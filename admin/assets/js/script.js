@@ -451,23 +451,30 @@ $('.view-details').on('click', function() {
 document.addEventListener("DOMContentLoaded", function () {
     const viewDetailsButtons = document.querySelectorAll(".view-details");
     viewDetailsButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const code = this.getAttribute("data-code");
-        const printButton = document.getElementById("print-button");
-        const codeDiv = document.getElementById("modal-code").parentElement;
-        if (!code) {
-            printButton.style.display = "none";
-            codeDiv.style.display = "none";
-        } else {
-          printButton.classList.remove("btn-danger");
-          printButton.classList.add("btn-primary");
-          printButton.textContent = "Print";
-          printButton.disabled = false;
-          codeDiv.style.display = "block";
-        }
-      });
+        button.addEventListener("click", function () {
+            const code = this.getAttribute("data-code");
+            const printButton = document.getElementById("print-button");
+            const codeDiv = document.getElementById("modal-code").parentElement;
+            if (!code) {
+                printButton.style.display = "none";
+                codeDiv.style.display = "none";
+            }
+        });
     });
-  });
+
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", function () {
+            const code = document.getElementById("modal-code")?.textContent;
+            const printButton = document.getElementById("print-button");
+            const codeDiv = document.getElementById("modal-code")?.parentElement;
+            if (!code) {
+                if (printButton) printButton.style.display = "none";
+                if (codeDiv) codeDiv.style.display = "none";
+            }
+        });
+    }
+});
 
 
 // show loader for once the browser load to prevent flickering
