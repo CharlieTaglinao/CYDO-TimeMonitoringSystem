@@ -12,7 +12,7 @@ include 'permission/permissionEditDeleteAccount.php';
 
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container mt-4">
+            <div class="container-fluid mt-4">
                 <div class="row text-center">
                     <div class="col-md-4">
                         <div class="card">

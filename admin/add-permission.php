@@ -9,7 +9,7 @@
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container mt-4">
+            <div class="container-fluid mt-4">
 
 
                 <?php if (isset($_SESSION['message'])): ?>

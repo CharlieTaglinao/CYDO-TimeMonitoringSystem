@@ -72,13 +72,13 @@ body {
 }
 
 #sidebar {
-  background: linear-gradient(135deg,#fff, #3498db, #409c6c);
-  color: rgb(0, 0, 0);
+  background-color: #1e1e1e;
+  color: rgb(255, 255, 255);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 #sidebar .nav-link {
-  color: rgb(0, 0, 0);
+  color: rgb(255, 255, 255);
   letter-spacing: 1px;
   transition: color 0.3s ease;
   font-weight: 500;
@@ -101,10 +101,10 @@ body {
 /* Dark mode styles */
 #dark-mode-toggle {
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 10px;
+  right: 10px;
   z-index: 9999;
-  background: linear-gradient(135deg, #fff, #3498db, #409c6c); /* Default to light mode gradient */
+  background-color: #1e1e1e;/* Lightened gradient for light mode */
   color: #ffffff;
   border: none;
   padding: 12px 24px;
@@ -116,12 +116,13 @@ body {
   animation: fadeIn 0.5s ease-in-out;
 }
 
+
 body.dark-mode #dark-mode-toggle {
   background: linear-gradient(135deg, #1e1e1e, #212f3c, #256328); /* Dark mode gradient */
 }
 
 body.dark-mode #dark-mode-toggle:hover {
-  background: linear-gradient(135deg, #fff, #3498db, #409c6c); /* Dark mode gradient */
+  background-color: #1e1e1e;/* Dark mode gradient */
   box-shadow: 0 4px 4px rgb(255, 255, 255);
 }
 

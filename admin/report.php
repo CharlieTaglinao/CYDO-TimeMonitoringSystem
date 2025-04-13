@@ -9,7 +9,7 @@
 
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container mt-4">
+            <div class="container-fluid mt-4">
                 <div id="modalContainer"></div>
                 <?php if (isset($_SESSION['message'])): ?>
                 <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show mt-3 position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1050; width: 100%;" role="alert">

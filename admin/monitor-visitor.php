@@ -10,7 +10,7 @@ include 'permission/permissionMonitorVisitor.php';?>
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container">
+            <div class="container-fluid">
                 <h3 class="font-weight-bold">Monitoring Visitor</h3>
                 <div class="row text-center mt-4">
                     <div class="col-md-4 mb-3">
