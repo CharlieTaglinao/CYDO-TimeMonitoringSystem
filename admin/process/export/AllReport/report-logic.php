@@ -75,7 +75,6 @@
         if ($customOffice) {
             $query .= " AND visitors.office_id = '$customOffice'";
         }
-
         $result = $conn->query($query);
         if (!$result) {
             error_log('Query Error: ' . $conn->error);

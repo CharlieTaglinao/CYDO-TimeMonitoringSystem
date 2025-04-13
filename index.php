@@ -306,7 +306,7 @@ if (isset($_GET['visitor_code'])) {
                 <?php unset($_SESSION['showQRModal']); ?>
             <?php endif; ?>
 
-            // Auto log out script
+            // Auto log out scriptt
             function checkAutoLogout() {
                 var now = new Date();
                 if (now.getHours() === 23 && now.getMinutes() === 59) {
