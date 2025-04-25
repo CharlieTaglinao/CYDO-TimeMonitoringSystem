@@ -18,7 +18,7 @@ include 'includes/header.php';
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container mt-4">
+            <div class="container-fluid mt-4">
                 <div class="row text-center">
 
                     <div class="col-md-4">
@@ -98,13 +98,13 @@ include 'includes/header.php';
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Time In</th>
-                                <th>Time Out</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                                <th>Actions</th>
+                                <th style="width: 20%;">FULL NAME</th>
+                                <th style="width: 10%;">DATE</th>
+                                <th style="width: 5%;">IN</th>
+                                <th style="width: 5%;">OUT</th>
+                                <th style="width: 20%;">DURATION</th>
+                                <th style="width: 12%;">STATUS</th>
+                                <th style="width: 20%;">ACTION</th>
                             </tr>
                         </thead>
                         <tbody id="visitor-table">
@@ -116,13 +116,13 @@ include 'includes/header.php';
                                     while ($row = $visitorsResult->fetch_assoc()):
                                         ?>
                                         <tr>
-                                            <td>
+                                            <td style="width: 20%;">
                                                 <?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
                                             </td>
-                                            <td><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?></td>
-                                            <td><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?></td>
-                                            <td><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?></td>
-                                            <td>
+                                            <td style="width: 10%;"><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?></td>
+                                            <td style="width: 5%;"><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?></td>
+                                            <td style="width: 5%;"><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?></td>
+                                            <td style="width: 20%;">
                                                 <?php
                                                 if (isset($row['time_in'], $row['time_out'])) {
                                                     $timeIn = new DateTime($row['time_in']);
@@ -134,9 +134,9 @@ include 'includes/header.php';
                                                 }
                                                 ?>
                                             </td>
-                                            <td><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
-                                            <td>
-                                                <button class="btn btn-success view-details"
+                                            <td style="width: 12%;"><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
+                                            <td style="width: 20%;">
+                                                <button class="btn btn-outline-success view-details"
                                                     data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
                                                     data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
                                                     data-code="<?php echo $row['code']; ?>"
@@ -148,7 +148,7 @@ include 'includes/header.php';
                                                 <?php if (is_null($row['time_out'])): ?>
                                                     <form action="process/force-time-out-visitor.php" method="POST" class="time-out-form" style="display:inline;">
                                                         <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
-                                                        <button type="button" class="btn btn-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
+                                                        <button type="button" class="btn btn-outline-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
                                                     </form>
                                                 <?php endif; ?>
                                             </td>

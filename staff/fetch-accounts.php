@@ -1,5 +1,9 @@
 <?php
 include '../includes/database.php';
+if(!isset($_SESSION)) {
+    session_start();
+
+}
 
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 $username = $_SESSION['username'];
@@ -25,17 +29,19 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Count total rows with search filter
-$totalRowsQuery = "SELECT COUNT(*) AS total FROM account";
+$totalRowsQuery = "SELECT COUNT(*) AS total FROM account WHERE username != '$username'";
 if (!empty($search)) {
-    $totalRowsQuery .= " WHERE username LIKE '%$search%'";
+    $totalRowsQuery .= " AND username LIKE '$search%'";
 }
 $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
 // Fetch accounts with optional search
-
-$accountQuery = "SELECT * FROM account WHERE role = 2 AND username LIKE '%$search%' AND username != '$username' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+$accountQuery = "SELECT account.id, account.username, account.role, account.created_at, account_email.email_address 
+                FROM account
+                INNER JOIN account_email ON account.email_id = account_email.id 
+                WHERE username LIKE '$search%' AND username != '$username' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
 $accountResult = $conn->query($accountQuery);
 
 if (isset($_GET['search']) && !isset($_GET['pagination'])) {
@@ -44,6 +50,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             $role = $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown');
             echo "<tr>
                 <td>" . $row['username']  . "</td>
+                <td>" . $row['email_address'] . "</td>
                 <td>" . $role . "</td>
                 <td>" . $row['created_at'] . "</td>
 
@@ -65,7 +72,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='4'>No records found</td></tr>";
+        echo "<tr><td colspan='5'>No records found</td></tr>";
     }
     echo "<input type='hidden' id='total-rows' value='$totalRows'>";
     echo "<script>

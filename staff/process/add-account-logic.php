@@ -5,6 +5,7 @@ date_default_timezone_set('Asia/Manila');
 session_start(); 
 
 $username = htmlspecialchars(trim($_POST['username']));
+$email = trim($_POST['email']);
 $password = trim($_POST['password']);
 $role = $_POST['role'];
 
@@ -29,11 +30,27 @@ if (empty($username) || empty($password) || empty($role) || ctype_space($usernam
     }
 }
 
+$addEmailQuery = "INSERT INTO account_email (email_address) VALUES (?)";
+$addEmailStmt = $conn->prepare($addEmailQuery);
+$addEmailStmt->bind_param("s", $email);
+if ($addEmailStmt->execute()) {
+    $_SESSION['message'] = "Email successfully added!";
+    $_SESSION['message_type'] = "success";
+
+    // Get the newly created email ID
+    $emailId = $conn->insert_id;
+} else {
+    $_SESSION['message'] = "An error occurred while adding the email. Please try again.";
+    $_SESSION['message_type'] = "danger";
+    header("Location: ../view-account.php");
+    exit();
+}
+
 $hashedpassword = password_hash($password, PASSWORD_DEFAULT);
 
-$AddAccountQuery = "INSERT INTO account( `username`, `password`, `role`, created_at) VALUES (?,?,?,NOW())";
+$AddAccountQuery = "INSERT INTO account( `username`, `email_id`, `password`, `role`, created_at) VALUES (?,?,?,?,NOW())";
 $AddAccountStmt = $conn->prepare($AddAccountQuery);
-$AddAccountStmt->bind_param("ssi", $username, $hashedpassword, $role);
+$AddAccountStmt->bind_param("sisi", $username, $emailId, $hashedpassword, $role);
 
 if ($AddAccountStmt->execute()) {
     $_SESSION['message'] = "Account successfully added!";

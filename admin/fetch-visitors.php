@@ -109,7 +109,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
             echo "</td>
                 <td style='width: 12%;'>" . htmlspecialchars($row['status']) . "</td>
                 <td style='width: 20%;'>
-                   <button class='btn btn-success view-details'
+                   <button class='btn btn-outline-success view-details'
                         data-name='{$fullName}'
                         data-age='" . htmlspecialchars($row['age']) . "'
                         data-sex='" . htmlspecialchars($row['sex_name']) . "'
@@ -123,7 +123,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
             if ($row['time_out'] === null) {
                 echo "<form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
                         <input type='hidden' name='visitor_code' value='" . htmlspecialchars($row['code']) . "'>
-                        <button type='submit' class='btn btn-danger'>Time Out</button>
+                        <button type='submit' class='btn btn-outline-danger'>Time Out</button>
                       </form>";
             }
 

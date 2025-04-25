@@ -1,6 +1,13 @@
-<?php 
+<?php
 include '../../includes/database.php';
+require '../../vendor/autoload.php'; // Ensure Dotenv is installed via Composer
 session_start();
+
+use Dotenv\Dotenv;
+
+// Load environment variables
+$dotenv = Dotenv::createImmutable(__DIR__ . '/../../');
+$dotenv->load();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id = intval($_POST['id']);

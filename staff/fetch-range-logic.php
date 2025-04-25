@@ -131,25 +131,29 @@ if (!empty($_GET['startDate']) && !empty($_GET['endDate'])) {
             } else {
                 echo '-';
             }
-            echo "</td>";
-            echo "<td>" . (isset($row['status']) ? $row['status'] : '-') . "</td>";
-            echo "<td>
-                <button class='btn btn-success view-details' 
-                    data-name='" . strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']) . "' 
-                    data-age='" . $row['age'] . "' 
-                    data-sex='" . $row['sex_name'] . "' 
-                    data-code='" . $row['code'] . "' 
-                    data-purpose='" . $row['purpose'] . "' 
-                    data-bs-toggle='modal'
-                    data-bs-target='#visitorDetailsModal'>View Details
-                </button>
+             echo "</td>
+                <td>" . htmlspecialchars($row['status']) . "</td>
+                <td>
+                   <button class='btn btn-success view-details'
+                        data-name='" . strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']) . "' 
+                        data-age='" . htmlspecialchars($row['age']) . "'
+                        data-sex='" . htmlspecialchars($row['sex_name']) . "'
+                        data-code='" . htmlspecialchars($row['code']) . "'
+                        data-purpose='" . htmlspecialchars($row['purpose']) . "'
+                        data-bs-toggle='modal'
+                        data-bs-target='#visitorDetailsModal'>
+                        View Details
+                    </button>";
 
-                <form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
-                        <input type='hidden' name='visitor_code' value='{$row['code']}'>
+            if ($row['time_out'] === null) {
+                echo "<form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
+                        <input type='hidden' name='visitor_code' value='" . htmlspecialchars($row['code']) . "'>
                         <button type='submit' class='btn btn-danger'>Time Out</button>
-                    </form>
-                </td>";
-            echo "</tr>";
+                      </form>";
+            }
+
+            echo "</td>
+            </tr>";
         }
     } else {
         echo "<tr><td colspan='7'>No records found for the selected date range and search criteria.</td></tr>";

@@ -60,6 +60,52 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
+document.addEventListener("DOMContentLoaded", function () {
+    const timeOutButtons = document.querySelectorAll(".time-out-button");
+
+    timeOutButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const visitorCode = this.getAttribute("data-id");
+            const form = this.closest(".time-out-form");
+
+            Swal.fire({
+                title: "Are you sure?",
+                text: `You are about to time out visitor with code: ${visitorCode}.`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#0A9548",
+                cancelButtonColor: "#a9a9a9",
+                confirmButtonText: "Yes",
+                cancelButtonText: "Cancel"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+
+
+// Handle "View Details" button clicks
+document.addEventListener('DOMContentLoaded', function () {
+    document.body.addEventListener('click', function (e) {
+        if (e.target.classList.contains('view-details')) {
+            const button = e.target;
+
+            // Populate modal with data attributes
+            document.getElementById('modal-name').textContent = button.getAttribute('data-name');
+            document.getElementById('modal-age').textContent = button.getAttribute('data-age');
+            document.getElementById('modal-sex').textContent = button.getAttribute('data-sex');
+            document.getElementById('modal-code').textContent = button.getAttribute('data-code');
+            document.getElementById('modal-purpose').textContent = button.getAttribute('data-purpose');
+
+            // Set hidden input for printing receipt
+            document.getElementById('visitor_code').value = button.getAttribute('data-code');
+        }
+    });
+});
+
 
 // Pop up modal for edit user account
 document.addEventListener("DOMContentLoaded", function () {
@@ -138,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById("search-input");
     const visitorTable = document.getElementById("visitor-table");
 
-    if (searchInput) {
+    if (searchInput && visitorTable) {
         searchInput.addEventListener("input", (event) => {
             const query = event.target.value;
             const startDate = document.getElementById("startDate")?.value || "";
@@ -155,6 +201,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .catch((error) => console.error("Error fetching data:", error));
         });
+    } else {
+        console.warn("Search input or visitor table element is missing.");
     }
 });
 
@@ -171,20 +219,19 @@ function updateVisitorPagination() {
         })
         .then((data) => {
             document.getElementById("pagination").innerHTML = data;
-            const totalRows = parseInt(document.getElementById("total-rows").value);
-            const totalPages = Math.ceil(totalRows / 7);
-            const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
-            document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+            const totalRowsElement = document.getElementById("total-rows");
+            if (totalRowsElement) {
+                const totalRows = parseInt(totalRowsElement.value);
+                const totalPages = Math.ceil(totalRows / 7); // Adjust rows per page if needed
+                const currentPage = parseInt(document.getElementById("pagination").querySelector(".active a").textContent);
+                document.getElementById("page-info").textContent = `Page ${currentPage} of ${totalPages}`;
+            }
         })
         .catch((error) => console.error("Error fetching pagination data:", error));
 }
 
-
 // END OF FETCH AND UPDATE PAGINATION FOR VISITORS TABLE
 //------------------------------------------------------------------//
-
-
-
 
 
 
@@ -366,6 +413,8 @@ setTimeout(function () {
     }
 }, 3000);
 
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const viewDetailsButtons = document.querySelectorAll('.view-details');
     viewDetailsButtons.forEach(button => {
@@ -402,26 +451,30 @@ $('.view-details').on('click', function() {
 document.addEventListener("DOMContentLoaded", function () {
     const viewDetailsButtons = document.querySelectorAll(".view-details");
     viewDetailsButtons.forEach((button) => {
-      button.addEventListener("click", function () {
-        const code = this.getAttribute("data-code");
-        const printButton = document.getElementById("print-button");
-        const codeDiv = document.getElementById("modal-code").parentElement;
-        if (!code) {
-          printButton.classList.remove("btn-primary");
-          printButton.classList.add("btn-danger");
-          printButton.textContent = "Print Unavailable";
-          printButton.disabled = true;
-          codeDiv.style.display = "none";
-        } else {
-          printButton.classList.remove("btn-danger");
-          printButton.classList.add("btn-primary");
-          printButton.textContent = "Print";
-          printButton.disabled = false;
-          codeDiv.style.display = "block";
-        }
-      });
+        button.addEventListener("click", function () {
+            const code = this.getAttribute("data-code");
+            const printButton = document.getElementById("print-button");
+            const codeDiv = document.getElementById("modal-code").parentElement;
+            if (!code) {
+                printButton.style.display = "none";
+                codeDiv.style.display = "none";
+            }
+        });
     });
-  });
+
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", function () {
+            const code = document.getElementById("modal-code")?.textContent;
+            const printButton = document.getElementById("print-button");
+            const codeDiv = document.getElementById("modal-code")?.parentElement;
+            if (!code) {
+                if (printButton) printButton.style.display = "none";
+                if (codeDiv) codeDiv.style.display = "none";
+            }
+        });
+    }
+});
 
 
 // show loader for once the browser load to prevent flickering
@@ -433,8 +486,12 @@ window.addEventListener('load', async () => {
     document.querySelector('.image-holder').style.display = 'none';
 });
 
-
-
+// Reload index.php every 60 seconds
+setInterval(() => {
+    if (window.location.pathname.endsWith("index") || window.location.pathname.endsWith("monitor-visitor")) {
+        window.location.reload();
+    }
+}, 60000);
 
 // Start of chart js
 
@@ -508,14 +565,19 @@ function initialize3DChart(chartId, chartData, chartOptions, chartTitle) {
     });
 }
 
-// Function to create 3D line graphs using the fetched data
+// Ensure visitorData and other datasets are defined
 document.addEventListener("DOMContentLoaded", function () {
+    if (typeof visitorData === "undefined" || typeof userData === "undefined" || typeof cydoData === "undefined" || typeof pdaoData === "undefined") {
+        console.error("Chart data is not defined. Please ensure visitorData, userData, cydoData, and pdaoData are loaded before initializing charts.");
+        return;
+    }
+
     const visitorChartData = {
         labels: visitorData.labels,
         datasets: [{
             label: 'Visitors',
             data: visitorData.values,
-            backgroundColor: 'rgba(64, 156, 108, 0.2)',
+            backgroundColor: 'rgb(64, 156, 108)',
             borderColor: 'rgba(64, 156, 108, 1)',
             borderWidth: 2,
             fill: true,
@@ -528,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'Users',
             data: userData.values,
-            backgroundColor: 'rgba(0, 51, 255, 0.2)',
+            backgroundColor: 'rgb(0, 51, 255)',
             borderColor: 'rgba(0, 51, 255, 1)',
             borderWidth: 2,
             fill: true,
@@ -541,7 +603,7 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'CYDO',
             data: cydoData.values,
-            backgroundColor: 'rgba(255, 79, 76, 0.2)',
+            backgroundColor: 'rgb(255, 79, 76)',
             borderColor: 'rgba(255, 79, 76, 1)',
             borderWidth: 2,
             fill: true,
@@ -554,8 +616,8 @@ document.addEventListener("DOMContentLoaded", function () {
         datasets: [{
             label: 'PDAO',
             data: pdaoData.values,
-            backgroundColor: 'rgba(255, 253, 14, 0.2)',
-            borderColor: 'rgba(255, 253, 14, 1)',
+            backgroundColor: 'rgb(182, 182, 5)',
+            borderColor: 'rgb(182, 182, 5)',
             borderWidth: 2,
             fill: true,
             tension: 0.4
@@ -595,7 +657,6 @@ document.addEventListener("DOMContentLoaded", function () {
         body.classList.add("dark-mode");
         icon.classList.remove("fa-moon");
         icon.classList.add("fa-sun");
-        toggleButton.textContent = " Light Mode";
         toggleButton.prepend(icon);
     }
 
@@ -606,13 +667,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isDarkMode) {
             icon.classList.remove("fa-moon");
             icon.classList.add("fa-sun");
-            toggleButton.textContent = " Light Mode";
         } else {
             icon.classList.remove("fa-sun");
             icon.classList.add("fa-moon");
-            toggleButton.textContent = " Dark Mode";
         }
         toggleButton.prepend(icon);
     });
 });
+
+
 

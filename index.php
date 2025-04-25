@@ -340,7 +340,7 @@ if (isset($_GET['visitor_code'])) {
         </script>
 
         <footer>
-           <div class="footer-text"><p class="text-dark LJF-text">Let's Join Forces <span class="text-success LJF-text2">For a More Progressive City of General Trias</span></p></div>  
+           <div class="footer-text"><p class="text-dark LJF-text">Let's Join Forces <span class="text-success LJF-text2">For a More Progressive City of General Trias</span></p></div>
         </footer>
 
     </body>

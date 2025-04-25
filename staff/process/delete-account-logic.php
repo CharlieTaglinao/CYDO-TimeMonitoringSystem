@@ -18,6 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'])) {
         $stmt = $conn->prepare($deletePermissionsQuery);
         $stmt->bind_param("i", $id);
         $stmt->execute();
+
+        // Delete email from account_email table
+        $deleteEmailQuery = "DELETE FROM account_email WHERE id = (SELECT email_id FROM account WHERE id = ?)";
+        $stmt = $conn->prepare($deleteEmailQuery);
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
         
         $deleteQuery = "DELETE FROM account WHERE id = ?";
         $stmt = $conn->prepare($deleteQuery);

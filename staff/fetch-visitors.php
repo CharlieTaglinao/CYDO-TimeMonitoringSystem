@@ -91,11 +91,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
             $timeOut = isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-';
 
             echo "<tr>
-                <td>{$fullName}</td>
-                <td>{$date}</td>
-                <td>{$timeIn}</td>
-                <td>{$timeOut}</td>
-                <td>";
+                <td style='width: 20%;'>{$fullName}</td>
+                <td style='width: 10%;'>{$date}</td>
+                <td style='width: 5%;'>{$timeIn}</td>
+                <td style='width: 5%;'>{$timeOut}</td>
+                <td style='width: 20%;'>";
 
             if (isset($row['time_in'], $row['time_out'])) {
                 $timeInObj = new DateTime($row['time_in']);
@@ -107,9 +107,9 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
             }
 
             echo "</td>
-                <td>" . htmlspecialchars($row['status']) . "</td>
-                <td>
-                   <button class='btn btn-success view-details'
+                <td style='width: 12%;'>" . htmlspecialchars($row['status']) . "</td>
+                <td style='width: 20%;'>
+                   <button class='btn btn-outline-success view-details'
                         data-name='{$fullName}'
                         data-age='" . htmlspecialchars($row['age']) . "'
                         data-sex='" . htmlspecialchars($row['sex_name']) . "'
@@ -123,7 +123,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
             if ($row['time_out'] === null) {
                 echo "<form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
                         <input type='hidden' name='visitor_code' value='" . htmlspecialchars($row['code']) . "'>
-                        <button type='submit' class='btn btn-danger'>Time Out</button>
+                        <button type='submit' class='btn btn-outline-danger'>Time Out</button>
                       </form>";
             }
 

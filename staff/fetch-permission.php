@@ -1,8 +1,14 @@
 <?php
 include '../includes/database.php';
 
+
+$currentUserRole = $_SESSION['role']; // Assuming the role is stored in the session
+
 // Fetch permissions
 $permissionsQuery = "SELECT permission_id, permission_name, category, created_at FROM permission";
+if ($currentUserRole == 2) {
+    $permissionsQuery .= " WHERE role != 1"; // Restrict access to role 1
+}
 $stmt = $conn->prepare($permissionsQuery);
 $stmt->execute();
 $permissionsResult = $stmt->get_result();

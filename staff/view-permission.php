@@ -8,13 +8,13 @@ include 'fetch-user-permission.php';
 include 'includes/header.php';
 ?>
 
-<body class="bg-light">
+<body>
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container mt-4">
+            <div class="container-fluid mt-4">
 
                 <?php if (isset($_SESSION['message'])): ?>
                 <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show mt-3" role="alert">
@@ -49,6 +49,7 @@ include 'includes/header.php';
                                 <th>Monitor Visitor</th>
                                 <th>View Analytics</th>
                                 <th>View Permissions</th>
+                                <th>Account Type</th>
                             </tr>
                         </thead>
                         <tbody id="user-permission-table">
@@ -68,6 +69,7 @@ include 'includes/header.php';
                                         <td><?php echo in_array('c5pwoB1uPkzwwZgFokRZZ85fE', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
                                         <td><?php echo in_array('qD0mEzTMK6Toi4u8aR1Pdusag', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
                                         <td><?php echo in_array('ubmssiHKw9GEPDulEVpDtOudM', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
+                                        <td><?= $row['role_name'];?></td>
                                     </tr>
                                     <?php
                                 endwhile;

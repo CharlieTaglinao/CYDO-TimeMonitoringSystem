@@ -1,4 +1,4 @@
-        <?php
+<?php
 
         require '../../../../vendor/autoload.php';
         require '../../../../includes/database.php';
@@ -20,10 +20,18 @@
         $customOffice = isset($_POST['customOffice']) ? $_POST['customOffice'] : null;
 
         if ($type === 'custom' && (!$customStartDate || !$customEndDate)) {
-            $_SESSION['message'] = 'Please provide both start and end dates for custom reports.';
-            $_SESSION['message_type'] = 'danger';
-            header('Location: ../../../report.php');
-            exit;
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                // If the request is an AJAX (fetch) request, return a JSON response
+                http_response_code(400);
+                echo json_encode(['error' => 'Please provide both start and end dates for custom reports.']);
+                exit;
+            } else {
+                // Otherwise, redirect as usual
+                $_SESSION['message'] = 'Please provide both start and end dates for custom reports.';
+                $_SESSION['message_type'] = 'danger';
+                header('Location: ../../../report.php');
+                exit;
+            }
         }
 
         if ($type === 'month') {
@@ -85,10 +93,18 @@
         }
 
         if ($result->num_rows === 0) {
-            $_SESSION['message'] = 'No records found for the selected period.';
-            $_SESSION['message_type'] = 'warning';
-            header('Location: ../../../report.php');
-            exit;
+            if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+                // If the request is an AJAX (fetch) request, return a JSON response
+                http_response_code(404);
+                echo json_encode(['error' => 'No records found for the selected period.']);
+                exit;
+            } else {
+                // Otherwise, redirect as usual
+                $_SESSION['message'] = 'No records found for the selected period.';
+                $_SESSION['message_type'] = 'warning';
+                header('Location: ../../../report.php');
+                exit;
+            }
         }
 
         if ($format === 'xlsx') {
@@ -160,8 +176,9 @@
 
                 header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
                 header("Content-Disposition: attachment; filename=\"$filename.xlsx\"");
+                ob_clean(); // Clear any output buffer to prevent corruption
+                ob_end_clean(); // End the output buffer
                 $writer = new Xlsx($spreadsheet);
-                ob_end_clean();
                 $writer->save('php://output');
             } catch (Exception $e) {
                 error_log('XLSX Generation Error: ' . $e->getMessage());

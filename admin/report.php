@@ -33,11 +33,11 @@
                             <div class="row g-4">
                                 <!-- Today's Report -->
                                 <div class="col-md-3">
-                                    <a class="btn btn-secondary btn-lg w-100 py-4" href="process/export/AllReport/report-logic.php?type=today&format=xlsx">Today's Report</a>
+                                    <a class="btn btn-secondary btn-lg w-100 py-4" id="export-today-button-xlsx" data-type="today" data-format="xlsx">Today's Report</a>
                                 </div>
                                 <!-- 1 Month Report -->
                                 <div class="col-md-3">
-                                    <a class="btn btn-secondary btn-lg w-100 py-4" href="process/export/AllReport/report-logic.php?type=month&format=xlsx">1 Month Report</a>
+                                    <a class="btn btn-secondary btn-lg w-100 py-4" id="export-todays-month-button-xlsx" data-type="month" data-format="xlsx">1 Month Report</a>
                                 </div>
                                 <!-- Custom Report -->
                                 <div class="col-md-3">
@@ -54,11 +54,11 @@
                             <div class="row g-4">
                                 <!-- Today's Report -->
                                 <div class="col-md-3">
-                                    <a class="btn btn-secondary btn-lg w-100 py-4" href="process/export/AllReport/report-logic.php?type=today&format=pdf">Today's Report</a>
+                                    <a class="btn btn-secondary btn-lg w-100 py-4" id="export-today-button-pdf" data-type="today" data-format="pdf">Today's Report</a>
                                 </div>
                                 <!-- 1 Month Report -->
                                 <div class="col-md-3">
-                                    <a class="btn btn-secondary btn-lg w-100 py-4" href="process/export/AllReport/report-logic.php?type=month&format=pdf">1 Month Report</a>
+                                    <a class="btn btn-secondary btn-lg w-100 py-4" id="export-todays-month-button-pdf" data-type="month" data-format="pdf">1 Month Report</a>
                                 </div>
                                 <!-- Custom Report -->
                                 <div class="col-md-3">
@@ -75,5 +75,7 @@
             </div>
         </div>
     </div>
+
+    <script src="assets/js/export-report.js"></script>
 </body>
 </html>

@@ -657,7 +657,6 @@ document.addEventListener("DOMContentLoaded", function () {
         body.classList.add("dark-mode");
         icon.classList.remove("fa-moon");
         icon.classList.add("fa-sun");
-        toggleButton.textContent = " Light Mode";
         toggleButton.prepend(icon);
     }
 
@@ -668,11 +667,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (isDarkMode) {
             icon.classList.remove("fa-moon");
             icon.classList.add("fa-sun");
-            toggleButton.textContent = " Light Mode";
         } else {
             icon.classList.remove("fa-sun");
             icon.classList.add("fa-moon");
-            toggleButton.textContent = " Dark Mode";
         }
         toggleButton.prepend(icon);
     });

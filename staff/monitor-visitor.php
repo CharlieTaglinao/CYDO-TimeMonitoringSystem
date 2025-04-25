@@ -10,7 +10,7 @@ include 'permission/permissionMonitorVisitor.php';?>
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container">
+            <div class="container-fluid">
                 <h3 class="font-weight-bold">Monitoring Visitor</h3>
                 <div class="row text-center mt-4">
                     <div class="col-md-4 mb-3">
@@ -93,8 +93,7 @@ include 'permission/permissionMonitorVisitor.php';?>
                                                             <?php echo (new DateTime($row['time_in']))->format('F j, Y'); ?></small><br>
                                                         <small class="text-muted" style="font-weight: 600;">Time in:
                                                             <?php echo (new DateTime($row['time_in']))->format('g:i A'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Purpose:
-                                                            <?php echo $row['purpose']; ?></small>
+                                                        <small class="text-muted" style="font-weight: 600;">Purpose:<?php echo $row['purpose']; ?></small>
                                                     </div>
                                                     <span class="badge bg-success">IN SITE</span>
                                                 </div>

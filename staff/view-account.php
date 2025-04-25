@@ -12,7 +12,7 @@ include 'permission/permissionEditDeleteAccount.php';
 
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container mt-4">
+            <div class="container-fluid mt-4">
                 <div class="row text-center">
                     <div class="col-md-4">
                         <div class="card">
@@ -36,7 +36,7 @@ include 'permission/permissionEditDeleteAccount.php';
                                 <h5 class="card-title">TOTAL ACCOUNTS</h5>
                                 <p class="card-text" id="current-visitors"><?php echo $totalAll; ?></p>
                             </div>
-                        </div>
+                        </div> 
                     </div>
                 </div>
 
@@ -65,36 +65,41 @@ include 'permission/permissionEditDeleteAccount.php';
                         <thead class="table-dark">
                             <tr>
                                 <th>Username</th>
+                                <th>E-mail</th>
                                 <th>Role</th>
                                 <th>Date Created</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="account-table">
-                            <?php while ($row = $accountResult->fetch_assoc()): ?>
-                                <tr>
-                                    <td><?php echo $row['username']; ?></td>
-                                    <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?>
-                                    </td>
-                                    <td><?php echo $row['created_at']; ?></td>
-                                    <td>
-                                        <button class="btn btn-sm btn-primary editModalBtn"
-                                            data-id="<?php echo $row['id']; ?>"
-                                            data-username="<?php echo $row['username']; ?>"
-                                            data-role="<?php echo $row['role']; ?>" data-bs-toggle="modal"
-                                            data-bs-target="#editModal">
-                                            EDIT
-                                        </button>
+                            <?php if ($accountResult->num_rows > 0): ?>
+                                <?php while ($row = $accountResult->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?php echo $row['username']; ?></td>
+                                        <td><?php echo $row['email_address']?></td>
+                                        <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?>
+                                        </td>
+                                        <td><?php echo $row['created_at']; ?></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary editModalBtn"
+                                                data-id="<?php echo $row['id']; ?>"
+                                                data-username="<?php echo $row['username']; ?>"
+                                                data-role="<?php echo $row['role']; ?>" 
+                                                onclick="confirmEdit(this)">
+                                                EDIT
+                                            </button>
 
-                                        <form action="process/delete-account-logic.php" method="POST"
-                                            id="delete-button-on-form" class="d-inline delete-form">
-                                            <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                                            <button type="submit"
-                                                class="btn btn-sm btn-danger delete-button">DELETE</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
+                                            <form action="process/delete-account-logic.php" method="POST" id="delete-button-on-form" class="d-inline delete-form">
+                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                                <button type="submit"
+                                                    class="btn btn-sm btn-danger delete-button">DELETE</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr><td colspan='5'>No records found</td></tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
@@ -142,4 +147,70 @@ include 'permission/permissionEditDeleteAccount.php';
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirmEdit(button) {
+            const role = button.getAttribute('data-role');
+            if (role != 1) {
+            // Directly show the edit modal for non-admin roles
+            const editModal = new bootstrap.Modal(document.getElementById('editModal'));
+            document.getElementById('edit-id').value = button.getAttribute('data-id');
+            document.getElementById('edit-username').value = button.getAttribute('data-username');
+            document.getElementById('edit-role').value = role;
+            editModal.show();
+            return;
+            }
+
+            // Proceed with verification for role = 1 (Admin)
+            Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to edit this account?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'Cancel'
+            }).then(async (result) => {
+            if (result.isConfirmed) {
+                const accountId = button.getAttribute('data-id');
+                const username = button.getAttribute('data-username');
+
+                // Show loader
+                document.body.innerHTML += '<div class="background-overlay"></div><div class="loader"></div><div class="image-holder"></div>';
+                
+                try {
+                const response = await fetch('process/send-verification-pin.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: accountId })
+                });
+
+                if (response.status === 200) {
+                    const data = await response.json();
+
+                    if (data.success) {
+                    // Remove loader, image-holder, and background-overlay
+                    document.querySelectorAll('.background-overlay, .loader, .image-holder').forEach(el => el.remove());
+
+                    // Show PIN modal
+                    const pinModal = new bootstrap.Modal(document.getElementById('pinVerificationModal'));
+                    document.getElementById('pin-account-id').value = accountId;
+                    document.getElementById('pin-username').value = username;
+                    document.getElementById('pin-role').value = role;
+                    pinModal.show();
+                    } else {
+                    Swal.fire('Error', data.message, 'error');
+                    }
+                } else {
+                    Swal.fire('Error', 'Failed to send verification PIN. Please try again.', 'error');
+                }
+                } catch (error) {
+                Swal.fire('Error', 'An unexpected error occurred. Please try again.', 'error');
+                } finally {
+                // Ensure removal of loader, image-holder, and background-overlay in case of any error
+                document.querySelectorAll('.background-overlay, .loader, .image-holder, .swal2-container').forEach(el => el.remove());
+                }
+            }
+            });
+        }
+    </script>
 </body>
