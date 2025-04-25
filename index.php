@@ -337,6 +337,76 @@ if (isset($_GET['visitor_code'])) {
                         });
                 }
             });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const loginForm = document.querySelector('#loginModal form');
+                const usernameField = document.getElementById('username');
+                const passwordField = document.getElementById('password');
+
+                // Validate inputs dynamically
+                usernameField.addEventListener('input', () => {
+                    if (usernameField.value.trim() === '') {
+                        usernameField.classList.add('is-invalid');
+                        usernameField.nextElementSibling.textContent = 'Please provide a username.';
+                    } else {
+                        usernameField.classList.remove('is-invalid');
+                        usernameField.nextElementSibling.textContent = '';
+                    }
+                });
+
+                passwordField.addEventListener('input', () => {
+                    if (passwordField.value.trim() === '') {
+                        passwordField.classList.add('is-invalid');
+                        passwordField.nextElementSibling.textContent = 'Please provide a password.';
+                    } else {
+                        passwordField.classList.remove('is-invalid');
+                        passwordField.nextElementSibling.textContent = '';
+                    }
+                });
+
+                // Handle form submission
+                loginForm.addEventListener('submit', function (event) {
+                    event.preventDefault();
+
+                    // Clear previous validation states
+                    [usernameField, passwordField].forEach(field => {
+                        field.classList.remove('is-invalid');
+                        field.nextElementSibling.textContent = '';
+                    });
+
+                    if (!loginForm.checkValidity()) {
+                        event.stopPropagation();
+                        loginForm.classList.add('was-validated');
+                        return;
+                    }
+
+                    const formData = new FormData(loginForm);
+
+                    fetch('process/login.php', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = data.redirect;
+                        } else {
+                            if (data.errors.username) {
+                                usernameField.classList.add('is-invalid');
+                                usernameField.nextElementSibling.textContent = data.errors.username;
+                            }
+                            if (data.errors.password) {
+                                passwordField.classList.add('is-invalid');
+                                passwordField.nextElementSibling.textContent = data.errors.password;
+                            }
+                            if (data.errors.general) {
+                                alert(data.errors.general);
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+                });
+            });
         </script>
 
         <footer>

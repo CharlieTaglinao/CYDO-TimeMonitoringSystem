@@ -10,11 +10,11 @@
                 <form method="POST" id="customRangeXLSX"
                     action="process/export/AllReport/report-logic.php?type=custom&format=xlsx">
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date</label>
+                        <label for="startDate" class="form-label">Start Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="startDateXLSX" name="startDate">
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date</label>
+                        <label for="endDate" class="form-label">End Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="endDateXLSX" name="endDate">
                     </div>
                     <button type="submit" class="btn btn-primary" id="applyDateRange">Download</button>

@@ -17,22 +17,22 @@
                 <!-- Form -->
                 <form action="process/add-account-logic.php" method="POST">
                     <div class="mb-3">
-                        <label for="role" class="form-label">Select a role</label>
+                        <label for="role" class="form-label">Select a role <span class="text-danger fw-bold">*</span></label>
                         <select name="role" id="role" class="form-control">
                             <option value="1">ADMIN</option>
                             <option value="2">STAFF</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
+                        <label for="username" class="form-label">Username <span class="text-danger fw-bold">*</span></label>
                         <input type="text" id="username" name="username" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email:</label>
+                        <label for="email" class="form-label">Email <span class="text-danger fw-bold">*</span></label>
                         <input type="text" id="email" name="email" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
+                        <label for="password" class="form-label">Password <span class="text-danger fw-bold">*</span></label>
                         <input type="password" id="password" name="password" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-success w-100">ADD</button>

@@ -9,18 +9,18 @@
                 <form action="process/edit-account-logic.php" method="POST" id="editAccountForm">
                     <input type="hidden" id="edit-id" name="id">
                     <div class="mb-3">
-                        <label for="edit-role" class="form-label">Select a role</label>
+                        <label for="edit-role" class="form-label">Select a role <span class="text-danger fw-bold">*</span></label>
                         <select name="role" id="edit-role" class="form-control">
                             <option value="1">ADMIN</option>
                             <option value="2">STAFF</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="edit-username" class="form-label">Username</label>
+                        <label for="edit-username" class="form-label">Username <span class="text-danger fw-bold">*</span></label>
                         <input type="text" id="edit-username" name="username" class="form-control">
                     </div>
                     <div class="mb-3">
-                        <label for="edit-password" class="form-label">Password</label>
+                        <label for="edit-password" class="form-label">Password <span class="text-danger fw-bold">*</span></label>
                         <input type="password" id="edit-password" name="password" class="form-control">
                     </div>
                     <button type="submit" class="btn btn-success w-100">Update</button>
@@ -34,7 +34,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="pinVerificationModalLabel">Enter Verification PIN</h5>
+                <h5 class="modal-title" id="pinVerificationModalLabel">Enter Verification PIN <span class="text-danger fw-bold">*</span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">

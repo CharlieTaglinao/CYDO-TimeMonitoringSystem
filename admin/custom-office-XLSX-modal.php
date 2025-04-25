@@ -10,15 +10,15 @@
                 <form method="POST" id="customOfficeFormXLSX"
                     action="process/export/AllReport/report-logic.php?type=custom&format=xlsx">
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date</label>
+                        <label for="startDate" class="form-label">Start Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="startDateXLSX" name="startDate" required>
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date</label>
+                        <label for="endDate" class="form-label">End Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="endDateXLSX" name="endDate" required>
                     </div>
                     <div class="mb-3">
-                        <label for="customOffice" class="form-label">Select an Office</label>
+                        <label for="customOffice" class="form-label">Select an Office <span class="text-danger fw-bold">*</span></label>
                         <select class="form-select" name="customOffice" id="customOffice" required>
                             <option value="1">City Youth Development Office</option>
                             <option value="2">Person With Disability Affairs Office</option>

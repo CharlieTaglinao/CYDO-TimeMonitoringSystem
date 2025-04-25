@@ -8,13 +8,19 @@ require_once '../includes/database.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    
 
-    
-    if (empty($username) || empty($password)) {
-        $_SESSION['message'] = 'Please fill in all fields.';
-        $_SESSION['message_type'] = 'danger';
-        header('Location: ../index');
+    $response = ['success' => false, 'errors' => []];
+
+    if (empty($username)) {
+        $response['errors']['username'] = 'Please provide a username.';
+    }
+
+    if (empty($password)) {
+        $response['errors']['password'] = 'Please provide a password.';
+    }
+
+    if (!empty($response['errors'])) {
+        echo json_encode($response);
         exit();
     }
 
@@ -28,7 +34,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param('s', $username);
         $stmt->execute();
         $result = $stmt->get_result();
-        
 
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
@@ -38,37 +43,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role_name'];
 
-                // Redirect based on role
-                if ($user['role_name'] === 'admin') {
-                    header('Location: ../admin/index');
-                } elseif ($user['role_name'] === 'staff') {
-                    header('Location: ../staff/index');
-                } else {
-                    header('Location: ../index');
-                }
-
+                $response['success'] = true;
+                $response['redirect'] = ($user['role_name'] === 'admin') ? 'admin/index' :
+                                        (($user['role_name'] === 'staff') ? 'staff/index' : '../index');
+                echo json_encode($response);
                 exit();
             } else {
-                $_SESSION['message'] = 'Invalid password.';
-                $_SESSION['message_type'] = 'danger';
-                header('Location: ../index');
-                exit();
+                $response['errors']['password'] = 'Invalid password.';
             }
         } else {
-            $_SESSION['message'] = 'User not found.';
-            $_SESSION['message_type'] = 'danger';
-            header('Location: ../index');
-            exit();
+            $response['errors']['username'] = 'User not found.';
         }
     } catch (Exception $e) {
-        $_SESSION['message'] = 'An error occurred: ' . htmlspecialchars($e->getMessage());
-        $_SESSION['message_type'] = 'danger';
-        header('Location: ../index');
-        exit();
+        $response['errors']['general'] = 'An error occurred: ' . htmlspecialchars($e->getMessage());
     }
+
+    echo json_encode($response);
+    exit();
 } else {
     header('Location: ../index');
     exit();
 }
-
 ?>

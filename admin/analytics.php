@@ -21,8 +21,15 @@ if (isset($_GET['visitor_code'])) {
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="mt-4">
+            <div class="d-flex justify-content-between align-items-center mt-4">
                 <h3>Analytics</h3>
+                <h3>
+                    <?php 
+                    if (isset($_POST['year'])) {
+                        echo htmlspecialchars($_POST['year']);
+                    }
+                    ?>
+                </h3>
             </div>
 
             <form action="analytics.php" method="post" id="yearForm">
