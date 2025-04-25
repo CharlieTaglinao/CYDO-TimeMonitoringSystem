@@ -10,19 +10,18 @@
                 <form method="POST" id="customOfficeFormPDF"
                     action="process/export/AllReport/report-logic.php?type=custom&format=pdf">
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date</label>
+                        <label for="startDate" class="form-label">Start Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="startDatePDF" name="startDate">
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date</label>
+                        <label for="endDate" class="form-label">End Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="endDatePDF" name="endDate">
                     </div>
                     <div class="mb-3">
-                        <label for="customOffice" class="form-label">Select an Office</label>
+                        <label for="customOffice" class="form-label">Select an Office <span class="text-danger fw-bold">*</span></label>
                         <select class="form-select" name="customOffice" id="customOffice">
                             <option value="1">City Youth Development Office</option>
                             <option value="2">Person With Disability Affairs Office</option>
-                            <!-- Add more options as needed -->
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary" id="applyDateRange">Download</button>

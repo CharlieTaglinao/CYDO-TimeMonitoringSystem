@@ -8,11 +8,11 @@
             <div class="modal-body">
                 <form method="GET" action="index">
                     <div class="mb-3">
-                        <label for="startDate" class="form-label">Start Date</label>
+                        <label for="startDate" class="form-label">Start Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="startDate" name="startDate" value="<?php echo htmlspecialchars($_GET['startDate'] ?? ''); ?>">
                     </div>
                     <div class="mb-3">
-                        <label for="endDate" class="form-label">End Date</label>
+                        <label for="endDate" class="form-label">End Date <span class="text-danger fw-bold">*</span></label>
                         <input type="date" class="form-control" id="endDate" name="endDate" value="<?php echo htmlspecialchars($_GET['endDate'] ?? ''); ?>">
                     </div>
                     <button type="submit" class="btn btn-primary" id="applyDateRange">Apply</button>

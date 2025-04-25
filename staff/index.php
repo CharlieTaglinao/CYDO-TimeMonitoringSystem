@@ -136,7 +136,7 @@ include 'includes/header.php';
                                             </td>
                                             <td style="width: 12%;"><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
                                             <td style="width: 20%;">
-                                                <button class="btn btn-outline-success view-details"
+                                                <button class="btn btn-success view-details"
                                                     data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
                                                     data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
                                                     data-code="<?php echo $row['code']; ?>"
@@ -148,7 +148,7 @@ include 'includes/header.php';
                                                 <?php if (is_null($row['time_out'])): ?>
                                                     <form action="process/force-time-out-visitor.php" method="POST" class="time-out-form" style="display:inline;">
                                                         <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
-                                                        <button type="button" class="btn btn-outline-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
+                                                        <button type="button" class="btn btn-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
                                                     </form>
                                                 <?php endif; ?>
                                             </td>
