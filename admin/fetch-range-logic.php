@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 visitors.age, 
                 visitors.sex_id, 
                 sex.sex_name,
+                visitor_school_name.school_name,
                 time_logs.time_in, 
                 time_logs.time_out, 
                 time_logs.code, 
@@ -27,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             FROM visitors
                 INNER JOIN time_logs ON visitors.id = time_logs.client_id
                 INNER JOIN sex ON visitors.sex_id = sex.id
+                INNER JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
                 INNER JOIN (
                     SELECT client_id, MAX(id) as latest_purpose_id 
                     FROM purpose 
@@ -57,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     echo '-';
                 }
                 echo "</td>
+                    <td>" . htmlspecialchars($row['school_name']) . "</td>
                     <td>" . $row['status'] . "</td>
                     <td>
                         <button class='btn btn-success view-details'
@@ -73,10 +76,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </tr>";
             }
         } else {
-            echo "<tr><td colspan='7'>No records found</td></tr>";
+            echo "<tr><td colspan='8'>No records found</td></tr>";
         }
     } else {
-        echo "<tr><td colspan='6'>Invalid date range</td></tr>";
+        echo "<tr><td colspan='8'>Invalid date range</td></tr>";
     }
 }
 
@@ -94,6 +97,7 @@ if (!empty($_GET['startDate']) && !empty($_GET['endDate'])) {
             visitors.age, 
             visitors.sex_id, 
             sex.sex_name,
+            visitor_school_name.school_name,
             time_logs.time_in, 
             time_logs.time_out, 
             time_logs.code, 
@@ -102,6 +106,7 @@ if (!empty($_GET['startDate']) && !empty($_GET['endDate'])) {
         FROM visitors
         INNER JOIN time_logs ON visitors.id = time_logs.client_id
         INNER JOIN sex ON visitors.sex_id = sex.id
+        INNER JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
         INNER JOIN (
             SELECT client_id, MAX(id) as latest_purpose_id 
             FROM purpose 
@@ -132,6 +137,7 @@ if (!empty($_GET['startDate']) && !empty($_GET['endDate'])) {
                 echo '-';
             }
              echo "</td>
+                <td>" . htmlspecialchars($row['school_name']) . "</td>
                 <td>" . htmlspecialchars($row['status']) . "</td>
                 <td>
                    <button class='btn btn-success view-details'
@@ -156,7 +162,7 @@ if (!empty($_GET['startDate']) && !empty($_GET['endDate'])) {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='7'>No records found for the selected date range and search criteria.</td></tr>";
+        echo "<tr><td colspan='8'>No records found for the selected date range and search criteria.</td></tr>";
     }
 }
 ?>

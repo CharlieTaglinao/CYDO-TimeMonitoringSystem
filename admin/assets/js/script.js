@@ -123,7 +123,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 });
+document.addEventListener("DOMContentLoaded", function () {
+    const editButtons = document.querySelectorAll(".editModal");
 
+    editButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            const id = this.getAttribute("data-id");
+            const role = this.getAttribute("data-role");
+
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-role").value = role;
+        });
+    });
+});
 //------------------------------------------------------------------//
 // START OF FETCH AND UPDATE PAGINATION FOR USER PERMISSION TABLE 
 
@@ -332,6 +344,18 @@ $(document).ready(function () {
 
         // Load modal 
         $.get("add-account-modal.php", function (data) {
+            $("#modalContainer").html(data);
+            $("#exampleModal").modal("show");
+        });
+    });
+});
+
+$(document).ready(function () {
+    $("#addAccountTypeBtn").click(function (e) {
+        e.preventDefault();
+
+        // Load modal 
+        $.get("add-role-modal.php", function (data) {
             $("#modalContainer").html(data);
             $("#exampleModal").modal("show");
         });

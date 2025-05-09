@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $_SESSION['role'] = $user['role_name'];
 
                 $response['success'] = true;
-                $response['redirect'] = ($user['role_name'] === 'admin') ? 'admin/index' :
-                                        (($user['role_name'] === 'staff') ? 'staff/index' : '../index');
+                // Redirect to admin/index if role exists
+                $response['redirect'] = 'admin/index';
                 echo json_encode($response);
                 exit();
             } else {

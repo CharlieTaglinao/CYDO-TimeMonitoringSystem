@@ -8,18 +8,9 @@ if(!isset($_SESSION)) {
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 $username = $_SESSION['username'];
 
-// Count all admin
-$totalAdminQuery = "SELECT COUNT(id) AS total_admin FROM account WHERE role = 1";
-$totalAdminResult = $conn->query($totalAdminQuery);
-$totalAdmin = $totalAdminResult->fetch_assoc()['total_admin'];
-
-// Count all staff
-$totalStaffQuery = "SELECT COUNT(id) AS total_staff FROM account WHERE role = 2";
-$totalStaffResult = $conn->query($totalStaffQuery);
-$totalStaff = $totalStaffResult->fetch_assoc()['total_staff'];
 
 // Count all users
-$totalAllQuery = "SELECT COUNT(*) AS total_all FROM account";
+$totalAllQuery = "SELECT COUNT(*) AS total_all FROM role";
 $totalAllResult = $conn->query($totalAllQuery);
 $totalAll = $totalAllResult->fetch_assoc()['total_all'];
 
@@ -28,36 +19,34 @@ $limit = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-// Count total rows with search filter
-$totalRowsQuery = "SELECT COUNT(*) AS total FROM account WHERE username != '$username'";
+// Count total rows with optional search filter
+$totalRowsQuery = "SELECT COUNT(*) AS total FROM role";
 if (!empty($search)) {
-    $totalRowsQuery .= " AND username LIKE '$search%'";
+    $totalRowsQuery .= " WHERE role LIKE '%$search%'";
 }
 $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
-// Fetch accounts with optional search
-$accountQuery = "SELECT account.id, account.username, account.role, account.created_at, account_email.email_address 
-                FROM account
-                INNER JOIN account_email ON account.email_id = account_email.id 
-                WHERE username LIKE '$search%' AND username != '$username' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+// Fetch accounts with optional search filter
+$accountQuery = "SELECT * FROM role";
+if (!empty($search)) {
+    $accountQuery .= " WHERE role LIKE '%$search%'";
+}
+$accountQuery .= " LIMIT $limit OFFSET $offset";
 $accountResult = $conn->query($accountQuery);
 
 if (isset($_GET['search']) && !isset($_GET['pagination'])) {
     if ($accountResult->num_rows > 0) {
         while ($row = $accountResult->fetch_assoc()) {
-            $role = $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown');
             echo "<tr>
-                <td>" . $row['username']  . "</td>
-                <td>" . $row['email_address'] . "</td>
-                <td>" . $role . "</td>
+                <td>" . $row['id'] . "</td>
+                <td>" . $row['role'] . "</td>
                 <td>" . $row['created_at'] . "</td>
 
                 <td>
                     <button class='btn btn-sm btn-primary editModalBtn'
                             data-id='" . $row['id'] . "'
-                            data-username='" . $row['username'] . "'
                             data-role='" . $row['role'] . "' 
                             data-bs-toggle='modal'
                             data-bs-target='#editModal'>

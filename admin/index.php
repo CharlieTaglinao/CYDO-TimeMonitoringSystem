@@ -103,6 +103,7 @@ include 'includes/header.php';
                                 <th style="width: 5%;">IN</th>
                                 <th style="width: 5%;">OUT</th>
                                 <th style="width: 20%;">DURATION</th>
+                                <th style="width: 10%;">SCHOOL NAME</th>
                                 <th style="width: 12%;">STATUS</th>
                                 <th style="width: 20%;">ACTION</th>
                             </tr>
@@ -134,9 +135,10 @@ include 'includes/header.php';
                                                 }
                                                 ?>
                                             </td>
+                                            <td style="width: 10%;"><?php echo isset($row['school_name']) ? $row['school_name'] : '-';?></td>
                                             <td style="width: 12%;"><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
                                             <td style="width: 20%;">
-                                                <button class="btn btn-success view-details"
+                                                <button class="btn btn-outline-info view-details"
                                                     data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
                                                     data-age="<?php echo $row['age']; ?>" data-sex="<?php echo $row['sex_name']; ?>"
                                                     data-code="<?php echo $row['code']; ?>"
@@ -148,7 +150,7 @@ include 'includes/header.php';
                                                 <?php if (is_null($row['time_out'])): ?>
                                                     <form action="process/force-time-out-visitor.php" method="POST" class="time-out-form" style="display:inline;">
                                                         <input type="hidden" name="visitor_code" value="<?php echo $row['code']; ?>">
-                                                        <button type="button" class="btn btn-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
+                                                        <button type="button" class="btn btn-outline-danger time-out-button" data-id="<?php echo $row['code']; ?>">Time Out</button>
                                                     </form>
                                                 <?php endif; ?>
                                             </td>
@@ -158,7 +160,7 @@ include 'includes/header.php';
                                 } else {
                                     ?>
                                     <tr>
-                                        <td colspan="7" class="text-center">End of the list reached.</td>
+                                        <td colspan="8" class="text-center">End of the list reached.</td>
                                     </tr>
                                     <?php
                                 }

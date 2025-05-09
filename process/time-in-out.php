@@ -8,7 +8,7 @@ $firstName = strtoupper($_POST['firstName'] ?? '');
 $middleName = strtoupper($_POST['middleName'] ?? '');
 $lastName = strtoupper($_POST['lastName'] ?? '');
 $email = $_POST['email'] ?? '';
-$officename = strtoupper(trim($_POST['office']));
+$officename = strtoupper(trim($_POST['school_name']));
 $barangayname = strtoupper(trim($_POST['barangay']));
 $purpose = strtoupper(trim($_POST['purpose'] ?? ''));
 $sex = strtoupper(trim($_POST['sex'] ?? ''));
@@ -42,10 +42,28 @@ if (isset($_POST['timeIn'])) {
         $checkFullNameStmt->bind_result($clientId);
         $checkFullNameStmt->fetch();
     } else {
+        // Handle visitor_school_name table
+        $schoolName = strtoupper(trim($_POST['school_name'] ?? ''));
+        $checkSchoolQuery = "SELECT id FROM visitor_school_name WHERE school_name = ?";
+        $checkSchoolStmt = $conn->prepare($checkSchoolQuery);
+        $checkSchoolStmt->bind_param("s", $schoolName);
+        $checkSchoolStmt->execute();
+        $checkSchoolStmt->store_result();
+        if ($checkSchoolStmt->num_rows > 0) {
+            $checkSchoolStmt->bind_result($schoolId);
+            $checkSchoolStmt->fetch();
+        } else {
+            $insertSchoolQuery = "INSERT INTO visitor_school_name (school_name) VALUES (?)";
+            $insertSchoolStmt = $conn->prepare($insertSchoolQuery);
+            $insertSchoolStmt->bind_param("s", $schoolName);
+            $insertSchoolStmt->execute();
+            $schoolId = $conn->insert_id;
+        }
+
         // Insert new visitor
-        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, office_id, barangay_id, age, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, school_id, barangay_id, age, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $officename, $barangayname, $age);
+        $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $schoolId, $barangayname, $age);
         $insertStmt->execute();
         $clientId = $conn->insert_id;
 

@@ -1,4 +1,8 @@
 
+
+<?php 
+include '../includes/database.php';  
+?>
 <body>
 <div class="modal fade <?php if (isset($_SESSION['show_modal']) && $_SESSION['show_modal']) echo 'show'; ?>" 
      id="exampleModal" 
@@ -18,9 +22,15 @@
                 <form action="process/add-account-logic.php" method="POST">
                     <div class="mb-3">
                         <label for="role" class="form-label">Select a role <span class="text-danger fw-bold">*</span></label>
+                        <?php
+                        // Fetch roles from the database 
+                        $query = "SELECT id, role FROM role";
+                        $result = $conn->query($query);
+                        ?>
                         <select name="role" id="role" class="form-control">
-                            <option value="1">ADMIN</option>
-                            <option value="2">STAFF</option>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                                <option value="<?php echo $row['id']; ?>"><?php echo htmlspecialchars(strtoupper($row['role']))?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="mb-3">

@@ -8,16 +8,6 @@ if(!isset($_SESSION)) {
 $search = isset($_GET['search']) ? $conn->real_escape_string($_GET['search']) : '';
 $username = $_SESSION['username'];
 
-// Count all admin
-$totalAdminQuery = "SELECT COUNT(id) AS total_admin FROM account WHERE role = 1";
-$totalAdminResult = $conn->query($totalAdminQuery);
-$totalAdmin = $totalAdminResult->fetch_assoc()['total_admin'];
-
-// Count all staff
-$totalStaffQuery = "SELECT COUNT(id) AS total_staff FROM account WHERE role = 2";
-$totalStaffResult = $conn->query($totalStaffQuery);
-$totalStaff = $totalStaffResult->fetch_assoc()['total_staff'];
-
 // Count all users
 $totalAllQuery = "SELECT COUNT(*) AS total_all FROM account";
 $totalAllResult = $conn->query($totalAllQuery);
@@ -38,24 +28,25 @@ $totalRows = $totalRowsResult->fetch_assoc()['total'];
 $totalPages = ceil($totalRows / $limit);
 
 // Fetch accounts with optional search
-$accountQuery = "SELECT account.id, account.username, account.role, account.created_at, account_email.email_address 
+$accountQuery = "SELECT account.id, account.username, account.role, role.role AS role_name, account.created_at, account_email.email_address 
                 FROM account
                 INNER JOIN account_email ON account.email_id = account_email.id 
+                INNER JOIN role ON account.role = role.id 
                 WHERE username LIKE '$search%' AND username != '$username' ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
 $accountResult = $conn->query($accountQuery);
 
 if (isset($_GET['search']) && !isset($_GET['pagination'])) {
     if ($accountResult->num_rows > 0) {
         while ($row = $accountResult->fetch_assoc()) {
-            $role = $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown');
+            $roleName = $row['role_name'];
             echo "<tr>
                 <td>" . $row['username']  . "</td>
                 <td>" . $row['email_address'] . "</td>
-                <td>" . $role . "</td>
+                <td>" . $roleName . "</td>
                 <td>" . $row['created_at'] . "</td>
 
                 <td>
-                    <button class='btn btn-sm btn-primary editModalBtn'
+                    <button class='btn btn-sm btn-outline-info editModalBtn'
                             data-id='" . $row['id'] . "'
                             data-username='" . $row['username'] . "'
                             data-role='" . $row['role'] . "' 
@@ -66,7 +57,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
                 
                     <form action='process/delete-account-logic.php' method='POST' id='delete-button-on-form' class='d-inline delete-form'>
                         <input type='hidden' name='id' value='" . $row['id'] . "'>
-                        <button type='submit' class='btn btn-sm btn-danger delete-button'>DELETE</button>
+                        <button type='submit' class='btn btn-sm btn-outline-danger delete-button'>DELETE</button>
                     </form>
                 </td>
             </tr>";

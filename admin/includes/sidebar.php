@@ -25,10 +25,10 @@ function has_permission($permission_id, $user_permissions) {
 
 ?>
 
-<div id="sidebar" class="p-3" style="width: 250px; height: auto; min-height: 100vh;">
+<div id="sidebar" class="p-3" style="width: 330px; height: auto; min-height: 100vh;">
     <div class="btn mb-3 w-100">
         <a href="index">
-            <img src="../assets/images/CYDO-LOGO.png" alt="" style="max-height: 200px;">
+            <img src="../assets/images/CH-LOGO.png" alt="" style="max-height: 100px; width: 280px;">
         </a>
     </div>
     <h2 class="fs-4"><?php echo "Welcome " . $user_login?></h2>
@@ -60,10 +60,10 @@ function has_permission($permission_id, $user_permissions) {
                 <div class="collapse" id="accountSubmenu">
                     <nav class="nav flex-column ms-3">
                         <?php if (has_permission('T9rPHeL7ectsYwT6Ih2AswTeZ', $user_permissions)) { ?>
-                            <a href="#" class="nav-link" id="addAccountBtn">Add Account</a>
+                            <a href="#" class="nav-link fw-normal" id="addAccountBtn">Add Account</a>
                         <?php } ?>
                         <?php if (has_permission('906IZi3K8od7FBS518t5I31jY', $user_permissions)) { ?>
-                            <a href="view-account" class="nav-link">View Account</a>
+                            <a href="view-account" class="nav-link fw-normal">View Account</a>
                         <?php } ?>
                     </nav>
                 </div>
@@ -73,20 +73,32 @@ function has_permission($permission_id, $user_permissions) {
         <!-- Manage role Menu with Submenu -->
         <?php if (has_permission('8sAygcnqpOXP8aAAG7IAWI4Cg', $user_permissions)) { ?>
             <div class="nav-item">
-                <a 
-                    class="nav-link dropdown-toggle" 
-                    data-bs-toggle="collapse" 
-                    href="#manageRoleSubmenu" 
-                    role="button" 
-                    aria-expanded="false" 
-                    aria-controls="manageRoleSubmenu">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="collapse" href="#othersSubmenu" role="button" aria-expanded="false" aria-controls="othersSubmenu">
                     Others
                 </a>
-                <div class="collapse" id="manageRoleSubmenu">
-                    <nav class="nav flex-column ms-3">
-                        <a href="add-permission" class="nav-link">Add Permission</a>
-                        <a href="view-permission" class="nav-link" id="viewPermissionsBtn">View Permissions</a>
-                    </nav>
+                <div class="collapse" id="othersSubmenu">
+                    <div class="nav-item">
+                        <a class="nav-link dropdown-toggle ms-2" data-bs-toggle="collapse" href="#manageRoleSubmenu" role="button" aria-expanded="false" aria-controls="manageRoleSubmenu">
+                            Manage Account Type
+                        </a>
+                        <div class="collapse ms-3" id="manageRoleSubmenu" data-bs-parent="#othersSubmenu">
+                            <nav class="nav flex-column">
+                                <a href="#" class="nav-link fw-normal" id="addAccountTypeBtn">Add Account type  </a>
+                                <a href="view-account-type" class="nav-link fw-normal">View Account Type</a>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="nav-item">
+                        <a class="nav-link dropdown-toggle ms-2" data-bs-toggle="collapse" href="#managePermissionSubmenu" role="button" aria-expanded="false" aria-controls="managePermissionSubmenu">
+                            Manage Permission
+                        </a>
+                        <div class="collapse ms-3" id="managePermissionSubmenu" data-bs-parent="#othersSubmenu">
+                            <nav class="nav flex-column">
+                                <a href="add-permission" class="nav-link fw-normal" id="addPermissionBtn">Add Permission</a>
+                                <a href="view-permission" class="nav-link fw-normal">View Permission</a>
+                            </nav>
+                        </div>
+                    </div>
                 </div>
             </div>
         <?php } ?>
@@ -102,3 +114,4 @@ function has_permission($permission_id, $user_permissions) {
     </nav>
     
 </div>
+

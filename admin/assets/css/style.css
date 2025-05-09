@@ -72,7 +72,7 @@ body {
 }
 
 #sidebar {
-  background-color: #1e1e1e;
+  background-color: #727272;
   color: rgb(255, 255, 255);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -177,7 +177,7 @@ body.dark-mode .alert {
 }
 
 body.dark-mode #sidebar {
-  background: linear-gradient(135deg, #1e1e1e, #212f3c, #256328);
+  background: linear-gradient(135deg, #c9c9c9, #404549, #164994);
   color: #ffffff;
 }
 

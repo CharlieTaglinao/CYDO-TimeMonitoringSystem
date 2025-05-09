@@ -14,23 +14,7 @@ include 'permission/permissionEditDeleteAccount.php';
         <div class="flex-grow-1 p-4">
             <div class="container-fluid mt-4">
                 <div class="row text-center">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">ADMIN</h5>
-                                <p class="card-text"><?php echo $totalAdmin; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">STAFF</h5>
-                                <p class="card-text" id="current-visitors"><?php echo $totalStaff; ?></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
+                    <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">TOTAL ACCOUNTS</h5>
@@ -77,11 +61,10 @@ include 'permission/permissionEditDeleteAccount.php';
                                     <tr>
                                         <td><?php echo $row['username']; ?></td>
                                         <td><?php echo $row['email_address']?></td>
-                                        <td><?php echo $row['role'] == 1 ? 'Admin' : ($row['role'] == 2 ? 'Staff' : 'Unknown'); ?>
-                                        </td>
+                                        <td><?php echo $row['role_name']; ?></td>
                                         <td><?php echo $row['created_at']; ?></td>
                                         <td>
-                                            <button class="btn btn-sm btn-primary editModalBtn"
+                                            <button class="btn btn-sm btn-outline-info editModalBtn"
                                                 data-id="<?php echo $row['id']; ?>"
                                                 data-username="<?php echo $row['username']; ?>"
                                                 data-role="<?php echo $row['role']; ?>" 
@@ -92,7 +75,7 @@ include 'permission/permissionEditDeleteAccount.php';
                                             <form action="process/delete-account-logic.php" method="POST" id="delete-button-on-form" class="d-inline delete-form">
                                                 <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                                                 <button type="submit"
-                                                    class="btn btn-sm btn-danger delete-button">DELETE</button>
+                                                    class="btn btn-sm btn-outline-danger delete-button">DELETE</button>
                                             </form>
                                         </td>
                                     </tr>

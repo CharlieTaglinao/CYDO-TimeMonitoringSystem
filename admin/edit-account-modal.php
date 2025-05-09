@@ -10,9 +10,13 @@
                     <input type="hidden" id="edit-id" name="id">
                     <div class="mb-3">
                         <label for="edit-role" class="form-label">Select a role <span class="text-danger fw-bold">*</span></label>
+                        <?php
+                        $roleResult = $conn->query("SELECT id, role FROM role");
+                        ?>
                         <select name="role" id="edit-role" class="form-control">
-                            <option value="1">ADMIN</option>
-                            <option value="2">STAFF</option>
+                            <?php while ($r = $roleResult->fetch_assoc()): ?>
+                            <option value="<?php echo $r['id']; ?>"><?php echo htmlspecialchars($r['role']); ?></option>
+                            <?php endwhile; ?>
                         </select>
                     </div>
                     <div class="mb-3">

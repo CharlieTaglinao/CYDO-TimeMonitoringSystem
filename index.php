@@ -11,23 +11,13 @@ if (isset($_GET['visitor_code'])) {
     <div class="w-100">
         <!-- Add the beep audio element -->
         <audio id="beep" src="assets/audio/beep.mp3"></audio>
-        <div class="header-container container-fluid w-100 " style="position: relative; bottom: 120px;">
+        <div class="header-container container-fluid w-100" style="position: relative; bottom: 80px;">
             <div class="cydo-logo">
                 <div class="row">
-                    <div class="col-md-3 d-flex align-items-center">
-                        <img src="assets/images/CYDO-LOGO.png" class="LOGO-CYDO" alt="CYDO-LOGO">
+                    <div class="col-md-12 d-flex align-items-center">
+                        <img src="assets/images/CH-LOGO.png" class="LOGO-CYDO" alt="CYDO-LOGO">
                     </div>
-                    <div class="col-md-9 d-flex flex-column justify-content-center">
-                        <h1 class="card-title text-light TEXT-CYDO">CITY YOUTH DEVELOPMENT OFFICE</h1>
-                        <div class="header-bar d-flex align-items-center">
-                            <div class="right-decor">
-                                <div class="slice"></div>
-                                <div class="slice"></div>
-                                <div class="slice"></div>
-                                <div class="slice"></div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>          
             </div>
         </div>
@@ -153,14 +143,10 @@ if (isset($_GET['visitor_code'])) {
                             <div class="row">
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label class="form-label" for="office">Office <span class="asterisk-required-fields">*</span></label>
-                                        <select class="form-select" name="office" id="office" required>
-                                            <option value="" selected disabled>Select an Office</option>
-                                            <option value="1">City Youth Development Office</option>
-                                            <option value="2">Person with Disablity Affairs Office</option>
-                                        </select>
+                                        <label class="form-label" for="school_name">School name <span class="asterisk-required-fields">*</span></label>
+                                        <input type="text" name="school_name" id="school_name" class="form-control" placeholder="Gov Ferrer Memorial Integrated National High School" required>
     
-                                        <div class="invalid-feedback">Please select an office.</div>
+                                        <div class="invalid-feedback">Please provide a school name.</div>
                                     </div>
                                 </div>
                                 <div class="col-6">

@@ -22,5 +22,17 @@ function checkUserRole($requiredRoles) {
 }
 
 function isAuthenticated() {
-    checkUserRole(['admin', 'staff']);
+    include '../includes/database.php';
+
+    $query = "SELECT role FROM role";
+    $result = $conn->query($query);
+
+    $roles = [];
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            $roles[] = $row['role'];
+        }
+    }
+
+    checkUserRole($roles);
 }

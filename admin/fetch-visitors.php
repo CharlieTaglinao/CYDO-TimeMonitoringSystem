@@ -56,8 +56,10 @@ $visitorsQuery = "
         visitors.middle_name, 
         visitors.last_name,
         visitors.age, 
-        visitors.sex_id, 
+        visitors.sex_id,
+        visitors.school_id, 
         sex.sex_name,
+        visitor_school_name.school_name,
         time_logs.time_in, 
         time_logs.time_out, 
         time_logs.status,
@@ -66,6 +68,7 @@ $visitorsQuery = "
     FROM visitors
     INNER JOIN time_logs ON visitors.id = time_logs.client_id
     INNER JOIN sex ON visitors.sex_id = sex.id
+    INNER JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
     INNER JOIN (SELECT client_id, MAX(id) as latest_purpose_id FROM purpose GROUP BY client_id) as latest_purposes ON visitors.id = latest_purposes.client_id
     INNER JOIN purpose ON latest_purposes.latest_purpose_id = purpose.id 
     WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '$search%'
@@ -106,7 +109,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
                 echo '-';
             }
 
-            echo "</td>
+            echo "</td><td style='width: 10%;'>" . htmlspecialchars($row['school_name']) . "</td>
                 <td style='width: 12%;'>" . htmlspecialchars($row['status']) . "</td>
                 <td style='width: 20%;'>
                    <button class='btn btn-outline-success view-details'
@@ -131,7 +134,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='7'>No records found</td></tr>";
+        echo "<tr><td colspan='8'>No records found</td></tr>";
     }
 
     // Return updated pagination links
@@ -168,10 +171,10 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
                 echo '-';
             }
 
-            echo "</td>
+            echo "</td><td>" . htmlspecialchars($row['school_name']) . "</td>
                 <td>" . htmlspecialchars($row['status']) . "</td>
                 <td>
-                   <button class='btn btn-success view-details'
+                   <button class='btn btn-outline-info view-details'
                         data-name='{$fullName}'
                         data-age='" . htmlspecialchars($row['age']) . "'
                         data-sex='" . htmlspecialchars($row['sex_name']) . "'
@@ -185,7 +188,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             if ($row['time_out'] === null) {
                 echo "<form action='process/force-time-out-visitor.php' method='POST' style='display:inline;'>
                         <input type='hidden' name='visitor_code' value='" . htmlspecialchars($row['code']) . "'>
-                        <button type='submit' class='btn btn-danger'>Time Out</button>
+                        <button type='submit' class='btn btn-outline-danger'>Time Out</button>
                       </form>";
             }
 
@@ -193,7 +196,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='7'>No records found</td></tr>";
+        echo "<tr><td colspan='8'>No records found</td></tr>";
     }
     
     echo "<input type='hidden' id='total-rows' value='$totalRows'>";
