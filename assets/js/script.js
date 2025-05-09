@@ -47,24 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     dateElement.textContent = today.toLocaleDateString(undefined, options);
 
-    // Check for mobile device and request camera access
-    if (/Mobi|Android/i.test(navigator.userAgent)) {
-        console.log("Mobile device detected. Requesting camera access...");
-        Instascan.Camera.getCameras()
-            .then(function (cameras) {
-                if (cameras.length > 0) {
-                    console.log("Cameras found on mobile device:", cameras);
-                    scanner.start(cameras[0]);
-                } else {
-                    alert("No camera found on mobile device");
-                }
-            })
-            .catch(function (e) {
-                console.error("Error getting cameras on mobile device:", e);
-            });
-    }
-    // Live validation for form fields
-    // Dynamic feedback text
     const feedbackMessages = {
         firstName: "Please provide a first name.",
         middleName: "Please provide a middle name.",
@@ -162,51 +144,36 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    const isMemberSelect = document.getElementById('isMember');
+    const personalSection = document.getElementById('personalDetailsSection');
+    const membershipSection = document.getElementById('membershipSection');
+    isMemberSelect.addEventListener('change', () => {
+        if (isMemberSelect.value === 'yes') {
+            membershipSection.style.display = 'block';
+            personalSection.style.display = 'none';
+            // Disable validation for personal details
+            personalSection.querySelectorAll('input, select').forEach(input => {
+                input.required = false;
+                input.disabled = true;
+            });
+            membershipSection.querySelectorAll('input').forEach(input => {
+                input.required = true;
+                input.disabled = false;
+            });
+        } else if (isMemberSelect.value === 'no') {
+            membershipSection.style.display = 'none';
+            personalSection.style.display = 'block';
+            // Enable validation for personal details
+            personalSection.querySelectorAll('input, select').forEach(input => {
+                input.required = true;
+                input.disabled = false;
+            });
+            membershipSection.querySelectorAll('input').forEach(input => {
+                input.required = false;
+                input.disabled = true;
+            });
+        }
+    });
 });
  
-document.getElementById('time-out-button-card').addEventListener('click', function () {
-    // Initialize the scanner
-    let scanner = new Instascan.Scanner({ video: document.getElementById("preview") });
-    if (document.getElementById("preview")) {
-        Instascan.Camera.getCameras()
-            .then(function (cameras) {
-                if (cameras.length > 0) {
-                    console.log("Cameras found:", cameras);
-                    // Start the scanner with the first available camera
-                    scanner.start(cameras[0]);
-                } else {
-                    alert("No camera found");
-                }
-            })
-            .catch(function (e) {
-                console.error("Error getting cameras:", e);
-            });
-    } else {
-        console.error("Video element not found");
-    }
-
-    // Add a listener for the scan event
-    scanner.addListener("scan", function (c) {
-        document.getElementById("code").value = c;
-
-        // Play the beep sound
-        let beepAudio = document.getElementById("beep");
-        console.log("Beep audio element:", beepAudio); 
-        beepAudio.play().then(() => {
-            console.log("Beep sound played successfully");
-            setTimeout(function() {
-                document.getElementById("btnTimeOut").click();
-            }, 700); //since 1 second yung audio file kaya nag lagay tayo dito ng timeout na kahit .7s na delay para maplay muna yung audio bago masubmit 
-        }).catch((error) => {
-            console.error("Error playing beep sound:", error);
-        });
-    });
-
-    // Close the camera when the modal is closed
-    const modalElement = document.getElementById('timeOutModal');
-    modalElement.addEventListener('hidden.bs.modal', function () {
-        scanner.stop();
-        console.log("Camera stopped as modal closed");
-    });
-});
-

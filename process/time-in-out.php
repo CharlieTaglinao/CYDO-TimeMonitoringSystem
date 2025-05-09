@@ -8,13 +8,13 @@ $firstName = strtoupper($_POST['firstName'] ?? '');
 $middleName = strtoupper($_POST['middleName'] ?? '');
 $lastName = strtoupper($_POST['lastName'] ?? '');
 $email = $_POST['email'] ?? '';
-$officename = strtoupper(trim($_POST['school_name']));
-$barangayname = strtoupper(trim($_POST['barangay']));
+$schoolName = strtoupper(trim($_POST['schoolname']));
+$barangayname = strtoupper(trim($_POST['barangayname']));
 $purpose = strtoupper(trim($_POST['purpose'] ?? ''));
 $sex = strtoupper(trim($_POST['sex'] ?? ''));
 $age = (int) ($_POST['age'] ?? 0);
-$code = strtoupper(trim($_POST['code'] ?? ''));
-
+$code = trim($_POST['membership_code'] ?? '');  
+$isMember = $_POST['isMember'] ?? '';
 
 $_SESSION['first_name'] = $firstName;
 $_SESSION['middle_name'] = $middleName;
@@ -29,21 +29,53 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
-    // Check if client is already timed in
-    $clientId = null;
 
-    $checkFullNameQuery = "SELECT id FROM visitors WHERE first_name = ? AND middle_name= ? AND last_name = ?";
-    $checkFullNameStmt = $conn->prepare($checkFullNameQuery);
-    $checkFullNameStmt->bind_param("sss", $firstName, $middleName, $lastName);
-    $checkFullNameStmt->execute();
-    $checkFullNameStmt->store_result();
+    if ($isMember === 'yes') {
+        // Check if the membership code is valid
+        $checkCodeQuery = "SELECT id FROM member_code WHERE membership_code = ?";
+        $checkCodeStmt = $conn->prepare($checkCodeQuery);
+        $checkCodeStmt->bind_param("s", $code);
+        $checkCodeStmt->execute();
+        $checkCodeStmt->store_result();
 
-    if ($checkFullNameStmt->num_rows > 0) {
-        $checkFullNameStmt->bind_result($clientId);
-        $checkFullNameStmt->fetch();
+        if ($checkCodeStmt->num_rows === 0) {
+            $_SESSION['message'] = "Invalid membership code.";
+            $_SESSION['message_type'] = 'danger';
+            header("Location: ../index.php");
+            exit();
+        }
+
+        // Get the client ID associated with the membership code
+        $getClientIdQuery = "SELECT id FROM visitors WHERE membership_id = (SELECT id FROM member_code WHERE membership_code = ?)";
+        $getClientIdStmt = $conn->prepare($getClientIdQuery);
+        $getClientIdStmt->bind_param("s", $code);
+        $getClientIdStmt->execute();
+        $getClientIdStmt->store_result();
+
+        if ($getClientIdStmt->num_rows === 0) {
+            $_SESSION['message'] = "No client found with this membership code.";
+            $_SESSION['message_type'] = 'danger';
+            header("Location: ../index.php");
+            exit();
+        }
+
+        // Fetch the client ID
+        $getClientIdStmt->bind_result($clientId);
+        $getClientIdStmt->fetch();
     } else {
+        // new visitor: generate membership code
+        $year = date('Y');
+        $random = generateRandomCode(6);
+        $membershipCode = "CH-$year-$random";
+        $code = $membershipCode;  // set unified code for insertion
+        $insertCodeQuery = "INSERT INTO member_code (membership_code) VALUES (?)";
+        $codeStmt = $conn->prepare($insertCodeQuery);
+        $codeStmt->bind_param("s", $membershipCode);
+        $codeStmt->execute();
+        $membershipId = $conn->insert_id;
+        
         // Handle visitor_school_name table
-        $schoolName = strtoupper(trim($_POST['school_name'] ?? ''));
+        $schoolName = strtoupper(trim($_POST['schoolname'] ?? ''));
         $checkSchoolQuery = "SELECT id FROM visitor_school_name WHERE school_name = ?";
         $checkSchoolStmt = $conn->prepare($checkSchoolQuery);
         $checkSchoolStmt->bind_param("s", $schoolName);
@@ -60,18 +92,31 @@ if (isset($_POST['timeIn'])) {
             $schoolId = $conn->insert_id;
         }
 
-        // Insert new visitor
-        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, school_id, barangay_id, age, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        // Insert new visitor with membership_id
+        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, school_id, barangay_id, age, membership_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
         $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $schoolId, $barangayname, $age);
+        $insertStmt->bind_param("sssiiiiis", $firstName, $middleName, $lastName, $sex, $purpose, $schoolId, $barangayname, $age, $membershipId);
         $insertStmt->execute();
         $clientId = $conn->insert_id;
 
-        
         $insertEmailQuery = "INSERT INTO email (client_id, email) VALUES (?, ?)";
         $insertEmailStmt = $conn->prepare($insertEmailQuery);
         $insertEmailStmt->bind_param("is", $clientId, $email);
         $insertEmailStmt->execute();
+
+        // Insert purpose
+        $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
+        $insertPurposeStmt = $conn->prepare($insertPurposeQuery);
+        $insertPurposeStmt->bind_param("is", $clientId, $purpose);
+        $insertPurposeStmt->execute();
+
+        // Update Purpose_id
+        $updatePurposeIdQuery = "UPDATE visitors SET visitors.purpose_id = ? WHERE visitors.id = ?";
+        $updatePurposeIdStmt = $conn->prepare($updatePurposeIdQuery);
+        $updatePurposeIdStmt->bind_param("ii", $clientId, $clientId);
+        $updatePurposeIdStmt->execute();
+
+
     }
 
     // Check if the client is already timed in
@@ -88,43 +133,28 @@ if (isset($_POST['timeIn'])) {
         exit();
     }
 
-    // Allow a new time-in
-    $randomCode = generateRandomCode();
-
-    // Insert purpose
-    $insertPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
-    $insertPurposeStmt = $conn->prepare($insertPurposeQuery);
-    $insertPurposeStmt->bind_param("is", $clientId, $purpose);
-    $insertPurposeStmt->execute();
-
-    // Update Purpose_id
-    $updatePurposeIdQuery = "UPDATE visitors SET visitors.purpose_id = ? WHERE visitors.id = ?";
-    $updatePurposeIdStmt = $conn->prepare($updatePurposeIdQuery);
-    $updatePurposeIdStmt->bind_param("ii", $clientId, $clientId);
-    $updatePurposeIdStmt->execute();
-
-    // Insert new time log
-    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, code,office_id,status) VALUES (?, ?, ?, ?, 'On Site')";
+    // Allow a new time-in with membership code
+    $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, status, code) VALUES (?, ?, 'On Site', ?)";
     $insertLogStmt = $conn->prepare($insertLogQuery);
-    $insertLogStmt->bind_param("issi", $clientId, $logTime, $randomCode,$officename);
+    $insertLogStmt->bind_param("iss", $clientId, $logTime, $code);
 
     if ($insertLogStmt->execute()) {
-        $_SESSION['showQRModal'] = true;
-        $_SESSION['randomCode'] = $randomCode;
-        $_SESSION['message'] = "Successfully Time IN at $logTime. Your code is $randomCode";
+        $_SESSION['message'] = "Successfully Time IN at $logTime.";
         $_SESSION['message_type'] = 'success';
-        include '../includes/generate-qr-code.php';
     } else {
         $_SESSION['message'] = "Failed to log in.";
         $_SESSION['message_type'] = 'danger';
     }
 } elseif (isset($_POST['timeOut'])) {
-    if (!$code) {
+    $code = trim($_POST['code'] ?? ''); // Ensure code is retrieved from the form
+
+    if (empty($code)) {
         $_SESSION['message'] = "Code is required.";
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
     }
+
     $validateCodeQuery = "SELECT id FROM time_logs WHERE code = ? AND time_out IS NULL";
     $validateCodeStmt = $conn->prepare($validateCodeQuery);
     $validateCodeStmt->bind_param("s", $code);
@@ -132,7 +162,7 @@ if (isset($_POST['timeIn'])) {
     $validateCodeStmt->store_result();
 
     if ($validateCodeStmt->num_rows === 0) {
-        $_SESSION['message'] = "Invalid or used code. Ask admin/staff for assistance.";
+        $_SESSION['message'] = "Invalid or expired code. Please contact an administrator for assistance.";
         $_SESSION['message_type'] = 'danger';
         header("Location: ../index.php");
         exit();
@@ -140,12 +170,11 @@ if (isset($_POST['timeIn'])) {
 
     $logTime = date('Y-m-d H:i:s');
 
-    $updateLogQuery = "UPDATE time_logs SET time_out = ?, code = null, status = 'User Logout' WHERE code = ? AND time_out IS NULL";
+    $updateLogQuery = "UPDATE time_logs SET time_out = ?, status = 'User Logout' WHERE code = ? AND time_out IS NULL";
     $updateLogStmt = $conn->prepare($updateLogQuery);
     $updateLogStmt->bind_param("ss", $logTime, $code);
 
     if ($updateLogStmt->execute()) {
-        // Delete the used code file in the qrcodes folder
         $qrCodeFile = "../qrcodes/$code.png";
         if (file_exists($qrCodeFile)) {
             unlink($qrCodeFile);

@@ -36,12 +36,21 @@ if (isset($_GET['visitor_code'])) {
             </div>
 
             <?php if (isset($_SESSION['message'])): ?>
-                <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show mt-3" role="alert">
+                <div class="alert alert-<?php echo $_SESSION['message_type']; ?> alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x mt-3 w-75" role="alert" data-bs-delay="5000">
                     <?php echo $_SESSION['message'];
                     unset($_SESSION['message']);
                     unset($_SESSION['message_type']); ?>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
+                <script>
+                    setTimeout(() => {
+                        const alert = document.querySelector('.alert');
+                        if (alert) {
+                            alert.classList.remove('show');
+                            alert.addEventListener('transitionend', () => alert.remove());
+                        }
+                    }, 4000);
+                </script>
             <?php endif; ?>
             <div class="row mt-7">
                 <div class="col-md-6 offset-md-3">
@@ -65,165 +74,158 @@ if (isset($_GET['visitor_code'])) {
             </div>
         </div>
 
-        <!-- QR Code Modal -->
-        <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content" id="">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="qrModalLabel">
-                            <?php echo $_SESSION['first_name'] . ' ' . $_SESSION['middle_name'] . ' ' . $_SESSION['last_name']; ?>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body text-center">
-                        <img src="includes/generate-qr-code.php" alt="QR Code">
-                        <p class="mt-3">Please take a capture for your QR CODE <br> or use this code for time out.</p>
-                        <h4><?php echo $_SESSION['randomCode'] ?></h4>
-                    </div>
-                    <div class="modal-footer">
-                        <form action="admin/process/export/print-receipt.php" method="GET">
-                            <input type="hidden" name="visitor_code" id="visitor_code" value="<?php echo $_SESSION['randomCode']; ?>">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Print</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Time In Modal -->
         <div class="modal fade" id="timeInModal" tabindex="-1" aria-labelledby="timeInModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="timeInModalLabel">Personal Details</h5>
+                        <h5 class="modal-title" id="timeInModalLabel">Confirmation</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <form action="process/time-in-out.php" method="POST" class="needs-validation" novalidate>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="firstName" class="form-label">First Name <span class="asterisk-required-fields">*</span></label>
-                                        <input type="text" class="form-control" id="firstName" name="firstName"
-                                            placeholder="Ex. Juan" required>
-                                        <div class="invalid-feedback"></div>
-                                    </div>
+                            <div class="mb-3">
+                                <label for="isMember" class="form-label">Are you a member? <span class="asterisk-required-fields">*</span></label>
+                                <select class="form-select" id="isMember" name="isMember" required>
+                                    <option value="" disabled selected>Select</option>
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                                <div class="invalid-feedback">Please select membership status.</div>
+                            </div>
+                            <div id="membershipSection" style="display:none;">
+                                <div class="mb-3">
+                                    <label for="membership_code" class="form-label">Membership ID <span class="asterisk-required-fields">*</span></label>
+                                    <input type="text" class="form-control" id="membership_code" name="membership_code" placeholder="Enter your Membership ID">
+                                    <div class="invalid-feedback">Please provide your Membership ID.</div>
                                 </div>
-
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="middleName" class="form-label">Middle Name</label>
-                                        <input type="text" class="form-control" id="middleName" name="middleName"
-                                            placeholder="Ex. Santos">
+                            </div>
+                            <div id="personalDetailsSection" style="display:none;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="firstName" class="form-label">First Name <span class="asterisk-required-fields">*</span></label>
+                                            <input type="text" class="form-control" id="firstName" name="firstName"
+                                                placeholder="Ex. Juan" required>
                                             <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="lastName" class="form-label">Last Name <span class="asterisk-required-fields">*</span></label>
-                                        <input type="text" class="form-control" id="lastName" name="lastName"
-                                            placeholder="Ex. Dela Cruz" required>
-    
-                                        <div class="invalid-feedback"></div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="middleName" class="form-label">Middle Name</label>
+                                            <input type="text" class="form-control" id="middleName" name="middleName"
+                                                placeholder="Ex. Santos">
+                                                <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email"
-                                            placeholder="Ex. abcdefg@gmail.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="school_name">School name <span class="asterisk-required-fields">*</span></label>
-                                        <input type="text" name="school_name" id="school_name" class="form-control" placeholder="Gov Ferrer Memorial Integrated National High School" required>
-    
-                                        <div class="invalid-feedback">Please provide a school name.</div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label class="form-label" for="barangay">Barangay <span class="asterisk-required-fields">*</span></label>
-                                        <select class="form-select" name="barangay" id="barangay" required>
-                                            <option value="" selected disabled>Select a Barangay</option>
-                                            <option value="1">Alingaro</option>
-                                            <option value="2">Arnaldo</option>
-                                            <option value="3">Bacao I</option>
-                                            <option value="4">Bacao II</option>
-                                            <option value="5">Bagumbayan</option>
-                                            <option value="6">Biclatan</option>
-                                            <option value="7">Buenavista I</option>
-                                            <option value="8">Buenavista II</option>
-                                            <option value="9">Buenavista III</option>
-                                            <option value="10">Corregidor</option>
-                                            <option value="11">Dulong Bayan</option>
-                                            <option value="12">Governor Ferrer</option>
-                                            <option value="13">Javalera</option>
-                                            <option value="14">Manggahan</option>
-                                            <option value="15">Navarro</option>
-                                            <option value="16">Panungyanan</option>
-                                            <option value="17">Pasong Camachile I</option>
-                                            <option value="18">Pasong Camachile II</option>
-                                            <option value="19">Pasong Kawayan I</option>
-                                            <option value="20">Pasong Kawayan II</option>
-                                            <option value="21">Pinagtipunan</option>
-                                            <option value="22">Prinza</option>
-                                            <option value="23">Sampalucan</option>
-                                            <option value="24">Santiago</option>
-                                            <option value="25">San Francisco</option>
-                                            <option value="26">San Gabriel</option>
-                                            <option value="27">San Juan I</option>
-                                            <option value="28">San Juan II</option>
-                                            <option value="29">Santa Clara</option>
-                                            <option value="30">Tapia</option>
-                                            <option value="31">Tejero</option>
-                                            <option value="32">Vibora</option>
-                                            <option value="33">1896</option>
-                                        </select>
-    
-                                        <div class="invalid-feedback">Please select a barangay.</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="purpose" class="form-label">Purpose <span class="asterisk-required-fields">*</span></label>
-                                        <input type="text" class="form-control" id="purpose" name="purpose"
-                                            placeholder="Ex. Personal Matters" required>
-    
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="mb-3">
-                                        <label for="age" class="form-label">Age <span class="asterisk-required-fields">*</span></label>
-                                        <input type="text" class="form-control" id="age" name="age" placeholder="Ex. 21" required>
-    
-                                        <div class="invalid-feedback"></div>
-                                    </div>
-                                </div>
-                            </div>
 
-                            <div class="row">
-                                <div class="col">
-                                    <div class="mb-3">
-                                        <label for="sex" class="form-label">Sex <span class="asterisk-required-fields">*</span></label>
-                                        <select name="sex" class="form-select" id="sex" required>
-                                            <option value="" selected disabled>Select </option>
-                                            <option value="1">MALE</option>
-                                            <option value="2">FEMALE</option>
-                                        </select>
-    
-                                        <div class="invalid-feedback"></div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="lastName" class="form-label">Last Name <span class="asterisk-required-fields">*</span></label>
+                                            <input type="text" class="form-control" id="lastName" name="lastName"
+                                                placeholder="Ex. Dela Cruz" required>
+        
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control" id="email" name="email"
+                                                placeholder="Ex. abcdefg@gmail.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$">
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="school_name">School name <span class="asterisk-required-fields">*</span></label>
+                                            <input type="text" name="schoolname" id="school_name" class="form-control" placeholder="Gov Ferrer Memorial Integrated National High School" required>
+        
+                                            <div class="invalid-feedback">Please provide a school name.</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label class="form-label" for="barangay">Barangay <span class="asterisk-required-fields">*</span></label>
+                                            <select class="form-select" name="barangayname" id="barangay" required>
+                                                <option value="" selected disabled>Select a Barangay</option>
+                                                <option value="1">Alingaro</option>
+                                                <option value="2">Arnaldo</option>
+                                                <option value="3">Bacao I</option>
+                                                <option value="4">Bacao II</option>
+                                                <option value="5">Bagumbayan</option>
+                                                <option value="6">Biclatan</option>
+                                                <option value="7">Buenavista I</option>
+                                                <option value="8">Buenavista II</option>
+                                                <option value="9">Buenavista III</option>
+                                                <option value="10">Corregidor</option>
+                                                <option value="11">Dulong Bayan</option>
+                                                <option value="12">Governor Ferrer</option>
+                                                <option value="13">Javalera</option>
+                                                <option value="14">Manggahan</option>
+                                                <option value="15">Navarro</option>
+                                                <option value="16">Panungyanan</option>
+                                                <option value="17">Pasong Camachile I</option>
+                                                <option value="18">Pasong Camachile II</option>
+                                                <option value="19">Pasong Kawayan I</option>
+                                                <option value="20">Pasong Kawayan II</option>
+                                                <option value="21">Pinagtipunan</option>
+                                                <option value="22">Prinza</option>
+                                                <option value="23">Sampalucan</option>
+                                                <option value="24">Santiago</option>
+                                                <option value="25">San Francisco</option>
+                                                <option value="26">San Gabriel</option>
+                                                <option value="27">San Juan I</option>
+                                                <option value="28">San Juan II</option>
+                                                <option value="29">Santa Clara</option>
+                                                <option value="30">Tapia</option>
+                                                <option value="31">Tejero</option>
+                                                <option value="32">Vibora</option>
+                                                <option value="33">1896</option>
+                                            </select>
+        
+                                            <div class="invalid-feedback">Please select a barangay.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="purpose" class="form-label">Purpose <span class="asterisk-required-fields">*</span></label>
+                                            <input type="text" class="form-control" id="purpose" name="purpose"
+                                                placeholder="Ex. Personal Matters" required>
+        
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="mb-3">
+                                            <label for="age" class="form-label">Age <span class="asterisk-required-fields">*</span></label>
+                                            <input type="text" class="form-control" id="age" name="age" placeholder="Ex. 21" required>
+        
+                                            <div class="invalid-feedback"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-3">
+                                            <label for="sex" class="form-label">Sex <span class="asterisk-required-fields">*</span></label>
+                                            <select name="sex" class="form-select" id="sex" required>
+                                                <option value="" selected disabled>Select </option>
+                                                <option value="1">MALE</option>
+                                                <option value="2">FEMALE</option>
+                                            </select>
+        
+                                            <div class="invalid-feedback"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -243,12 +245,10 @@ if (isset($_GET['visitor_code'])) {
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <h4>Place your QR Code on camera to time out</h4>
-                        <video id="preview" width="100%"></video>
                         <form action="process/time-in-out.php" method="POST">
                             <div class="mb-3">
                                 <label for="code" class="form-label">Code</label>
-                                <input type="text" class="form-control" id="code" name="code" placeholder="Enter your code">
+                                <input type="text" class="form-control" id="code" name="code" placeholder="Enter your code" required>
                             </div>
                             <button type="submit" class="btn btn-danger" name="timeOut" id="btnTimeOut">Time Out</button>
                         </form>
@@ -306,23 +306,6 @@ if (isset($_GET['visitor_code'])) {
             }
 
             setInterval(checkAutoLogout, 60000); // Check every minute
-
-            document.getElementById('firstName').addEventListener('input', function() {
-                var firstName = this.value;
-                if (firstName.length > 2) {
-                    fetch('fetch_visitor_data.php?first_name=' + firstName)
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data) {
-                                document.getElementById('middleName').value = data.middle_name;
-                                document.getElementById('lastName').value = data.last_name;
-                                document.getElementById('email').value = data.email;
-                                document.getElementById('age').value = data.age;
-                                document.getElementById('sex').value = data.sex_id;
-                            }
-                        });
-                }
-            });
 
             document.addEventListener('DOMContentLoaded', () => {
                 const loginForm = document.querySelector('#loginModal form');
@@ -391,6 +374,37 @@ if (isset($_GET['visitor_code'])) {
                         }
                     })
                     .catch(error => console.error('Error:', error));
+                });
+
+                const isMemberSelect = document.getElementById('isMember');
+                const personalSection = document.getElementById('personalDetailsSection');
+                const membershipSection = document.getElementById('membershipSection');
+                isMemberSelect.addEventListener('change', () => {
+                    if (isMemberSelect.value === 'yes') {
+                        membershipSection.style.display = 'block';
+                        personalSection.style.display = 'none';
+                        // Disable validation for personal details
+                        personalSection.querySelectorAll('input, select').forEach(input => {
+                            input.required = false;
+                            input.disabled = true;
+                        });
+                        membershipSection.querySelectorAll('input').forEach(input => {
+                            input.required = true;
+                            input.disabled = false;
+                        });
+                    } else if (isMemberSelect.value === 'no') {
+                        membershipSection.style.display = 'none';
+                        personalSection.style.display = 'block';
+                        // Enable validation for personal details
+                        personalSection.querySelectorAll('input, select').forEach(input => {
+                            input.required = true;
+                            input.disabled = false;
+                        });
+                        membershipSection.querySelectorAll('input').forEach(input => {
+                            input.required = false;
+                            input.disabled = true;
+                        });
+                    }
                 });
             });
         </script>
