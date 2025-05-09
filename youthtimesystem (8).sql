@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 02, 2025 at 07:00 AM
+-- Generation Time: May 09, 2025 at 06:35 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -45,7 +45,8 @@ INSERT INTO `account` (`id`, `username`, `email_id`, `password`, `role`, `create
 (92, 'staff', 7, '$2y$10$GVzk6YjIhodlPrfVECYHXuCMOIt7BjgEASeO31WLA7jRWOZOs6VgC', '2', '2025-04-07 11:00:49'),
 (93, 'admin_2', 8, '$2y$10$DIOcBc1kq/7YmYwccEKLQORzeNHmYsRt1pGJZ11CKPB2o3B33Atb.', '1', '2025-04-08 09:05:04'),
 (96, 'shork', 11, '$2y$10$YY2cSldqnKcVQfG9OQRaCu7ccp2l25Ln1hVbghVOrzVDHvngsdE9m', '1', '2025-04-08 09:56:20'),
-(97, 'pogi', 0, '$2y$10$Yx/gYoLMQTTHLG19qM4yXecP3Uq0z9a9RCWIoIgi9sMg90gYyIPDC', '2', '2025-04-08 10:08:31');
+(97, 'pogi', 0, '$2y$10$Yx/gYoLMQTTHLG19qM4yXecP3Uq0z9a9RCWIoIgi9sMg90gYyIPDC', '2', '2025-04-08 10:08:31'),
+(99, 'staff2', 13, '$2y$10$ofg61O1HWkTIscW8T1zYoezggsQZVVG/R6qtXLnx8rilK5PTylsWe', '2', '2025-05-02 13:15:04');
 
 -- --------------------------------------------------------
 
@@ -59,6 +60,13 @@ CREATE TABLE `account_email` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `account_email`
+--
+
+INSERT INTO `account_email` (`id`, `email_address`, `created_at`, `updated_at`) VALUES
+(13, 'staff@gmail.com', '2025-05-02 13:15:04', NULL);
 
 -- --------------------------------------------------------
 
@@ -122,6 +130,15 @@ CREATE TABLE `email` (
   `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `email`
+--
+
+INSERT INTO `email` (`id`, `client_id`, `email`) VALUES
+(43, 43, 'ripoge@mailinator.com'),
+(44, 44, 'dixul@mailinator.com'),
+(45, 45, 'gydakafybu@mailinator.com');
+
 -- --------------------------------------------------------
 
 --
@@ -181,6 +198,15 @@ CREATE TABLE `purpose` (
   `purpose` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `purpose`
+--
+
+INSERT INTO `purpose` (`id`, `client_id`, `purpose`) VALUES
+(54, 43, 'NISI MINUS SUNT VEL'),
+(55, 44, 'ET SED NEMO LABORUM'),
+(56, 45, 'MOLLIT MAGNA PERSPIC');
+
 -- --------------------------------------------------------
 
 --
@@ -235,6 +261,15 @@ CREATE TABLE `time_logs` (
   `status` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `time_logs`
+--
+
+INSERT INTO `time_logs` (`id`, `client_id`, `time_in`, `time_out`, `code`, `office_id`, `status`) VALUES
+(52, 43, '2025-05-02 13:06:05', '2025-05-02 13:06:29', NULL, 1, 'User Logout'),
+(53, 44, '2025-05-02 13:06:50', NULL, 'YS9I0W', 1, 'On Site'),
+(54, 45, '2025-05-02 13:07:29', NULL, 'EZYDFW', 1, 'On Site');
+
 -- --------------------------------------------------------
 
 --
@@ -259,7 +294,11 @@ INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`) VALUES
 (250, 84, 'c5pwoB1uPkzwwZgFokRZZ85fE'),
 (251, 84, 'GfsdZkrEFuNhmIUmxIm8e7fS8'),
 (252, 84, 'qD0mEzTMK6Toi4u8aR1Pdusag'),
-(253, 84, 'ubmssiHKw9GEPDulEVpDtOudM');
+(253, 84, 'ubmssiHKw9GEPDulEVpDtOudM'),
+(254, 99, 'GfsdZkrEFuNhmIUmxIm8e7fS8'),
+(255, 99, 'JyCQULxjmYOycJFVOyceWb8BA'),
+(256, 99, 'c5pwoB1uPkzwwZgFokRZZ85fE'),
+(257, 99, 'qD0mEzTMK6Toi4u8aR1Pdusag');
 
 -- --------------------------------------------------------
 
@@ -279,6 +318,15 @@ CREATE TABLE `visitors` (
   `age` varchar(100) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `visitors`
+--
+
+INSERT INTO `visitors` (`id`, `first_name`, `middle_name`, `last_name`, `sex_id`, `purpose_id`, `office_id`, `barangay_id`, `age`, `created_at`) VALUES
+(43, 'HYATT', 'SOPOLINE LEVINE', 'SOTO', 1, 43, 1, 20, '23', '2025-05-02 13:06:05'),
+(44, 'BRIAN', 'ORLI DAVIDSON', 'BURTON', 1, 44, 1, 30, '21', '2025-05-02 13:06:50'),
+(45, 'KIERAN', 'YULI POLLARD', 'SEARS', 2, 45, 1, 4, '21', '2025-05-02 13:07:29');
 
 --
 -- Indexes for dumped tables
@@ -366,13 +414,13 @@ ALTER TABLE `visitors`
 -- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=99;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 
 --
 -- AUTO_INCREMENT for table `account_email`
 --
 ALTER TABLE `account_email`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `barangays`
@@ -384,7 +432,7 @@ ALTER TABLE `barangays`
 -- AUTO_INCREMENT for table `email`
 --
 ALTER TABLE `email`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- AUTO_INCREMENT for table `office`
@@ -402,7 +450,7 @@ ALTER TABLE `permission`
 -- AUTO_INCREMENT for table `purpose`
 --
 ALTER TABLE `purpose`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- AUTO_INCREMENT for table `role`
@@ -420,19 +468,19 @@ ALTER TABLE `sex`
 -- AUTO_INCREMENT for table `time_logs`
 --
 ALTER TABLE `time_logs`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
 
 --
 -- AUTO_INCREMENT for table `user_permissions`
 --
 ALTER TABLE `user_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=254;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
 
 --
 -- AUTO_INCREMENT for table `visitors`
 --
 ALTER TABLE `visitors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
 
 --
 -- Constraints for dumped tables
