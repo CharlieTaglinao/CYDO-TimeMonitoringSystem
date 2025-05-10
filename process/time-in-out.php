@@ -45,10 +45,20 @@ if (isset($_POST['timeIn'])) {
             exit();
         }
 
+        // Fetch the membership ID
+        $checkCodeStmt->bind_result($membershipId);
+        $checkCodeStmt->fetch();
+
+        // Ensure the visitor is associated with the membership ID
+        $updateMembershipQuery = "UPDATE visitors SET membership_id = ? WHERE first_name = ? AND last_name = ? AND membership_id IS NULL";
+        $updateMembershipStmt = $conn->prepare($updateMembershipQuery);
+        $updateMembershipStmt->bind_param("iss", $membershipId, $firstName, $lastName);
+        $updateMembershipStmt->execute();
+
         // Get the client ID associated with the membership code
-        $getClientIdQuery = "SELECT id FROM visitors WHERE membership_id = (SELECT id FROM member_code WHERE membership_code = ?)";
+        $getClientIdQuery = "SELECT id FROM visitors WHERE membership_id = ?";
         $getClientIdStmt = $conn->prepare($getClientIdQuery);
-        $getClientIdStmt->bind_param("s", $code);
+        $getClientIdStmt->bind_param("i", $membershipId);
         $getClientIdStmt->execute();
         $getClientIdStmt->store_result();
 
@@ -63,17 +73,9 @@ if (isset($_POST['timeIn'])) {
         $getClientIdStmt->bind_result($clientId);
         $getClientIdStmt->fetch();
     } else {
-        // new visitor: generate membership code
-        $year = date('Y');
-        $random = generateRandomCode(6);
-        $membershipCode = "CH-$year-$random";
-        $code = $membershipCode;  // set unified code for insertion
-        $insertCodeQuery = "INSERT INTO member_code (membership_code) VALUES (?)";
-        $codeStmt = $conn->prepare($insertCodeQuery);
-        $codeStmt->bind_param("s", $membershipCode);
-        $codeStmt->execute();
-        $membershipId = $conn->insert_id;
-        
+        // Guest logic: no membership code generation
+        $clientId = null;
+
         // Handle visitor_school_name table
         $schoolName = strtoupper(trim($_POST['schoolname'] ?? ''));
         $checkSchoolQuery = "SELECT id FROM visitor_school_name WHERE school_name = ?";
@@ -92,10 +94,10 @@ if (isset($_POST['timeIn'])) {
             $schoolId = $conn->insert_id;
         }
 
-        // Insert new visitor with membership_id
-        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, school_id, barangay_id, age, membership_id, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())";
+        // Insert new visitor without membership_id
+        $insertQuery = "INSERT INTO visitors (first_name, middle_name, last_name, sex_id, purpose_id, school_id, barangay_id,membership_id, age, type, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, null, ?, 'GUEST', NOW())";
         $insertStmt = $conn->prepare($insertQuery);
-        $insertStmt->bind_param("sssiiiiis", $firstName, $middleName, $lastName, $sex, $purpose, $schoolId, $barangayname, $age, $membershipId);
+        $insertStmt->bind_param("sssiiiii", $firstName, $middleName, $lastName, $sex, $purpose, $schoolId, $barangayname, $age);
         $insertStmt->execute();
         $clientId = $conn->insert_id;
 
@@ -116,21 +118,43 @@ if (isset($_POST['timeIn'])) {
         $updatePurposeIdStmt->bind_param("ii", $clientId, $clientId);
         $updatePurposeIdStmt->execute();
 
+        // Generate a temporary code for the guest
+        $temporaryCode = generateRandomCode();
 
+        // Insert the temporary code into the time_logs table
+        $insertLogQuery = "INSERT INTO time_logs (client_id, time_in, status, code) VALUES (?, ?, 'On Site', ?)";
+        $insertLogStmt = $conn->prepare($insertLogQuery);
+        $insertLogStmt->bind_param("iss", $clientId, $logTime, $temporaryCode);
+
+        if ($insertLogStmt->execute()) {
+            $_SESSION['temporary_code'] = $temporaryCode; // Set the temporary code in the session
+            $_SESSION['message'] = "Successfully Time IN at $logTime. Your temporary code is $temporaryCode.";
+            $_SESSION['message_type'] = 'success';
+            header("Location: ../index.php");
+            exit();
+        } else {
+            $_SESSION['message'] = "Failed to log in.";
+            $_SESSION['message_type'] = 'danger';
+            header("Location: ../index.php");
+            exit();
+        }
     }
 
-    // Check if the client is already timed in
-    $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
-    $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
-    $checkTimeLogStmt->bind_param("i", $clientId);
-    $checkTimeLogStmt->execute();
-    $checkTimeLogStmt->store_result();
+    // Ensure clientId is set before checking time-in status
+    if ($clientId) {
+        // Check if the client is already timed in
+        $checkTimeLogQuery = "SELECT id FROM time_logs WHERE client_id = ? AND time_out IS NULL";
+        $checkTimeLogStmt = $conn->prepare($checkTimeLogQuery);
+        $checkTimeLogStmt->bind_param("i", $clientId);
+        $checkTimeLogStmt->execute();
+        $checkTimeLogStmt->store_result();
 
-    if ($checkTimeLogStmt->num_rows > 0) {
-        $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in.";
-        $_SESSION['message_type'] = 'danger';
-        header("Location: ../index.php");
-        exit();
+        if ($checkTimeLogStmt->num_rows > 0) {
+            $_SESSION['message'] = "You are already timed in. Please time out before recording a new time in.";
+            $_SESSION['message_type'] = 'danger';
+            header("Location: ../index.php");
+            exit();
+        }
     }
 
     // Allow a new time-in with membership code

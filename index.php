@@ -24,9 +24,9 @@ if (isset($_GET['visitor_code'])) {
         <div class="container text-center">
             <!-- Login button -->
             <div class="position-absolute top-0 end-0 p-3">
-                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#loginModal">
+                <a href="login" class="btn btn-primary">
                     <i class="fa fa-user"></i>
-                </button>
+                </a>
             </div>
 
             <!-- Centered title -->
@@ -257,32 +257,25 @@ if (isset($_GET['visitor_code'])) {
             </div>
         </div>
  
-        <!-- Login Modal -->
-        <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <!-- Temporary Code Modal -->
+        <div class="modal fade" id="temporaryCodeModal" tabindex="-1" aria-labelledby="temporaryCodeModalLabel" aria-hidden="true">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="loginModalLabel"><i class="fa fa-user"></i> Login</h5>
+                        <h5 class="modal-title" id="temporaryCodeModalLabel">Temporary Code</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="process/login.php" method="POST" class="needs-validation" novalidate>
-                            <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
-                                <input type="text" class="form-control" id="username" name="username" required>
-                                <div class="invalid-feedback">Please provide a username.</div>
-                            </div>
-                            <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="password" name="password" required>
-                                <div class="invalid-feedback">Please provide a password.</div>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Login</button>
-                        </form>
+                            <h4><em>Please don't forget to take a photo of your temporary code it will be used in the near future.</em></h4>
+                        <h3 class="text-center" style="color: #2e2c73; letter-spacing: 3px;" id="temporaryCodeDisplay"></h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+
         <?php include 'includes/footer.php'; ?>
 
         <script>
@@ -308,74 +301,6 @@ if (isset($_GET['visitor_code'])) {
             setInterval(checkAutoLogout, 60000); // Check every minute
 
             document.addEventListener('DOMContentLoaded', () => {
-                const loginForm = document.querySelector('#loginModal form');
-                const usernameField = document.getElementById('username');
-                const passwordField = document.getElementById('password');
-
-                // Validate inputs dynamically
-                usernameField.addEventListener('input', () => {
-                    if (usernameField.value.trim() === '') {
-                        usernameField.classList.add('is-invalid');
-                        usernameField.nextElementSibling.textContent = 'Please provide a username.';
-                    } else {
-                        usernameField.classList.remove('is-invalid');
-                        usernameField.nextElementSibling.textContent = '';
-                    }
-                });
-
-                passwordField.addEventListener('input', () => {
-                    if (passwordField.value.trim() === '') {
-                        passwordField.classList.add('is-invalid');
-                        passwordField.nextElementSibling.textContent = 'Please provide a password.';
-                    } else {
-                        passwordField.classList.remove('is-invalid');
-                        passwordField.nextElementSibling.textContent = '';
-                    }
-                });
-
-                // Handle form submission
-                loginForm.addEventListener('submit', function (event) {
-                    event.preventDefault();
-
-                    // Clear previous validation states
-                    [usernameField, passwordField].forEach(field => {
-                        field.classList.remove('is-invalid');
-                        field.nextElementSibling.textContent = '';
-                    });
-
-                    if (!loginForm.checkValidity()) {
-                        event.stopPropagation();
-                        loginForm.classList.add('was-validated');
-                        return;
-                    }
-
-                    const formData = new FormData(loginForm);
-
-                    fetch('process/login.php', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.location.href = data.redirect;
-                        } else {
-                            if (data.errors.username) {
-                                usernameField.classList.add('is-invalid');
-                                usernameField.nextElementSibling.textContent = data.errors.username;
-                            }
-                            if (data.errors.password) {
-                                passwordField.classList.add('is-invalid');
-                                passwordField.nextElementSibling.textContent = data.errors.password;
-                            }
-                            if (data.errors.general) {
-                                alert(data.errors.general);
-                            }
-                        }
-                    })
-                    .catch(error => console.error('Error:', error));
-                });
-
                 const isMemberSelect = document.getElementById('isMember');
                 const personalSection = document.getElementById('personalDetailsSection');
                 const membershipSection = document.getElementById('membershipSection');
@@ -406,6 +331,14 @@ if (isset($_GET['visitor_code'])) {
                         });
                     }
                 });
+
+                <?php if (isset($_SESSION['temporary_code'])): ?>
+                    const temporaryCode = "<?php echo $_SESSION['temporary_code']; ?>";
+                    document.getElementById('temporaryCodeDisplay').textContent = temporaryCode;
+                    const temporaryCodeModal = new bootstrap.Modal(document.getElementById('temporaryCodeModal'));
+                    temporaryCodeModal.show();
+                    <?php unset($_SESSION['temporary_code']); ?>
+                <?php endif; ?>
             });
         </script>
 

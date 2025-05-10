@@ -1,31 +1,30 @@
+/* Updated loader to a line loader */
 .loader {
     position: fixed;
     left: 50%;
-    top: 50%;
-    width: 150px;
-    height: 150px;
-    margin: -75px 0 0 -80px; 
-    border: 20px solid transparent;
-    border-right-color: #3498db;
-    border-top-color: #409c6c;
-    border-bottom-color: #3498db;
-    border-left-color: #409c6c;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    z-index: 1001; 
+    top: calc(50% + 40px); /* Positioned directly below the image-holder */
+    width: 450px;
+    height: 15px;
+    margin: 0 0 0 -200px; /* Center the loader horizontally */
+    background: linear-gradient(to right, #2e2c73, #1d669b);
+    border-radius: 40px;
+    overflow: hidden;
+    animation: loading 0.4s linear infinite;
+    z-index: 1001;
+    
 }
 
 .image-holder {
     position: fixed;
-    top: 50%;
+    top: 55%;
     left: 50%;
     transform: translate(-50%, -50%); 
     z-index: 1002; /* para nasa unahan ng bg overlay */
-}
-
-.loader-logo {
-    width: 100px;
-    height: 100px;
+    background-image: url('../../assets/images/CH-LOGO.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 500px;
+    height: 350px;
 }
 
 .background-overlay {
@@ -38,11 +37,29 @@
     z-index: 1000; /* para nasa likod ng loader */
 }
 
-@keyframes spin {
+.reminder-text {
+    position: fixed;
+    top: 65%; /* Positioned below the loader */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #ffffff; /* White text for visibility */
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 1003; /* Above the loader and background overlay */
+}
+
+
+#reminder-text {
+    opacity: 0;
+    transition: opacity 1s ease-in-out; /* Smooth fade-in and fade-out */
+}
+
+@keyframes loading {
     0% {
-        transform: rotate(0deg);
+        background-position: -200px 0;
     }
     100% {
-        transform: rotate(360deg);
+        background-position: 200px 0;
     }
 }

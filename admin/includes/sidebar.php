@@ -45,6 +45,24 @@ function has_permission($permission_id, $user_permissions) {
             <a href="analytics" class="nav-link">Analytics</a>
         <?php } ?>
 
+            <div class="nav-item">
+                <a 
+                    class="nav-link dropdown-toggle" 
+                    data-bs-toggle="collapse" 
+                    href="#memberSubmenu" 
+                    role="button" 
+                    aria-expanded="false" 
+                    aria-controls="memberSubmenu">
+                    Members
+                </a>
+                <div class="collapse" id="memberSubmenu">
+                    <nav class="nav flex-column ms-3">
+                            <a href="view-application" class="nav-link fw-normal">Application</a>
+                            <a href="view-activation" class="nav-link fw-normal">Activate/Deactivate</a>
+                    </nav>
+                </div>
+            </div>
+
         <!-- Account Menu with Submenu -->
         <?php if (has_permission('T9rPHeL7ectsYwT6Ih2AswTeZ', $user_permissions) || has_permission('906IZi3K8od7FBS518t5I31jY', $user_permissions)) { ?>
             <div class="nav-item">

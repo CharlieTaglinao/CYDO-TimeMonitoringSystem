@@ -272,6 +272,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+// Fetch account data by search
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input");
+    const accountTable = document.getElementById("application-table");
+
+    if (searchInput) {
+        searchInput.addEventListener("input", (event) => {
+            const query = event.target.value;
+            fetch(`fetch-application.php?search=${encodeURIComponent(query)}`)
+                .then((response) => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
+                })
+                .then((data) => {
+                    accountTable.innerHTML = data;
+                    updateAccountPagination();
+                })
+                .catch((error) => console.error("Error fetching data:", error));
+        });
+    }
+});
+
+// Fetch account data by search
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("search-input");
+    const accountTable = document.getElementById("activation-table");
+
+    if (searchInput) {
+        searchInput.addEventListener("input", (event) => {
+            const query = event.target.value;
+            fetch(`fetch-activation.php?search=${encodeURIComponent(query)}`)
+                .then((response) => {
+                    if (!response.ok) throw new Error("Network response was not ok");
+                    return response.text();
+                })
+                .then((data) => {
+                    accountTable.innerHTML = data;
+                    updateAccountPagination();
+                })
+                .catch((error) => console.error("Error fetching data:", error));
+        });
+    }
+});
+
 // Function to update account pagination dynamically
 function updateAccountPagination() {
     const query = document.getElementById("search-input").value;
