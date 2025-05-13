@@ -1,6 +1,6 @@
 <?php
 include 'includes/header.php';
-include 'fetch-application.php';
+include 'fetch-membership-code.php';
 include 'permission/permissionEditDeleteAccount.php';
 ?>
 
@@ -9,7 +9,7 @@ include 'permission/permissionEditDeleteAccount.php';
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
          <?php
-                            include 'fetch-application.php';
+                            include 'fetch-membership-code.php';
                             ?>
 
         <!-- Main Content -->
@@ -19,7 +19,7 @@ include 'permission/permissionEditDeleteAccount.php';
                     <div class="col-md-12">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">TOTAL APPLICATION</h5>
+                                <h5 class="card-title">TOTAL MEMBERS</h5>
                                 <p class="card-text" id="current-visitors"><?php echo $totalApplicants; ?></p>
                             </div>
                         </div> 
@@ -42,45 +42,32 @@ include 'permission/permissionEditDeleteAccount.php';
                 <?php endif; ?>
 
                 <div class="mt-4">
-                    <h3>Applications</h3>
+                    <h3>Membership Codes</h3>
                     <div class="d-flex justify-content-between mb-3">
-                        <input type="text" id="search-input" class="form-control w-25" placeholder="Search by name"
+                        <input type="text" id="search-membership-input" class="form-control w-25" placeholder="Search by membership code"
                             value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                     </div>
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
                                 <th>FULL NAME</th>
-                                <th>E-MAIL</th>
                                 <th>SCHOOL NAME</th>
                                 <th>AGE</th>
                                 <th>BARANGAY</th>
                                 <th>SEX</th>
-                                <th>ACTION</th>
+                                <th>CODE</th>
                             </tr>
                         </thead>
-                        <tbody id="application-table">
+                        <tbody id="membership-table">
                             <?php if ($accountResult->num_rows > 0): ?>
                                 <?php while ($row = $accountResult->fetch_assoc()): ?>
                                     <tr>
                                         <td><?php echo $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']; ?></td>
-                                        <td><?php echo $row['email_address']; ?></td>
                                         <td><?php echo $row['school_name']; ?></td>
                                         <td><?php echo $row['age']; ?></td>
                                         <td><?php echo $row['barangay_name']; ?></td>
                                         <td><?php echo $row['sex_name']; ?></td>
-                                        <td class="d-flex justify-content-center gap-3">
-                                            <form action="process/accept-decline-application-logic.php" method="POST">
-                                                <input type="hidden" name="application_id" value="<?php echo $row['id']; ?>">
-                                                <input type="hidden" name="action" value="accept">
-                                                <button type="submit" class="btn btn-outline-info">ACCEPT</button>
-                                            </form>
-                                            <form action="process/accept-decline-application-logic.php" method="POST">
-                                                <input type="hidden" name="application_id" value="<?php echo $row['id']; ?>">
-                                                <input type="hidden" name="action" value="decline">
-                                                <button type="submit" class="btn btn-outline-danger">DECLINE</button>
-                                            </form>
-                                        </td>
+                                        <td><?php echo $row['membership_code']; ?></td>
                                     </tr>
                                 <?php endwhile; ?>
                             <?php else: ?>

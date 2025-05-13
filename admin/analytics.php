@@ -11,12 +11,12 @@ if (isset($_GET['visitor_code'])) {
 
 <head>
     <!-- ...existing code... -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="assets/js/chart.js"></script>
     <?php include 'fetch-analytics-data.php'; ?>
 </head>
 
 <body>
-    <div class="d-flex">
+    <div class="d-flex fade-in-down">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
@@ -50,14 +50,6 @@ if (isset($_GET['visitor_code'])) {
                 </div>
                 <div class="col-md-6">
                     <canvas id="userChart"></canvas>
-                </div>
-            </div>
-            <div class="row mt-4">
-                <div class="col-md-6">
-                    <canvas id="cydoChart"></canvas>
-                </div>
-                <div class="col-md-6">
-                    <canvas id="pdaoChart"></canvas>
                 </div>
             </div>
 

@@ -1,6 +1,4 @@
 <?php
-// asd
-include 'permission/permissionMonitorDashboard.php';
 
 if (isset($_GET['visitor_code'])) {
     $_SESSION['randomCode'] = $_GET['visitor_code'];
@@ -18,10 +16,10 @@ include 'includes/header.php';
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container-fluid mt-4">
+            <div class="container-fluid mt-4 fade-in-down">
                 <div class="row text-center">
 
-                    <div class="col-md-4">
+                    <div class="col-md-4 ">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title fw-bold">Today's Visitors</h5>
@@ -102,9 +100,10 @@ include 'includes/header.php';
                                 <th style="width: 10%;">DATE</th>
                                 <th style="width: 5%;">IN</th>
                                 <th style="width: 5%;">OUT</th>
-                                <th style="width: 20%;">DURATION</th>
+                                <th style="width: 10%;">DURATION</th>
                                 <th style="width: 10%;">SCHOOL NAME</th>
                                 <th style="width: 12%;">STATUS</th>
+                                <th style="width: 10%">TYPE</th>
                                 <th style="width: 20%;">ACTION</th>
                             </tr>
                         </thead>
@@ -123,13 +122,13 @@ include 'includes/header.php';
                                             <td style="width: 10%;"><?php echo isset($row['time_in']) ? date('Y-m-d', strtotime($row['time_in'])) : '-'; ?></td>
                                             <td style="width: 5%;"><?php echo isset($row['time_in']) ? date('H:i:s', strtotime($row['time_in'])) : '-'; ?></td>
                                             <td style="width: 5%;"><?php echo isset($row['time_out']) ? date('H:i:s', strtotime($row['time_out'])) : '-'; ?></td>
-                                            <td style="width: 20%;">
+                                            <td style="width: 10%;">
                                                 <?php
                                                 if (isset($row['time_in'], $row['time_out'])) {
                                                     $timeIn = new DateTime($row['time_in']);
                                                     $timeOut = new DateTime($row['time_out']);
                                                     $interval = $timeIn->diff($timeOut);
-                                                    echo $interval->format('%h hours %i minutes %s seconds');
+                                                    echo $interval->format('%h : %i : %ss');
                                                 } else {
                                                     echo '-';
                                                 }
@@ -137,6 +136,7 @@ include 'includes/header.php';
                                             </td>
                                             <td style="width: 10%;"><?php echo isset($row['school_name']) ? $row['school_name'] : '-';?></td>
                                             <td style="width: 12%;"><?php echo isset($row['status']) ? $row['status'] : '-'; ?></td>
+                                            <td style="width: 10%;"><?php echo isset($row['type']) ? $row['type'] : '-'; ?></td>
                                             <td style="width: 20%;">
                                                 <button class="btn btn-outline-info view-details"
                                                     data-name="<?php echo strtoupper($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>"
@@ -160,7 +160,7 @@ include 'includes/header.php';
                                 } else {
                                     ?>
                                     <tr>
-                                        <td colspan="8" class="text-center">End of the list reached.</td>
+                                        <td colspan="9" class="text-center">End of the list reached.</td>
                                     </tr>
                                     <?php
                                 }
@@ -190,11 +190,6 @@ include 'includes/header.php';
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
-                                
-                                <form action="process/export/print-receipt.php" method="GET">
-                                    <input type="hidden" name="visitor_code" id="visitor_code">
-                                    <button type="submit" class="btn btn-primary" id="print-button">Print</button>
-                                </form>
                             </div>
                         </div>
                     </div>

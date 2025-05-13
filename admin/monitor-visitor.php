@@ -10,8 +10,8 @@ include 'permission/permissionMonitorVisitor.php';?>
         <?php include 'includes/sidebar.php'; ?>
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
-            <div class="container-fluid">
-                <h3 class="font-weight-bold">Monitoring Visitor</h3>
+            <div class="container-fluid fade-in-down">
+
                 <div class="row text-center mt-4">
                     <div class="col-md-4 mb-3">
                         <div class="card shadow-sm border-light rounded-lg">
@@ -66,7 +66,7 @@ include 'permission/permissionMonitorVisitor.php';?>
 
 
 
-
+                <h3 class="font-weight-bold">Monitoring Visitor</h3>
 
                 <!-- Visitor List -->
                 <div class="row mt-1">

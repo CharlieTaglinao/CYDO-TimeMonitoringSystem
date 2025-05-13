@@ -57,7 +57,8 @@ $visitorsQuery = "
         visitors.last_name,
         visitors.age, 
         visitors.sex_id,
-        visitors.school_id, 
+        visitors.school_id,
+        visitors.type, 
         sex.sex_name,
         visitor_school_name.school_name,
         time_logs.time_in, 
@@ -67,21 +68,24 @@ $visitorsQuery = "
         purpose.purpose
     FROM visitors
     INNER JOIN time_logs ON visitors.id = time_logs.client_id
-    INNER JOIN sex ON visitors.sex_id = sex.id
-    INNER JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
-    INNER JOIN (SELECT client_id, MAX(id) as latest_purpose_id FROM purpose GROUP BY client_id) as latest_purposes ON visitors.id = latest_purposes.client_id
-    INNER JOIN purpose ON latest_purposes.latest_purpose_id = purpose.id 
-    WHERE CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '$search%'
-    OR CONCAT(visitors.first_name, ' ', visitors.last_name) LIKE '$search%'
-    OR visitors.first_name LIKE '$search%'
-    OR visitors.middle_name LIKE '$search%'
-    OR visitors.last_name LIKE '$search%'
+    LEFT JOIN sex ON visitors.sex_id = sex.id
+    LEFT JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
+    LEFT JOIN purpose ON visitors.purpose_id = purpose.id
+    WHERE ('$search' = '' OR (
+        CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) LIKE '%$search%'
+        OR CONCAT(visitors.first_name, ' ', visitors.last_name) LIKE '%$search%'
+        OR visitors.first_name LIKE '%$search%'
+        OR visitors.middle_name LIKE '%$search%'
+        OR visitors.last_name LIKE '%$search%'
+    ))
     AND ('$startDate' = '' OR DATE(time_logs.time_in) >= '$startDate')
     AND ('$endDate' = '' OR DATE(time_logs.time_in) <= '$endDate')
-    ORDER BY time_logs.time_in DESC 
-    LIMIT $limit OFFSET $offset";
+    ORDER BY time_logs.time_in DESC
+    LIMIT $limit OFFSET $offset;";
 
 $visitorsResult = $conn->query($visitorsQuery);
+
+
 
 // Handle AJAX requests for dynamic table updates
 if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
@@ -98,19 +102,20 @@ if (isset($_GET['ajax']) && $_GET['ajax'] === 'true') {
                 <td style='width: 10%;'>{$date}</td>
                 <td style='width: 5%;'>{$timeIn}</td>
                 <td style='width: 5%;'>{$timeOut}</td>
-                <td style='width: 20%;'>";
+                <td style='width: 10%;'>";
 
             if (isset($row['time_in'], $row['time_out'])) {
                 $timeInObj = new DateTime($row['time_in']);
                 $timeOutObj = new DateTime($row['time_out']);
                 $interval = $timeInObj->diff($timeOutObj);
-                echo $interval->format('%h hours %i minutes %s seconds');
+                echo $interval->format('%h : %i : %ss');
             } else {
                 echo '-';
             }
 
             echo "</td><td style='width: 10%;'>" . htmlspecialchars($row['school_name']) . "</td>
                 <td style='width: 12%;'>" . htmlspecialchars($row['status']) . "</td>
+                <td style='width: 10%;'>" . htmlspecialchars($row['type']) . "</td>
                 <td style='width: 20%;'>
                    <button class='btn btn-outline-success view-details'
                         data-name='{$fullName}'
@@ -166,13 +171,14 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
                 $timeInObj = new DateTime($row['time_in']);
                 $timeOutObj = new DateTime($row['time_out']);
                 $interval = $timeInObj->diff($timeOutObj);
-                echo $interval->format('%h hours %i minutes %s seconds');
+                echo $interval->format('%h : %i : %ss');
             } else {
                 echo '-';
             }
 
             echo "</td><td>" . htmlspecialchars($row['school_name']) . "</td>
                 <td>" . htmlspecialchars($row['status']) . "</td>
+                <td>" . htmlspecialchars($row['type']) . "</td>
                 <td>
                    <button class='btn btn-outline-info view-details'
                         data-name='{$fullName}'
@@ -196,7 +202,7 @@ if (isset($_GET['search']) && !isset($_GET['pagination'])) {
             </tr>";
         }
     } else {
-        echo "<tr><td colspan='8'>No records found</td></tr>";
+        echo "<tr><td colspan='9'>No records found</td></tr>";
     }
     
     echo "<input type='hidden' id='total-rows' value='$totalRows'>";

@@ -75,6 +75,12 @@ if (isset($_POST['application_id']) && isset($_POST['action'])) {
 
         $_SESSION['message'] = $action === 'accept' ? 'Application accepted successfully.' : 'Application declined successfully.';
         $_SESSION['message_type'] = 'success';
+
+        if ($action === 'accept') {
+            echo json_encode(['status' => 'success', 'membership_code' => $membershipCode]);
+        } else {
+            echo json_encode(['status' => 'success']);
+        }
     } else {
         $_SESSION['message'] = 'Failed to process the application. Please try again.';
         $_SESSION['message_type'] = 'danger';
