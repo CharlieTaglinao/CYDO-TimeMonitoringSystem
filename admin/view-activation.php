@@ -1,7 +1,7 @@
 <?php
 include 'includes/header.php';
 include 'fetch-activation.php';
-include 'permission/permissionEditDeleteAccount.php';
+include 'permission/permissionDeactivateActivateMember.php';
 ?>
 
 <body>

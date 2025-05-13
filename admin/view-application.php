@@ -1,7 +1,7 @@
 <?php
 include 'includes/header.php';
 include 'fetch-application.php';
-include 'permission/permissionEditDeleteAccount.php';
+include 'permission/permissionAcceptDeclineMemberApplication.php';
 ?>
 
 <body>

@@ -24,6 +24,6 @@ foreach ($_COOKIE as $key => $value) {
 session_destroy();
 
 // Redirect to the login page
-header("Location: ../../index.php");
+header("Location: ../../login");
 exit();
 ?>

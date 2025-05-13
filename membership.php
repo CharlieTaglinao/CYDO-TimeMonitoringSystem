@@ -54,7 +54,7 @@ select option {
             <div class="col-md-7 d-flex justify-content-center align-items-center">
                 <div class="p-5 border-0 rounded-4 w-100 fade-in-down" style="max-width: 1000px;">
                     <div class="d-flex align-items-center justify-content-center gap-3 mb-4">
-                        <a href="index">
+                        <a href="login">
                             <img src="assets/images/CH-logo.png" alt="Logo" style="max-height: 100px; width: auto;">
                         </a>
                     </div>

@@ -1,7 +1,7 @@
 <?php
 include 'includes/header.php';
 include 'fetch-membership-code.php';
-include 'permission/permissionEditDeleteAccount.php';
+include 'permission/permissionViewMemberCodes.php';
 ?>
 
 <body>

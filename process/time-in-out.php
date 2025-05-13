@@ -51,7 +51,14 @@ if (isset($_POST['timeIn']) || isset($_POST['timeOut'])) {
             $_SESSION['message_type'] = 'danger';   
             header("Location: ../index.php");
             exit();
+        } else if ($membershipStatus === null) {
+            $_SESSION['message'] = "Your membership is for activation, Please ask the administrator to activate your membership.";
+            $_SESSION['message_type'] = 'info';
+            header("Location: ../index.php");
+            exit();
         }
+
+        
     }
 
     if (isset($_POST['timeIn'])) {

@@ -23,7 +23,7 @@
                 
                     
                 <div class="mt-4">
-                    <h3>Add Permissions</h3>
+                    <h3>Configure User's Permissions</h3>
                     
                     <form method="POST" action="process/save-permission-logic.php">
                         <div class="mb-4">
@@ -63,28 +63,22 @@
                             }
 
                             foreach ($categories as $category => $permissions) {
-                                echo "<h4>" . ucfirst($category) . "</h4><div class='row'>";
-                                $count = 0;
+                                echo "<div class='card mb-3'>";
+                                echo "<div class='card-header fw-bold bg-dark'>" . strtoupper($category) . "</div>";
+                                echo "<div class='card-body'>";
+
                                 foreach ($permissions as $row) {
-                                    $shortId = substr($row['permission_id'], 0, 6) . '****';
-                                    if ($count % 4 == 0 && $count != 0) {
-                                        echo "</div><div class='row'>";
-                                    }
-                                    echo "<div class='col-md-3 mb-3'>
-                                        <div class='card' id='permission" .'_'. str_replace(' ', '_', $row['permission_name']) . "'>
-                                            <div class='card-body text-dark'>
-                                                <h6 class='card-title'>" . strtoupper($row['permission_name']) . "</h6>
-                                                <p class='card-subtitle mb-2 text-sm fw-lighter'>ID: " . $shortId . "</p>
-                                                <div class='form-check form-switch'>
-                                                    <input class='form-check-input' type='checkbox' id='permission" . $row['permission_id'] . "' name='permissions[]' value='" . $row['permission_id'] . "'>
-                                                    <label class='form-check-label' for='permission" . $row['permission_id'] . "'>OFF / ON</label>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>";
-                                    $count++;
+                                    echo "<div class='d-flex justify-content-between align-items-center mb-2'>";
+                                    echo "<span class='permission-name'>" . ucfirst($row['permission_name']) . "</span>";
+                                    echo "<div class='form-check form-switch'>";
+                                    echo "<input class='form-check-input permission-checkbox' type='checkbox' id='permission" . $row['permission_id'] . "' name='permissions[]' value='" . $row['permission_id'] . "'>";
+                                    echo "<label class='form-check-label' for='permission" . $row['permission_id'] . "'>OFF / ON</label>";
+                                    echo "</div>";
+                                    echo "</div>";
                                 }
-                                echo "</div>";
+
+                                echo "</div>"; // Close card-body
+                                echo "</div>"; // Close card
                             }
                             ?>
                         </div>

@@ -40,42 +40,102 @@ include 'includes/header.php';
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th>Username</th>
-                                <th>Add Account</th>
-                                <th>Add Role</th>
-                                <th>Download Reports</th>
-                                <th>Edit/Delete Account</th>
-                                <th>Monitor Dashboard</th>
-                                <th>Monitor Visitor</th>
-                                <th>View Analytics</th>
-                                <th>View Permissions</th>
-                                <th>Account Type</th>
+                                <th style="width: 50%">Username</th>
+                                <th style="width: 50%;">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="user-permission-table">
+                        <tbody id="user-permissions-table">
                             <?php
-                                while ($row = $permissionResult->fetch_assoc()):
-                                    $permissions = explode(',', $row['permissions']); // Convert permissions to array
-                                    ?>
+                                while ($row = $permissionResult->fetch_assoc()): ?>
                                     <tr>
+                                        <td><?php echo $row['username']; ?></td>
                                         <td>
-                                            <?php echo $row['username']; ?>
+                                            <button class="btn btn-outline-info view-permission-btn" data-username="<?php echo $row['username']; ?>" data-permissions="<?php echo htmlspecialchars($row['permissions']); ?>">VIEW PERMISSIONS</button>
                                         </td>
-                                        <td><?php echo in_array('T9rPHeL7ectsYwT6Ih2AswTeZ', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('8sAygcnqpOXP8aAAG7IAWI4Cg', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('GfsdZkrEFuNhmIUmxIm8e7fS8', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('906IZi3K8od7FBS518t5I31jY', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('JyCQULxjmYOycJFVOyceWb8BA', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('c5pwoB1uPkzwwZgFokRZZ85fE', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('qD0mEzTMK6Toi4u8aR1Pdusag', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?php echo in_array('ubmssiHKw9GEPDulEVpDtOudM', $permissions) ? '<i class="fas fa-check" style="color: green;"></i>' : '<i class="fas fa-times" style="color: red;"></i>'; ?></td>
-                                        <td><?= $row['role_name'];?></td>
                                     </tr>
-                                    <?php
-                                endwhile;
-                            ?>
+                                <?php endwhile; ?>
                         </tbody>
                     </table>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="permissionModal" tabindex="-1" aria-labelledby="permissionModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="permissionModalLabel">Permissions for <span id="modal-username"></span></h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="permission-container" style="display: flex; flex-direction: column; gap: 10px;">
+                                        <!-- Dynamic content will be inserted here -->
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const viewButtons = document.querySelectorAll('.view-permission-btn');
+
+                            viewButtons.forEach(button => {
+                                button.addEventListener('click', function () {
+                                    const username = this.getAttribute('data-username');
+                                    const permissions = this.getAttribute('data-permissions').split(',');
+
+                                    const allActions = {
+                                            'T9rPHeL7ectsYwT6Ih2AswTeZ': 'Add Account',
+                                            'c5pwoB1uPkzwwZgFokRZZ85fE': 'Monitor Visitor',
+                                            'GfsdZkrEFuNhmIUmxIm8e7fS8': 'Download Reports',
+                                            'qD0mEzTMK6Toi4u8aR1Pdusag': 'View Analytics',
+                                            '906IZi3K8od7FBS518t5I31jY': 'Edit/Delete Account',
+                                            '8sAygcnqpOXP8aAAG7IAWI4Cg': 'Add Permission',
+                                            'ubmssiHKw9GEPDulEVpDtOudM': 'View User Permission',
+                                            '6QmUceiC4tYAFPR8ablg55KFZ': 'Accept/Decline Application',
+                                            '3DijIfOkS1uljCeXsJoyJAIbt': 'Activate/Deactivate Member',
+                                            'M24yNFhXnUXIgzruLUVLrr1dQ': 'View Member Codes',
+                                            'nLpx3AoiT6FJB8BVTGy4D6VE7': 'Add Account Type',
+                                            'p1YjKW0Ny5bLE64YdGreQJ92w': 'View Account Type',
+                                    };
+
+                                    const permissionContainer = document.getElementById('permission-container');
+                                    permissionContainer.innerHTML = '';
+
+                                    for (const [key, action] of Object.entries(allActions)) {
+                                        const actionDiv = document.createElement('div');
+                                        actionDiv.style.display = 'flex';
+                                        actionDiv.style.justifyContent = 'space-between';
+
+                                        const actionName = document.createElement('span');
+                                        actionName.textContent = action;
+
+                                        const actionStatus = document.createElement('span');
+                                        if (permissions.includes(key)) {
+                                            actionStatus.textContent = 'Permitted';
+                                            actionStatus.style.color = 'green';
+                                            actionStatus.style.fontWeight = 'bold';
+                                        } else {
+                                            actionStatus.textContent = 'Prohibited';
+                                            actionStatus.style.color = 'red';
+                                            actionStatus.style.fontWeight = 'bold';
+                                        }
+
+                                        actionDiv.appendChild(actionName);
+                                        actionDiv.appendChild(actionStatus);
+                                        permissionContainer.appendChild(actionDiv);
+                                    }
+
+                                    document.getElementById('modal-username').textContent = username;
+
+                                    const modal = new bootstrap.Modal(document.getElementById('permissionModal'));
+                                    modal.show();
+                                });
+                            });
+                        });
+                    </script>
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mt-3">

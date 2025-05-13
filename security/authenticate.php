@@ -11,7 +11,7 @@ function checkUserRole($requiredRoles) {
     if (!isset($_SESSION['user_id'], $_SESSION['role'])) {
         session_unset();
         session_destroy();
-        header("Location: ../index.php?showLoginModal=true");
+        header("Location: ../login");
         exit();
     }
 

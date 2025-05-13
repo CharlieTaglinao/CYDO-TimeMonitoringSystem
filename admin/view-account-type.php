@@ -1,6 +1,7 @@
 <?php
 include 'includes/header.php';
 include 'fetch-account-type.php';
+include 'permission/permissionViewAccountType.php';
 ?>
 
 <body>
