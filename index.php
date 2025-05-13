@@ -94,13 +94,22 @@ if (isset($_GET['visitor_code'])) {
                                 </select>
                                 <div class="invalid-feedback">Please select membership status.</div>
                             </div>
+
+
                             <div id="membershipSection" style="display:none;">
                                 <div class="mb-3">
                                     <label for="membership_code" class="form-label">Membership ID <span class="asterisk-required-fields">*</span></label>
-                                    <input type="text" class="form-control" id="membership_code" name="membership_code" placeholder="Enter your Membership ID">
-                                    <div class="invalid-feedback">Please provide your Membership ID.</div>
+                                    <input type="text" class="form-control" id="membership_code" name="membership_code" placeholder="CH-1234-ABC123">
+                                    <div class="invalid-feedback"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="purpose" class="form-label">Purpose of visit <span class="asterisk-required-fields">*</span></label>
+                                    <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Research">
+                                    <div class="invalid-feedback"></div>
                                 </div>
                             </div>
+
+
                             <div id="personalDetailsSection" style="display:none;">
                                 <div class="row">
                                     <div class="col-6">

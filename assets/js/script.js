@@ -52,7 +52,8 @@ document.addEventListener('DOMContentLoaded', () => {
         middleName: "Please provide a middle name.",
         lastName: "Please provide a last name.",
         email: "Please provide a valid e-mail address.",
-        purpose: "Please provide a purpose.",
+        membership_code: "Please provide a membership code.",
+        purpose: "Please provide your purpose of visit.",
         age: "Please provide a valid age"
     };
 
