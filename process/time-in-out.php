@@ -13,7 +13,8 @@ $barangayname = strtoupper(trim($_POST['barangayname']));
 $purpose = strtoupper(trim($_POST['purpose'] ?? ''));
 $sex = strtoupper(trim($_POST['sex'] ?? ''));
 $age = (int) ($_POST['age'] ?? 0);
-$code = trim($_POST['membership_code'] ?? '');  
+$code = trim($_POST['membership_code'] ?? '');
+$membership_purpose = $_POST['membership_purpose'] ?? '';
 $isMember = $_POST['isMember'] ?? '';
 
 $_SESSION['first_name'] = $firstName;
@@ -179,6 +180,13 @@ if (isset($_POST['timeIn']) || isset($_POST['timeOut'])) {
         $insertLogStmt = $conn->prepare($insertLogQuery);
         $insertLogStmt->bind_param("iss", $clientId, $logTime, $code);
 
+        // Insert the membership purpose if provided
+        if (!empty($membership_purpose)) {
+            $insertMembershipPurposeQuery = "INSERT INTO purpose (client_id, purpose) VALUES (?, ?)";
+            $insertMembershipPurposeStmt = $conn->prepare($insertMembershipPurposeQuery);
+            $insertMembershipPurposeStmt->bind_param("is", $clientId, $membership_purpose);
+            $insertMembershipPurposeStmt->execute();
+        }
         if ($insertLogStmt->execute()) {
             $_SESSION['message'] = "Successfully Time IN at $logTime.";
             $_SESSION['message_type'] = 'success';

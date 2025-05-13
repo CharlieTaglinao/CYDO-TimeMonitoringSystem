@@ -21,11 +21,11 @@
                 <?php endif; ?>
 
                 <div class="mt-4">
-                    <h2 class="mb-5">Visitor Reports</h2>
+                    <h2 class="mb-5">REPORTS</h2>
 
                     <!-- XLSX FORMAT Section -->
                     <div class="card mb-5 shadow-lg">
-                        <div class="card-header text-white py-4" style="background-color:rgb(46, 109, 76);">
+                        <div class="card-header text-white py-4" style="background-color:#2e2c73;">
                             <h4 class="mb-0">Visitors Report</h4>
                         </div>
                         <div class="card-body py-5">

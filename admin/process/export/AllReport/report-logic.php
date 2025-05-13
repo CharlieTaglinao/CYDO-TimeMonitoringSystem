@@ -17,7 +17,6 @@
         $format = isset($_GET['format']) ? $_GET['format'] : 'pdf';
         $customStartDate = isset($_POST['startDate']) ? $_POST['startDate'] : null;
         $customEndDate = isset($_POST['endDate']) ? $_POST['endDate'] : null;
-        $customOffice = isset($_POST['customOffice']) ? $_POST['customOffice'] : null;
 
         if ($type === 'custom' && (!$customStartDate || !$customEndDate)) {
             if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
@@ -40,12 +39,6 @@
             $title = "Visitor Records Report";
             $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
             $filename = date('F-1-Y', strtotime($startDate)) . '-to-' . date('F-t-Y', strtotime($endDate)) . '-Visitors-Report';
-        } else if ($type === 'custom' && $customStartDate && $customEndDate && $customOffice) {
-            $startDate = $customStartDate;
-            $endDate = $customEndDate;
-            $title = "Visitor Records Report by Office";
-            $subtitle = date('F j, Y', strtotime($startDate)) . " to " . date('F j, Y', strtotime($endDate));
-            $filename = date('F-j-Y', strtotime($startDate)) . '-to-' . date('F-j-Y', strtotime($endDate)) . '-Visitors-Report-Office-' . $customOffice;
         } else if ($type === 'custom' && $customStartDate && $customEndDate) {
             $startDate = $customStartDate;
             $endDate = $customEndDate;
@@ -66,23 +59,18 @@
                 DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
                 DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
                 TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
-                office.office_name,
                 purpose.purpose,
                 barangays.barangay_name,
                 time_logs.status
             FROM 
                 time_logs
             INNER JOIN visitors ON time_logs.client_id = visitors.id
-            INNER JOIN office ON visitors.office_id = office.id
             INNER JOIN purpose ON visitors.purpose_id = purpose.client_id
             INNER JOIN barangays ON visitors.barangay_id = barangays.id
             WHERE 
                 DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
             ";
 
-        if ($customOffice) {
-            $query .= " AND visitors.office_id = '$customOffice'";
-        }
         $result = $conn->query($query);
         if (!$result) {
             error_log('Query Error: ' . $conn->error);
@@ -111,18 +99,18 @@
             try {
                 $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
-                $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
+                $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
                 $sheet->fromArray($headers, NULL, 'A1');
 
                 // Style headers
-                $sheet->getStyle('A1:I1')->applyFromArray([
+                $sheet->getStyle('A1:H1')->applyFromArray([
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1c1c1c']],
                     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
                 // Adjust column widths
-                $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 35, 'F' => 20, 'G' => 20, 'H' => 15, 'I' => 20];
+                $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 20, 'F' => 20, 'G' => 15, 'H' => 20];
                 foreach ($columns as $col => $width) {
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
@@ -133,14 +121,12 @@
                 $sheet->getPageSetup()->setFitToHeight(1);
 
                 $rowNumber = 2;
-                $dataCount = 0;
                 while ($row = $result->fetch_assoc()) {
                     $sheet->fromArray([
                         wordwrap($row['full_name'] ?? '-', 15, "\n", true),
                         wordwrap($row['log_date'] ?? '-', 15, "\n", true),
                         wordwrap($row['time_in'] ?? '-', 15, "\n", true),
                         wordwrap($row['time_out'] ?? '-', 15, "\n", true),
-                        wordwrap($row['office_name'] ?? '-', 15, "\n", true),
                         wordwrap($row['purpose'] ?? '-', 15, "\n", true),
                         wordwrap($row['barangay_name'] ?? '-', 15, "\n", true),
                         wordwrap($row['duration'] ?? '-', 15, "\n", true),
@@ -149,20 +135,12 @@
 
                     // Apply red color to status if "Auto Logout" and green if "User Logout"
                     if ($row['status'] == 'Auto Logout') {
-                        $sheet->getStyle("I$rowNumber")->getFont()->getColor()->setRGB('FF0000');
+                        $sheet->getStyle("H$rowNumber")->getFont()->getColor()->setRGB('FF0000');
                     } else {
-                        $sheet->getStyle("I$rowNumber")->getFont()->getColor()->setRGB('008000');
+                        $sheet->getStyle("H$rowNumber")->getFont()->getColor()->setRGB('008000');
                     }
 
                     $rowNumber++;
-                    $dataCount++;
-                    
-                    if ($dataCount % 10 === 0) {
-                        $sheet->mergeCells("A$rowNumber:I$rowNumber");
-                        $sheet->setCellValue("A$rowNumber",' ' );
-                        $sheet->getStyle("A$rowNumber")->getFont()->setBold(true);
-                        $rowNumber++;
-                    }
                 }
 
                 $lastColumn = $sheet->getHighestColumn();
@@ -223,8 +201,8 @@
 
             $pdf->Ln(20); // Add space to avoid overlap with header
 
-            $headers = ['NAME', 'DATE', 'IN', 'OUT', 'OFFICE', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
-            $widths = [59, 22, 19, 19, 63, 34, 25, 20, 20]; 
+            $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
+            $widths = [59, 22, 19, 19, 34, 25, 20, 20]; 
 
             // Header row
             $pdf->SetFillColor(0, 0, 0); // Set background color to black
@@ -258,14 +236,13 @@
                     isset($row['log_date']) ? $row['log_date'] : '-',
                     isset($row['time_in']) ? $row['time_in'] : '-',
                     isset($row['time_out']) ? $row['time_out'] : '-',
-                    $row['office_name'] ?? '-',
                     $row['purpose'] ?? '-',
                     $row['barangay_name'] ?? '-',
                     $duration
                 ];
                 foreach ($data as $key => $value) {
                     $alignment = $key == 0 ? 'L' : 'C';
-                    $pdf->MultiCell($widths[$key], 10, $value, 1, $alignment, $fill, 0, '', '', true);
+                    $pdf->MultiCell($widths[$key], 10, $value, 1, $alignment, $fill, 0, 0, 0, true);
                 }
                 // Apply red color to status if "Auto Logout" and green if "User Logout"
                 if ($row['status'] == 'Auto Logout') {
@@ -273,7 +250,7 @@
                 } else {
                     $pdf->SetTextColor(0, 128, 0); // Green
                 }
-                $pdf->MultiCell($widths[8], 10, wordwrap($row['status'] ?? 'User Logout', 15, "\n", true), 1, 'C', $fill, 0, '', '', true);
+                $pdf->MultiCell($widths[7], 10, wordwrap($row['status'] ?? 'User Logout', 15, "\n", true), 1, 'C', $fill, 0, 0, 0, true);
                 $pdf->SetTextColor(0, 0, 0); // Reset text color
                 $pdf->Ln();
                 $fill = !$fill;

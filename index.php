@@ -103,8 +103,8 @@ if (isset($_GET['visitor_code'])) {
                                     <div class="invalid-feedback"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="purpose" class="form-label">Purpose of visit <span class="asterisk-required-fields">*</span></label>
-                                    <input type="text" class="form-control" id="purpose" name="purpose" placeholder="Research">
+                                    <label for="membership_purpose" class="form-label">Purpose of visit <span class="asterisk-required-fields">*</span></label>
+                                    <input type="text" class="form-control" id="membership_purpose" name="membership_purpose" placeholder="Research">
                                     <div class="invalid-feedback"></div>
                                 </div>
                             </div>
