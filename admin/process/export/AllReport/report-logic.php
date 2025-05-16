@@ -61,14 +61,17 @@
                 TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
                 purpose.purpose,
                 barangays.barangay_name,
+                visitor_school_name.school_name,
+                visitors.type,
                 time_logs.status
             FROM 
-                time_logs
-            INNER JOIN visitors ON time_logs.client_id = visitors.id
-            INNER JOIN purpose ON visitors.purpose_id = purpose.client_id
-            INNER JOIN barangays ON visitors.barangay_id = barangays.id
+                visitors
+            LEFT JOIN time_logs ON time_logs.client_id = visitors.id AND DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
+            LEFT JOIN purpose ON visitors.purpose_id = purpose.client_id
+            LEFT JOIN barangays ON visitors.barangay_id = barangays.id
+            LEFT JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
             WHERE 
-                DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
+                (DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate' OR time_logs.time_in IS NULL)
             ";
 
         $result = $conn->query($query);
@@ -99,18 +102,18 @@
             try {
                 $spreadsheet = new Spreadsheet();
                 $sheet = $spreadsheet->getActiveSheet();
-                $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
+                $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'SCHOOL', 'TYPE', 'DURATION', 'STATUS'];
                 $sheet->fromArray($headers, NULL, 'A1');
 
                 // Style headers
-                $sheet->getStyle('A1:H1')->applyFromArray([
+                $sheet->getStyle('A1:J1')->applyFromArray([
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '1c1c1c']],
                     'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF'], 'size' => 12],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
                 // Adjust column widths
-                $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 20, 'F' => 20, 'G' => 15, 'H' => 20];
+                $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 20, 'F' => 20, 'G' => 25, 'H' => 15, 'I' => 15, 'J' => 20];
                 foreach ($columns as $col => $width) {
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
@@ -129,15 +132,17 @@
                         wordwrap($row['time_out'] ?? '-', 15, "\n", true),
                         wordwrap($row['purpose'] ?? '-', 15, "\n", true),
                         wordwrap($row['barangay_name'] ?? '-', 15, "\n", true),
+                        wordwrap($row['school_name'] ?? '-', 15, "\n", true),
+                        wordwrap($row['type'] ?? '-', 15, "\n", true),
                         wordwrap($row['duration'] ?? '-', 15, "\n", true),
                         wordwrap($row['status'] ?? 'User Logout', 15, "\n", true)
                     ], NULL, "A$rowNumber");
 
                     // Apply red color to status if "Auto Logout" and green if "User Logout"
                     if ($row['status'] == 'Auto Logout') {
-                        $sheet->getStyle("H$rowNumber")->getFont()->getColor()->setRGB('FF0000');
+                        $sheet->getStyle("J$rowNumber")->getFont()->getColor()->setRGB('FF0000');
                     } else {
-                        $sheet->getStyle("H$rowNumber")->getFont()->getColor()->setRGB('008000');
+                        $sheet->getStyle("J$rowNumber")->getFont()->getColor()->setRGB('008000');
                     }
 
                     $rowNumber++;
@@ -172,14 +177,14 @@
                     global $title, $subtitle;
                     if ($this->PageNo() == 1) {
                         $this->Ln(5);
-                        $this->SetFont('helvetica', 'B', 20);
-                        $this->Cell(0, 15, $title, 0, 1, 'C', false, '', 0, false, 'T', 'M');
                         $this->SetFont('helvetica', '', 10);
+
+                        $this->Ln(8);
+                        // Use @ to suppress PNG ICC profile warning
+                        @$this->Image('../../../../assets/images/CH-LOGO.png', 120, 5, 80, 40); // Bigger logo, adjust X, Y, width, height
+
                         $date = date('F j, Y, g:i A');
                         $this->Cell(0, 0, 'Report Generated : ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
-                        $this->Ln(8);
-                        $this->Image('../../../../assets/images/CYDO-LOGO.png', 94, 10, 15);
-                        $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', 191, 10, 15);
                     }
                 }
 
@@ -201,61 +206,126 @@
 
             $pdf->Ln(20); // Add space to avoid overlap with header
 
-            $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'DURATION', 'STATUS'];
-            $widths = [59, 22, 19, 19, 34, 25, 20, 20]; 
+            $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'SCHOOL', 'TYPE', 'DURATION', 'STATUS'];
+            $widths = [60, 20, 20, 20, 35, 35, 35, 15, 18, 30]; 
 
-            // Header row
-            $pdf->SetFillColor(0, 0, 0); // Set background color to black
-            $pdf->SetTextColor(255, 255, 255); // Set font color to white
-            $pdf->SetFont('helvetica', 'B');
-            foreach ($headers as $key => $header) {
-                $pdf->Cell($widths[$key], 10, $header, 1, 0, 'C', true);
-            }
-            $pdf->Ln();
-
-            // Reset text color for data rows
-            $pdf->SetTextColor(0, 0, 0);
-
-            // Data rows
-            $pdf->SetFont('helvetica', '');
-            $pdf->SetFillColor(245, 245, 245);
-            $fill = false;
-
+            // Gather all data rows first
+            $dataRows = [];
             while ($row = $result->fetch_assoc()) {
-                // Check if a new page is needed
-                if ($pdf->GetY() > 180) {
-                    $pdf->AddPage();
-                }
-
                 $duration = isset($row['time_in'], $row['time_out'])
                     ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%H:%I:%S')
                     : '00:00:00';
-
-                $data = [
+                $dataRows[] = [
                     strtoupper($row['full_name']),
                     isset($row['log_date']) ? $row['log_date'] : '-',
                     isset($row['time_in']) ? $row['time_in'] : '-',
                     isset($row['time_out']) ? $row['time_out'] : '-',
                     $row['purpose'] ?? '-',
                     $row['barangay_name'] ?? '-',
-                    $duration
+                    $row['school_name'] ?? '-',
+                    $row['type'] ?? '-',
+                    $duration,
+                    $row['status'] ?? 'User Logout'
                 ];
-                foreach ($data as $key => $value) {
-                    $alignment = $key == 0 ? 'L' : 'C';
-                    $pdf->MultiCell($widths[$key], 10, $value, 1, $alignment, $fill, 0, 0, 0, true);
-                }
-                // Apply red color to status if "Auto Logout" and green if "User Logout"
-                if ($row['status'] == 'Auto Logout') {
-                    $pdf->SetTextColor(255, 0, 0); // Red
-                } else {
-                    $pdf->SetTextColor(0, 128, 0); // Green
-                }
-                $pdf->MultiCell($widths[7], 10, wordwrap($row['status'] ?? 'User Logout', 15, "\n", true), 1, 'C', $fill, 0, 0, 0, true);
-                $pdf->SetTextColor(0, 0, 0); // Reset text color
-                $pdf->Ln();
-                $fill = !$fill;
             }
 
+            // Calculate max width for each column (header and data), with padding
+            $colCount = count($headers);
+            $colWidths = array_fill(0, $colCount, 0);
+            $padding = 4; // 2mm left, 2mm right
+            // Check header widths
+            for ($i = 0; $i < $colCount; $i++) {
+                $colWidths[$i] = $pdf->GetStringWidth($headers[$i]) + $padding;
+            }
+            // Check data widths, and for NAME column (index 0), track max
+            $maxNameWidth = $colWidths[0];
+            foreach ($dataRows as $row) {
+                for ($i = 0; $i < $colCount; $i++) {
+                    $cellWidth = $pdf->GetStringWidth($row[$i]) + $padding;
+                    if ($i == 0 && $cellWidth > $maxNameWidth) {
+                        $maxNameWidth = $cellWidth;
+                    }
+                    if ($cellWidth > $colWidths[$i]) {
+                        $colWidths[$i] = $cellWidth;
+                    }
+                }
+            }
+            // Set NAME column width to maxNameWidth
+            $colWidths[0] = $maxNameWidth + 6; // add extra padding for clarity
+
+            // Calculate table width
+            $tableWidth = array_sum($colWidths);
+            // Center the table horizontally using public margin getters
+            $margins = $pdf->getMargins();
+            $pageWidth = $pdf->getPageWidth() - $margins['left'] - $margins['right'];
+            $tableStartX = $margins['left'] + (($pageWidth - $tableWidth) / 2);
+            $tableStartY = $pdf->GetY();
+
+            // Header row
+            $pdf->SetFillColor(0, 0, 0);
+            $pdf->SetTextColor(255, 255, 255);
+            $pdf->SetFont('helvetica', 'B'); // Bold and slightly larger font for header
+            $x = $tableStartX;
+            $y = $pdf->GetY();
+            for ($i = 0; $i < $colCount; $i++) {
+                $pdf->SetXY($x, $y);
+                $pdf->MultiCell($colWidths[$i], 10, $headers[$i], 0, 'C', true, 0); // Centered and bold
+                $x += $colWidths[$i];
+            }
+            $pdf->Ln();
+            // Draw header bottom line
+            $pdf->SetDrawColor(0,0,0);
+            $pdf->Line($tableStartX, $pdf->GetY(), $tableStartX + $tableWidth, $pdf->GetY());
+
+            // Data rows with table-striped effect and improved cell padding/spacing
+            $pdf->SetFont('helvetica', '', 9); // Slightly larger font for data
+            $pdf->SetTextColor(0, 0, 0);
+            foreach ($dataRows as $rowIndex => $data) {
+                $cellHeights = [];
+                for ($i = 0; $i < $colCount; $i++) {
+                    // Add extra vertical space for clarity
+                    $cellHeights[$i] = $pdf->getStringHeight($colWidths[$i] - 2, $data[$i]) + 2;
+                }
+                // Fix: ensure maxHeight is a float, not an array
+                $maxHeight = max(max($cellHeights), 12); // Minimum row height for clarity
+                $x = $tableStartX;
+                $y = $pdf->GetY();
+                // Set fill color for striped effect
+                if ($rowIndex % 2 == 0) {
+                    $pdf->SetFillColor(255, 255, 255);
+                } else {
+                    $pdf->SetFillColor(240, 240, 240);
+                }
+                // Set generous cell padding for this row
+                $pdf->setCellPaddings(3, 2, 3, 2); // left, top, right, bottom
+                for ($i = 0; $i < $colCount; $i++) {
+                    $pdf->SetXY($x, $y);
+                    if ($i == 9) {
+                        if ($data[9] == 'Auto Logout') {
+                            $pdf->SetTextColor(255, 0, 0);
+                        } else {
+                            $pdf->SetTextColor(0, 128, 0);
+                        }
+                    } else {
+                        $pdf->SetTextColor(0, 0, 0);
+                    }
+                    $align = $i == 0 ? 'L' : 'C';
+                    $pdf->MultiCell($colWidths[$i], $maxHeight, $data[$i], 0, $align, true, 0);
+                    $x += $colWidths[$i];
+                }
+                $pdf->SetTextColor(0, 0, 0);
+                $pdf->SetY($y + $maxHeight);
+            }
+            // Reset cell paddings to default after table
+            $pdf->setCellPaddings(0, 0, 0, 0);
+            // Draw table outline
+            $tableEndY = $pdf->GetY();
+            $pdf->SetDrawColor(0,0,0);
+            $pdf->Rect($tableStartX, $tableStartY, $tableWidth, $tableEndY - $tableStartY);
+            // Draw header bottom line again for clarity
+            $pdf->Line($tableStartX, $tableStartY + 10, $tableStartX + $tableWidth, $tableStartY + 10);
+
+            ob_clean(); // Clear any output buffer to prevent corruption
             $filename = $filename . '.pdf';
             $pdf->Output($filename, 'D');
         }

@@ -1,7 +1,7 @@
 <?php
 include 'includes/header.php';
-include 'fetch-monitor-visitor.php'; 
-include 'permission/permissionMonitorVisitor.php';?>
+include 'fetch-monitor-visitor.php';
+include 'permission/permissionMonitorVisitor.php'; ?>
 
 
 <body>
@@ -83,19 +83,38 @@ include 'permission/permissionMonitorVisitor.php';?>
                                 <div class="list-group monitor-container p-2">
                                     <div id="insite-table">
                                         <?php while ($row = $insiteVisitorResult->fetch_assoc()): ?>
-
-                                            <div class="card mb-2">
+                                            <div class="card mb-2 border-0 shadow-lg">
                                                 <div
-                                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                                    class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">
                                                     <div>
-                                                        <strong><?php echo $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']; ?></strong><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Date:
-                                                            <?php echo (new DateTime($row['time_in']))->format('F j, Y'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Time in:
-                                                            <?php echo (new DateTime($row['time_in']))->format('g:i A'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Purpose:<?php echo $row['purpose']; ?></small>
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h5 class="mb-0 fw-bold">
+                                                                <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-semibold me-2">Date:</small>
+                                                            <small><?php echo (new DateTime($row['time_in']))->format('F j, Y'); ?></small>
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-semibold me-2">Time in:</small>
+                                                            <small><?php echo (new DateTime($row['time_in']))->format('g:i A'); ?></small>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted fw-semibold me-2">Purpose:</small>
+                                                            <small><?php echo htmlspecialchars($row['purpose']); ?></small>
+                                                        </div>
                                                     </div>
-                                                    <span class="badge bg-success">IN SITE</span>
+                                                    <div class="d-flex flex-column align-items-end">
+                                                        <?php if (!empty($row['type'])): ?>
+                                                            <span
+                                                                class="badge fs-6 mb-2 px-3 <?php echo (strtolower($row['type']) !== 'guest') ? '' : 'bg-secondary'; ?>"
+                                                                style="<?php echo (strtolower($row['type']) !== 'guest') ? 'background-color: #2e2c73;' : ''; ?>">
+                                                                <?php echo htmlspecialchars($row['type']); ?>
+                                                            </span>
+                                                        <?php endif; ?>
+                                                        <span class="badge bg-success fs-6 px-3">IN SITE</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -108,7 +127,7 @@ include 'permission/permissionMonitorVisitor.php';?>
 
                     <!-- Outgoing Visitors -->
                     <div class="col-md-6">
-                        <div class="card shadow-lg border-light rounded-lg">
+                        <div class="card shadow-lg border-light rounded-lg w-100">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-center mb-4">
                                     <h5 class="card-title">Outgoing Visitors</h5>
@@ -120,29 +139,53 @@ include 'permission/permissionMonitorVisitor.php';?>
                                 <div class="list-group monitor-container p-2">
                                     <div id="outgoing-table">
                                         <?php while ($row = $alreadyOutResult->fetch_assoc()): ?>
-                                            <div class="card mb-2">
+                                            <div class="card mb-2 border-0 shadow-lg w-100">
                                                 <div
-                                                    class="list-group-item d-flex justify-content-between align-items-center">
+                                                    class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">
                                                     <div>
-
-                                                        <strong><?php echo $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']; ?></strong><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Date:
-                                                            <?php echo (new DateTime($row['time_in']))->format('F j, Y'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Time in:
-                                                            <?php echo (new DateTime($row['time_in']))->format('g:i A'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Time out:
-                                                            <?php echo (new DateTime($row['time_out']))->format('g:i A'); ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Purpose:
-                                                            <?php echo $row['purpose']; ?></small><br>
-                                                        <small class="text-muted" style="font-weight: 600;">Duration:
-                                                            <?php
-                                                            $timeIn = new DateTime($row['time_in']);
-                                                            $timeOut = new DateTime($row['time_out']);
-                                                            $duration = $timeIn->diff($timeOut);
-                                                            echo $duration->format('%h hour %i minutes %s seconds');
-                                                            ?> </small>
+                                                        <div class="d-flex align-items-center mb-1">
+                                                            <h5 class="mb-0 fw-bold">
+                                                                <?php echo htmlspecialchars($row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']); ?>
+                                                            </h5>
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-semibold me-2">Date:</small>
+                                                            <small><?php echo (new DateTime($row['time_in']))->format('F j, Y'); ?></small>
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-semibold me-2">Time in:</small>
+                                                            <small><?php echo (new DateTime($row['time_in']))->format('g:i A'); ?></small>
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-semibold me-2">Time out:</small>
+                                                            <small><?php echo (new DateTime($row['time_out']))->format('g:i A'); ?></small>
+                                                        </div>
+                                                        <div class="mb-1">
+                                                            <small class="text-muted fw-semibold me-2">Purpose:</small>
+                                                            <small><?php echo htmlspecialchars($row['purpose']); ?></small>
+                                                        </div>
+                                                        <div>
+                                                            <small class="text-muted fw-semibold me-2">Duration:</small>
+                                                            <small>
+                                                                <?php
+                                                                $timeIn = new DateTime($row['time_in']);
+                                                                $timeOut = new DateTime($row['time_out']);
+                                                                $duration = $timeIn->diff($timeOut);
+                                                                echo $duration->format('%h hour %i minutes %s seconds');
+                                                                ?>
+                                                            </small>
+                                                        </div>
                                                     </div>
-                                                    <span class="badge bg-danger">ALREADY OUT</span>
+                                                    <div class="d-flex flex-column align-items-end">
+                                                        <?php if (!empty($row['type'])): ?>
+                                                            <span
+                                                                class="badge fs-6 mb-2 px-3 <?php echo (strtolower($row['type']) !== 'guest') ? '' : 'bg-secondary'; ?>"
+                                                                style="<?php echo (strtolower($row['type']) !== 'guest') ? 'background-color: #2e2c73;' : ''; ?>">
+                                                                <?php echo htmlspecialchars($row['type']); ?>
+                                                            </span>
+                                                        <?php endif; ?>
+                                                        <span class="badge bg-danger fs-6 px-3 py-2">ALREADY OUT</span>
+                                                    </div>
                                                 </div>
                                             </div>
 
