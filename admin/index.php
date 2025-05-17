@@ -96,15 +96,15 @@ include 'includes/header.php';
                     <table class="table table-bordered">
                         <thead class="table-dark">
                             <tr>
-                                <th style="width: 20%;">FULL NAME</th>
-                                <th style="width: 10%;">DATE</th>
-                                <th style="width: 5%;">IN</th>
-                                <th style="width: 5%;">OUT</th>
-                                <th style="width: 10%;">DURATION</th>
-                                <th style="width: 10%;">SCHOOL NAME</th>
-                                <th style="width: 12%;">STATUS</th>
-                                <th style="width: 10%">TYPE</th>
-                                <th style="width: 20%;">ACTION</th>
+                                <th style="width: 20%;">FULL NAME<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(FIRST NAME, MIDDLE NAME, LAST NAME)</span></th>
+                                <th style="width: 10%;">DATE<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(YYYY-MM-DD)</span></th>
+                                <th style="width: 5%;">IN<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(HH:MM:SS)</span></th>
+                                <th style="width: 5%;">OUT<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(HH:MM:SS)</span></th>
+                                <th style="width: 10%;">DURATION<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(HH:MM:SS)</span></th>
+                                <th style="width: 10%;">SCHOOL NAME<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(SCHOOL)</span></th>
+                                <th style="width: 12%;">STATUS<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(User logout | On-site | Logout by)</span></th>
+                                <th style="width: 10%">TYPE<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(VISITOR TYPE)</span></th>
+                                <th style="width: 20%;">ACTION<br><span class="text-muted fst-italic" style="font-size: 10px; font-weight: normal;">(VIEW/LOG OUT)</span></th>
                             </tr>
                         </thead>
                         <tbody id="visitor-table">
