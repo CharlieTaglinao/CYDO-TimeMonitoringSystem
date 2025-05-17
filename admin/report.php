@@ -26,26 +26,22 @@
                     <!-- XLSX FORMAT Section -->
                     <div class="card mb-5 shadow-lg">
                         <div class="card-header text-white py-4" style="background-color:#2e2c73;">
-                            <h4 class="mb-0">Visitors Report</h4>
+                            <h4 class="mb-0">TIME LOGS</h4>
                         </div>
                         <div class="card-body py-5">
                         <h4 class="mb-4">XLSX</h4>
                             <div class="row g-4">
                                 <!-- Today's Report -->
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <a class="btn btn-secondary btn-lg w-100 py-4" id="export-today-button-xlsx" data-type="today" data-format="xlsx">Today's Report</a>
                                 </div>
                                 <!-- 1 Month Report -->
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <a class="btn btn-secondary btn-lg w-100 py-4" id="export-todays-month-button-xlsx" data-type="month" data-format="xlsx">1 Month Report</a>
                                 </div>
                                 <!-- Custom Report -->
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <button class="btn btn-secondary btn-lg w-100 py-4" id="customRangeExportXLSXBtn">Custom</button>
-                                </div>
-                                <!-- By Office Report -->
-                                <div class="col-md-3">
-                                    <button class="btn btn-secondary btn-lg w-100 py-4" id="customOfficeExportXLSXBtn">By Office</button>
                                 </div>
                             </div>
 
@@ -53,20 +49,16 @@
 
                             <div class="row g-4">
                                 <!-- Today's Report -->
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <a class="btn btn-secondary btn-lg w-100 py-4" id="export-today-button-pdf" data-type="today" data-format="pdf">Today's Report</a>
                                 </div>
                                 <!-- 1 Month Report -->
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <a class="btn btn-secondary btn-lg w-100 py-4" id="export-todays-month-button-pdf" data-type="month" data-format="pdf">1 Month Report</a>
                                 </div>
                                 <!-- Custom Report -->
-                                <div class="col-md-3">
+                                <div class="col-md-4">
                                     <button class="btn btn-secondary btn-lg w-100 py-4" id="customRangeExportPDFBtn">Custom</button>
-                                </div>
-                                <!-- By Office Report -->
-                                <div class="col-md-3">
-                                    <button class="btn btn-secondary btn-lg w-100 py-4" id="customOfficeExportPDFBtn">By Office</button>
                                 </div>
                             </div>
                         </div>

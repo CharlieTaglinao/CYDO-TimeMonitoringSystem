@@ -50,22 +50,32 @@
                             $categories = [];
                             if ($permissionsResult->num_rows > 0) {
                                 while ($row = $permissionsResult->fetch_assoc()) {
-                                    if ($currentUserRole == 2) {
-                                        $restrictedPermissions = ['8sAygcnqpOXP8aAAG7IAWI4Cg', 'ubmssiHKw9GEPDulEVpDtOudM'];
-                                        if (in_array($row['permission_id'], $restrictedPermissions)) {
-                                            continue;
-                                        }
-                                    }
+                                 
                                    
                                     
                                     $categories[$row['category']][] = $row;   
                                 }
                             }
+                                      // Toggle All switch
+                                echo "<div class='card mb-3'>";
+                                echo "<div class='card-header fw-bold bg-dark'>" . 'TOGGLE ALL'. "</div>";
+                                echo "<div class='card-body'>";
+                                echo "<div class='d-flex justify-content-between align-items-center mb-2'>";
+                                echo "<span class='fw-normal'>Access all permission</span>";
+                                echo "<div class='form-check form-switch'>";
+                                echo "<input class='form-check-input' type='checkbox' id='toggleAllPermissions'>";
+                                echo "<label class='form-check-label' for='toggleAllPermissions'>OFF / ON</label>";
+                                echo "</div>";
+                                echo "</div>";
+                                echo "</div>"; // Close card-body
+                                echo "</div>"; // Close card
 
                             foreach ($categories as $category => $permissions) {
                                 echo "<div class='card mb-3'>";
                                 echo "<div class='card-header fw-bold bg-dark'>" . strtoupper($category) . "</div>";
                                 echo "<div class='card-body'>";
+
+                      
 
                                 foreach ($permissions as $row) {
                                     echo "<div class='d-flex justify-content-between align-items-center mb-2'>";

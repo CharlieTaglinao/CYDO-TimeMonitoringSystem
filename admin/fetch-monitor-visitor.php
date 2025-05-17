@@ -58,25 +58,25 @@ if (isset($_GET['searchInsite'])) {
             $typeBadgeStyle = (strtolower($type) !== 'guest') ? 'background-color: #2e2c73;' : '';
 
             echo '<div class="card mb-2 border-0 shadow-lg">'
-                .'<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
-                    .'<div>'
-                        .'<div class="d-flex align-items-center mb-1">'
-                            .'<h5 class="mb-0 fw-bold">' . $fullName . '</h5>'
-                        .'</div>'
-                        .'<div class="mb-1">'
-                            .'<small class="text-muted fw-semibold me-2">Date:</small>'
-                            .'<small>' . $date . '</small>'
-                        .'</div>'
-                        .'<div class="mb-1">'
-                            .'<small class="text-muted fw-semibold me-2">Time in:</small>'
-                            .'<small>' . $timeIn . '</small>'
-                        .'</div>'
-                        .'<div>'
-                            .'<small class="text-muted fw-semibold me-2">Purpose:</small>'
-                            .'<small>' . $purpose . '</small>'
-                        .'</div>'
-                    .'</div>'
-                    .'<div class="d-flex flex-column align-items-end">';
+                . '<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
+                . '<div>'
+                . '<div class="d-flex align-items-center mb-1">'
+                . '<h5 class="mb-0 fw-bold">' . $fullName . '</h5>'
+                . '</div>'
+                . '<div class="mb-1">'
+                . '<small class="text-muted fw-semibold me-2">Date:</small>'
+                . '<small>' . $date . '</small>'
+                . '</div>'
+                . '<div class="mb-1">'
+                . '<small class="text-muted fw-semibold me-2">Time in:</small>'
+                . '<small>' . $timeIn . '</small>'
+                . '</div>'
+                . '<div>'
+                . '<small class="text-muted fw-semibold me-2">Purpose:</small>'
+                . '<small>' . $purpose . '</small>'
+                . '</div>'
+                . '</div>'
+                . '<div class="d-flex flex-column align-items-end">';
             if (!empty($type)) {
                 echo '<span class="badge fs-6 mb-2 ' . $typeBadgeClass . '" style="' . $typeBadgeStyle . '">' . $type . '</span>';
             }
@@ -85,12 +85,12 @@ if (isset($_GET['searchInsite'])) {
         }
     } else {
         echo '<div class="card mb-2 border-0 shadow-lg">'
-            .'<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
-                .'<div>'
-                    .'<strong>No Records Found</strong><br>'
-                .'</div>'
-            .'</div>'
-        .'</div>';
+            . '<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
+            . '<div>'
+            . '<strong>No Records Found</strong><br>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
     }
 }
 
@@ -128,50 +128,54 @@ if (isset($_GET['searchOutgoing'])) {
             $purpose = htmlspecialchars($row['purpose']);
             $duration = $timeInForDuration->diff($timeOutForDuration);
             $type = isset($row['type']) ? htmlspecialchars($row['type']) : '';
-            $typeBadgeClass = (strtolower($type) !== 'guest') ? '' : 'bg-secondary';
-            $typeBadgeStyle = (strtolower($type) !== 'guest') ? 'background-color: #2e2c73;' : '';
+            $typeBadgeClass = (strtolower($type) == 'GUEST') ? '' : 'bg-secondary';
+            $typeBadgeStyleOutgoing = (strtolower($type) !== 'GUEST') ? 'background-color: #2e2c73;' : '';
 
-            echo '<div class="card mb-2 border-0 shadow-lg">'
-                .'<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
-                    .'<div>'
-                        .'<div class="d-flex align-items-center mb-1">'
-                            .'<h5 class="mb-0 fw-bold">' . $fullName . '</h5>'
-                        .'</div>'
-                        .'<div class="mb-1">'
-                            .'<small class="text-muted fw-semibold me-2">Date:</small>'
-                            .'<small>' . $date . '</small>'
-                        .'</div>'
-                        .'<div class="mb-1">'
-                            .'<small class="text-muted fw-semibold me-2">Time in:</small>'
-                            .'<small>' . $timeIn . '</small>'
-                        .'</div>'
-                        .'<div class="mb-1">'
-                            .'<small class="text-muted fw-semibold me-2">Time out:</small>'
-                            .'<small>' . $timeOut . '</small>'
-                        .'</div>'
-                        .'<div class="mb-1">'
-                            .'<small class="text-muted fw-semibold me-2">Purpose:</small>'
-                            .'<small>' . $purpose . '</small>'
-                        .'</div>'
-                        .'<div>'
-                            .'<small class="text-muted fw-semibold me-2">Duration:</small>'
-                            .'<small>' . $duration->format('%h hour %i minutes %s seconds') . '</small>'
-                        .'</div>'
-                    .'</div>'
-                    .'<div class="d-flex flex-column align-items-end">'
-                        .'<span class="badge bg-danger fs-6 px-3 py-2">ALREADY OUT</span>'
-                    .'</div>'
-                .'</div>'
-            .'</div>';
+
+            echo '<div class="card mb-2 border-0 shadow-lg w-100">'
+                . '<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
+                . '<div>'
+                . '<div class="d-flex align-items-center mb-1">'
+                . '<h5 class="mb-0 fw-bold">' . $fullName . '</h5>'
+                . '</div>'
+                . '<div class="mb-1">'
+                . '<small class="text-muted fw-semibold me-2">Date:</small>'
+                . '<small>' . $date . '</small>'
+                . '</div>'
+                . '<div class="mb-1">'
+                . '<small class="text-muted fw-semibold me-2">Time in:</small>'
+                . '<small>' . $timeIn . '</small>'
+                . '</div>'
+                . '<div class="mb-1">'
+                . '<small class="text-muted fw-semibold me-2">Time out:</small>'
+                . '<small>' . $timeOut . '</small>'
+                . '</div>'
+                . '<div class="mb-1">'
+                . '<small class="text-muted fw-semibold me-2">Purpose:</small>'
+                . '<small>' . $purpose . '</small>'
+                . '</div>'
+                . '<div>'
+                . '<small class="text-muted fw-semibold me-2">Duration:</small>'
+                . '<small>' . $duration->format('%h hour %i minutes %s seconds') . '</small>'
+                . '</div>'
+                . '</div>'
+                . '<div class="d-flex flex-column align-items-end">';
+            if (!empty($type)) {
+                echo '<span class="badge fs-6 mb-2 px-3 ' . $typeBadgeClass . '" style="' . $typeBadgeStyleOutgoing . '">' . $type . '</span>';
+            }
+            echo '<span class="badge bg-danger fs-6 px-3 py-2">ALREADY OUT</span>'
+                . '</div>'
+                . '</div>'
+                . '</div>';
         }
     } else {
         echo '<div class="card mb-2 border-0 shadow-lg">'
-            .'<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
-                .'<div>'
-                    .'<strong>No Records Found</strong><br>'
-                .'</div>'
-            .'</div>'
-        .'</div>';
+            . '<div class="list-group-item d-flex justify-content-between align-items-center bg-transparent border-0">'
+            . '<div>'
+            . '<strong>No Records Found</strong><br>'
+            . '</div>'
+            . '</div>'
+            . '</div>';
     }
 }
 

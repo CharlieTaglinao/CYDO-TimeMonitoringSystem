@@ -36,43 +36,107 @@
         if ($type === 'month') {
             $startDate = date('Y-m-01');
             $endDate = date('Y-m-t');
-            $title = "Visitor Records Report";
+            $title = "TIMELOGS REPORT";
             $subtitle = date('F 1, Y', strtotime($startDate)) . " to " . date('F t, Y', strtotime($endDate));
-            $filename = date('F-1-Y', strtotime($startDate)) . '-to-' . date('F-t-Y', strtotime($endDate)) . '-Visitors-Report';
+            $filename = date('F-1-Y', strtotime($startDate)) . '-to-' . date('F-t-Y', strtotime($endDate)) . '-TimeLogs-Report';
         } else if ($type === 'custom' && $customStartDate && $customEndDate) {
             $startDate = $customStartDate;
             $endDate = $customEndDate;
-            $title = "Visitor Records Report";
+            $title = "TIMELOGS REPORT";
             $subtitle = date('F j, Y', strtotime($startDate)) . " to " . date('F j, Y', strtotime($endDate));
-            $filename = date('F-j-Y', strtotime($startDate)) . '-to-' . date('F-j-Y', strtotime($endDate)) . '-Visitors-Report';
+            $filename = date('F-j-Y', strtotime($startDate)) . '-to-' . date('F-j-Y', strtotime($endDate)) . '-TimeLogs-Report';
         } else {
             $startDate = $endDate = date('Y-m-d');
-            $title = "Visitor Records Report";
+            $title = "TIMELOGS REPORT";
             $subtitle = date('F j, Y', strtotime($startDate));
-            $filename = date('F-j-Y', strtotime($startDate)) . '-Visitors-Report';
+            $filename = date('F-j-Y', strtotime($startDate)) . '-TimeLogs-Report';
         }
 
-        $query = "
-            SELECT 
-                CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
-                DATE(time_logs.time_in) AS log_date,
-                DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
-                DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
-                TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
-                purpose.purpose,
-                barangays.barangay_name,
-                visitor_school_name.school_name,
-                visitors.type,
-                time_logs.status
-            FROM 
-                visitors
-            LEFT JOIN time_logs ON time_logs.client_id = visitors.id AND DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
-            LEFT JOIN purpose ON visitors.purpose_id = purpose.client_id
-            LEFT JOIN barangays ON visitors.barangay_id = barangays.id
-            LEFT JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
-            WHERE 
-                (DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate' OR time_logs.time_in IS NULL)
+        if ($type === 'today') {
+            $query = "
+                SELECT 
+                    CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
+                    DATE(time_logs.time_in) AS log_date,
+                    DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
+                    DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
+                    TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
+                    (
+                        SELECT p2.purpose FROM purpose p2
+                        WHERE p2.client_id = visitors.id
+                        AND p2.id = (
+                            SELECT MAX(p3.id) FROM purpose p3
+                            WHERE p3.client_id = visitors.id
+                            AND p3.id <= time_logs.id
+                        )
+                    ) as purpose,
+                    barangays.barangay_name,
+                    visitor_school_name.school_name,
+                    visitors.type,
+                    time_logs.status
+                FROM 
+                    visitors
+                LEFT JOIN time_logs ON time_logs.client_id = visitors.id AND DATE(time_logs.time_in) = '$startDate'
+                LEFT JOIN barangays ON visitors.barangay_id = barangays.id
+                LEFT JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
+                WHERE DATE(time_logs.time_in) = '$startDate'
             ";
+        } else if ($type === 'custom' && $customStartDate && $customEndDate) {
+            $query = "
+                SELECT 
+                    CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
+                    DATE(time_logs.time_in) AS log_date,
+                    DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
+                    DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
+                    TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
+                    (
+                        SELECT p2.purpose FROM purpose p2
+                        WHERE p2.client_id = visitors.id
+                        AND p2.id = (
+                            SELECT MAX(p3.id) FROM purpose p3
+                            WHERE p3.client_id = visitors.id
+                            AND p3.id <= time_logs.id
+                        )
+                    ) as purpose,
+                    barangays.barangay_name,
+                    visitor_school_name.school_name,
+                    visitors.type,
+                    time_logs.status
+                FROM 
+                    visitors
+                LEFT JOIN time_logs ON time_logs.client_id = visitors.id AND DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
+                LEFT JOIN barangays ON visitors.barangay_id = barangays.id
+                LEFT JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
+                WHERE DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
+            ";
+        } else {
+            $query = "
+                SELECT 
+                    CONCAT(visitors.first_name, ' ', visitors.middle_name, ' ', visitors.last_name) AS full_name,
+                    DATE(time_logs.time_in) AS log_date,
+                    DATE_FORMAT(time_logs.time_in, '%h:%i:%s %p') AS time_in,
+                    DATE_FORMAT(time_logs.time_out, '%h:%i:%s %p') AS time_out,
+                    TIME_FORMAT(TIMEDIFF(time_logs.time_out, time_logs.time_in), '%H:%i:%s') AS duration,
+                    (
+                        SELECT p2.purpose FROM purpose p2
+                        WHERE p2.client_id = visitors.id
+                        AND p2.id = (
+                            SELECT MAX(p3.id) FROM purpose p3
+                            WHERE p3.client_id = visitors.id
+                            AND p3.id <= time_logs.id
+                        )
+                    ) as purpose,
+                    barangays.barangay_name,
+                    visitor_school_name.school_name,
+                    visitors.type,
+                    time_logs.status
+                FROM 
+                    visitors
+                LEFT JOIN time_logs ON time_logs.client_id = visitors.id AND DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate'
+                LEFT JOIN barangays ON visitors.barangay_id = barangays.id
+                LEFT JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
+                WHERE (DATE(time_logs.time_in) BETWEEN '$startDate' AND '$endDate' OR time_logs.time_in IS NULL)
+            ";
+        }
 
         $result = $conn->query($query);
         if (!$result) {
@@ -113,7 +177,7 @@
                 ]);
 
                 // Adjust column widths
-                $columns = ['A' => 40, 'B' => 15, 'C' => 15, 'D' => 15, 'E' => 20, 'F' => 20, 'G' => 25, 'H' => 15, 'I' => 15, 'J' => 20];
+                $columns = ['A' => 55, 'B' => 22, 'C' => 22, 'D' => 22, 'E' => 40, 'F' => 32, 'G' => 32, 'H' => 18, 'I' => 20, 'J' => 22];
                 foreach ($columns as $col => $width) {
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
@@ -179,12 +243,13 @@
                         $this->Ln(5);
                         $this->SetFont('helvetica', '', 10);
 
-                        $this->Ln(8);
-                        // Use @ to suppress PNG ICC profile warning
-                        @$this->Image('../../../../assets/images/CH-LOGO.png', 120, 5, 80, 40); // Bigger logo, adjust X, Y, width, height
-
-                        $date = date('F j, Y, g:i A');
-                        $this->Cell(0, 0, 'Report Generated : ' . $date, 0, 1, 'C', false, '', 0, false, 'T', 'M');
+                        // Center the logo at the top, but move CH-LOGO.png slightly to the right
+                        $pageWidth = $this->getPageWidth();
+                        $logoWidth = 80; // width in mm
+                        $logoX = ($pageWidth - $logoWidth) / 2 - 10; // Move 10mm to the right
+                        @$this->Image('../../../../assets/images/CH-LOGO.png', $logoX, 10, $logoWidth, 20); // Adjusted logo position
+                        $this->Image('../../../../assets/images/GENTRI-LOGO.jpeg', $logoX + 90, 10, $logoWidth - 60, 20); // Centered logo
+                        $this->Ln(25); // Add space below the logo
                     }
                 }
 
@@ -202,19 +267,19 @@
             // Adjust margins to reduce left and right margins
             $pdf->SetMargins(8, 20, 5); 
             $pdf->AddPage();
-            $pdf->SetFont('helvetica', '', 8);
+            $pdf->SetFont('helvetica', 'B', 9);
 
             $pdf->Ln(20); // Add space to avoid overlap with header
 
             $headers = ['NAME', 'DATE', 'IN', 'OUT', 'PURPOSE', 'BARANGAY', 'SCHOOL', 'TYPE', 'DURATION', 'STATUS'];
-            $widths = [60, 20, 20, 20, 35, 35, 35, 15, 18, 30]; 
+            $widths = [50, 25, 25, 25, 35, 32, 32, 22, 20, 22]; 
 
             // Gather all data rows first
             $dataRows = [];
             while ($row = $result->fetch_assoc()) {
                 $duration = isset($row['time_in'], $row['time_out'])
                     ? (new DateTime($row['time_in']))->diff(new DateTime($row['time_out']))->format('%H:%I:%S')
-                    : '00:00:00';
+                    : '-';
                 $dataRows[] = [
                     strtoupper($row['full_name']),
                     isset($row['log_date']) ? $row['log_date'] : '-',
@@ -229,29 +294,10 @@
                 ];
             }
 
-            // Calculate max width for each column (header and data), with padding
+            // Use fixed column widths
             $colCount = count($headers);
-            $colWidths = array_fill(0, $colCount, 0);
+            $colWidths = $widths;
             $padding = 4; // 2mm left, 2mm right
-            // Check header widths
-            for ($i = 0; $i < $colCount; $i++) {
-                $colWidths[$i] = $pdf->GetStringWidth($headers[$i]) + $padding;
-            }
-            // Check data widths, and for NAME column (index 0), track max
-            $maxNameWidth = $colWidths[0];
-            foreach ($dataRows as $row) {
-                for ($i = 0; $i < $colCount; $i++) {
-                    $cellWidth = $pdf->GetStringWidth($row[$i]) + $padding;
-                    if ($i == 0 && $cellWidth > $maxNameWidth) {
-                        $maxNameWidth = $cellWidth;
-                    }
-                    if ($cellWidth > $colWidths[$i]) {
-                        $colWidths[$i] = $cellWidth;
-                    }
-                }
-            }
-            // Set NAME column width to maxNameWidth
-            $colWidths[0] = $maxNameWidth + 6; // add extra padding for clarity
 
             // Calculate table width
             $tableWidth = array_sum($colWidths);
@@ -269,37 +315,65 @@
             $y = $pdf->GetY();
             for ($i = 0; $i < $colCount; $i++) {
                 $pdf->SetXY($x, $y);
-                $pdf->MultiCell($colWidths[$i], 10, $headers[$i], 0, 'C', true, 0); // Centered and bold
+                $pdf->MultiCell($colWidths[$i], 7, $headers[$i], 0, 'C', true, 0); // Centered and bold, slightly less height
+                $x += $colWidths[$i];
+            }
+            // Guides inside header block
+            $pdf->SetFont('helvetica', 'I', 7); // Italic, small
+            $pdf->SetTextColor(200, 200, 200); // Lighter gray for inside header
+            $x = $tableStartX;
+            $y = $y + 7; // Move below header text
+            $guides = [
+                '(First Name, Middle Name, Surname)',
+                '(YYYY-MM-DD)',
+                '(HH:MM:SS)',
+                '(HH:MM:SS)',
+                '(Purpose of Visit)',
+                '(Barangay Name)',
+                '(School Name)',
+                '(Member/Guest)',
+                '(HH:MM:SS)',
+                '(Status)'
+            ];
+            for ($i = 0; $i < $colCount; $i++) {
+                $pdf->SetXY($x, $y);
+                $pdf->MultiCell($colWidths[$i], 5, $guides[$i], 0, 'C', true, 0); // Still filled, so it's inside header
                 $x += $colWidths[$i];
             }
             $pdf->Ln();
             // Draw header bottom line
             $pdf->SetDrawColor(0,0,0);
             $pdf->Line($tableStartX, $pdf->GetY(), $tableStartX + $tableWidth, $pdf->GetY());
-
-            // Data rows with table-striped effect and improved cell padding/spacing
-            $pdf->SetFont('helvetica', '', 9); // Slightly larger font for data
             $pdf->SetTextColor(0, 0, 0);
+            $pdf->SetFont('helvetica', '', 9); // Reset font for data rows
+
             foreach ($dataRows as $rowIndex => $data) {
                 $cellHeights = [];
                 for ($i = 0; $i < $colCount; $i++) {
-                    // Add extra vertical space for clarity
                     $cellHeights[$i] = $pdf->getStringHeight($colWidths[$i] - 2, $data[$i]) + 2;
                 }
-                // Fix: ensure maxHeight is a float, not an array
-                $maxHeight = max(max($cellHeights), 12); // Minimum row height for clarity
+                $maxHeight = max(max($cellHeights), 12);
                 $x = $tableStartX;
                 $y = $pdf->GetY();
-                // Set fill color for striped effect
+
+                // Check if next row will overflow the page, if so, add a new page (no header re-draw)
+                if ($y + $maxHeight > ($pdf->getPageHeight() - $pdf->getMargins()['bottom'] - 15)) {
+                    $pdf->AddPage();
+                    $pdf->SetFont('helvetica', 'B', 9);
+                    $pdf->SetTextColor(0, 0, 0);
+                    $x = $tableStartX;
+                    $y = $pdf->GetY();
+                }
+
                 if ($rowIndex % 2 == 0) {
                     $pdf->SetFillColor(255, 255, 255);
                 } else {
                     $pdf->SetFillColor(240, 240, 240);
                 }
-                // Set generous cell padding for this row
-                $pdf->setCellPaddings(3, 2, 3, 2); // left, top, right, bottom
+                $pdf->setCellPaddings(3, 2, 3, 2);
                 for ($i = 0; $i < $colCount; $i++) {
                     $pdf->SetXY($x, $y);
+                    $pdf->SetFont('helvetica', 'B', 9); // Set bold font for all data cells
                     if ($i == 9) {
                         if ($data[9] == 'Auto Logout') {
                             $pdf->SetTextColor(255, 0, 0);
@@ -314,17 +388,12 @@
                     $x += $colWidths[$i];
                 }
                 $pdf->SetTextColor(0, 0, 0);
+                $pdf->SetFont('helvetica', '', 9); // Reset font after row
                 $pdf->SetY($y + $maxHeight);
             }
             // Reset cell paddings to default after table
             $pdf->setCellPaddings(0, 0, 0, 0);
-            // Draw table outline
-            $tableEndY = $pdf->GetY();
-            $pdf->SetDrawColor(0,0,0);
-            $pdf->Rect($tableStartX, $tableStartY, $tableWidth, $tableEndY - $tableStartY);
-            // Draw header bottom line again for clarity
-            $pdf->Line($tableStartX, $tableStartY + 10, $tableStartX + $tableWidth, $tableStartY + 10);
-
+          
             ob_clean(); // Clear any output buffer to prevent corruption
             $filename = $filename . '.pdf';
             $pdf->Output($filename, 'D');
