@@ -67,7 +67,7 @@ include 'includes/header.php';
                     <div class="d-flex justify-content-between mb-3">
                         <!-- Search Box -->
                         <div class="row">
-                            <div class="col">
+                            <div class="col-5">
                                 <input type="text" id="search-input" class="form-control" placeholder="Search by name"
                                     value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>">
                             </div>
@@ -83,6 +83,7 @@ include 'includes/header.php';
                                     <input type="hidden" name="startDate" id="startDate" value="<?php echo $startDate; ?>">
                                     <input type="hidden" name="endDate" id="endDate" value="<?php echo $endDate; ?>">
                                     <input type="hidden" name="page" value="1">
+                                    <!-- to be fix this custom range feature -->
                                     <button class="form-control" id="customRangeBtn">Custom range</button>
                                 </form>
                             </div>
