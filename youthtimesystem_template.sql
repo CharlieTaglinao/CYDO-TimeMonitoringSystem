@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2025 at 06:35 AM
+-- Generation Time: May 17, 2025 at 07:42 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -42,11 +42,9 @@ CREATE TABLE `account` (
 
 INSERT INTO `account` (`id`, `username`, `email_id`, `password`, `role`, `created_at`) VALUES
 (84, 'admin', 1, '$2y$10$uPul6WagIXQHnK0.08tAr.rNNXftzl.ERKTrUh4sAATX6Pjxwt.Ay', '1', '2025-04-04 16:04:23'),
-(92, 'staff', 7, '$2y$10$GVzk6YjIhodlPrfVECYHXuCMOIt7BjgEASeO31WLA7jRWOZOs6VgC', '2', '2025-04-07 11:00:49'),
-(93, 'admin_2', 8, '$2y$10$DIOcBc1kq/7YmYwccEKLQORzeNHmYsRt1pGJZ11CKPB2o3B33Atb.', '1', '2025-04-08 09:05:04'),
-(96, 'shork', 11, '$2y$10$YY2cSldqnKcVQfG9OQRaCu7ccp2l25Ln1hVbghVOrzVDHvngsdE9m', '1', '2025-04-08 09:56:20'),
-(97, 'pogi', 0, '$2y$10$Yx/gYoLMQTTHLG19qM4yXecP3Uq0z9a9RCWIoIgi9sMg90gYyIPDC', '2', '2025-04-08 10:08:31'),
-(99, 'staff2', 13, '$2y$10$ofg61O1HWkTIscW8T1zYoezggsQZVVG/R6qtXLnx8rilK5PTylsWe', '2', '2025-05-02 13:15:04');
+(100, 'mentor', 14, '$2y$10$CXAKPnAHkdMHMQqvPoHT4OnY7u1HBJRoRySyLoHdKn2C50.niKPG2', '5', '2025-05-09 14:27:41'),
+(101, 'charlie_member', 15, '$2y$10$KBkUSCwOQXX1HPoXdzUuzu8T3kU6Fm1FUPQtMibbJoHei629d9Bhy', '7', '2025-05-09 14:43:40'),
+(102, 'coordinator', 16, '$2y$10$lNJMVBf269qGC.axflcd4eAYtfGhEWAmyouJkilVr/5Ip3k3ejbuu', '6', '2025-05-13 18:37:22');
 
 -- --------------------------------------------------------
 
@@ -66,7 +64,9 @@ CREATE TABLE `account_email` (
 --
 
 INSERT INTO `account_email` (`id`, `email_address`, `created_at`, `updated_at`) VALUES
-(13, 'staff@gmail.com', '2025-05-02 13:15:04', NULL);
+(14, 'mentor@gmail.com', '2025-05-09 14:27:41', NULL),
+(15, 'member@gmail.com', '2025-05-09 14:43:40', NULL),
+(16, 'coordinator@gmail.com', '2025-05-13 18:37:22', NULL);
 
 -- --------------------------------------------------------
 
@@ -130,33 +130,63 @@ CREATE TABLE `email` (
   `email` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `email`
+-- Table structure for table `member_applicants`
 --
 
-INSERT INTO `email` (`id`, `client_id`, `email`) VALUES
-(43, 43, 'ripoge@mailinator.com'),
-(44, 44, 'dixul@mailinator.com'),
-(45, 45, 'gydakafybu@mailinator.com');
+CREATE TABLE `member_applicants` (
+  `id` int(11) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `middle_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL,
+  `age` int(11) NOT NULL,
+  `email_id` int(11) NOT NULL,
+  `school_id` int(11) NOT NULL,
+  `barangay_id` int(11) NOT NULL,
+  `sex_id` int(11) NOT NULL,
+  `status` varchar(50) DEFAULT NULL,
+  `submitted_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `office`
+-- Table structure for table `member_code`
 --
 
-CREATE TABLE `office` (
-  `id` int(255) NOT NULL,
-  `office_name` varchar(100) NOT NULL
+CREATE TABLE `member_code` (
+  `id` int(11) NOT NULL,
+  `membership_code` varchar(100) DEFAULT NULL,
+  `status` varchar(100) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `office`
+-- Table structure for table `member_email`
 --
 
-INSERT INTO `office` (`id`, `office_name`) VALUES
-(1, 'CITY YOUTH DEVELOPMENT OFFICE'),
-(2, 'PERSON WITH DISABILITY AFFAIRS OFFICE');
+CREATE TABLE `member_email` (
+  `id` int(11) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `submitted_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `member_school_name`
+--
+
+CREATE TABLE `member_school_name` (
+  `id` int(11) NOT NULL,
+  `school_name` varchar(255) NOT NULL,
+  `submitted_at` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -181,10 +211,14 @@ INSERT INTO `permission` (`id`, `permission_id`, `permission_name`, `category`, 
 (3, 'c5pwoB1uPkzwwZgFokRZZ85fE', 'Monitor Visitor', 'Monitoring', '2025-03-11 02:32:06'),
 (4, 'GfsdZkrEFuNhmIUmxIm8e7fS8', 'Download Reports', 'Reports', '2025-03-11 02:33:42'),
 (5, 'qD0mEzTMK6Toi4u8aR1Pdusag', 'View Analytics', 'Reports', '2025-03-11 02:34:07'),
-(6, 'JyCQULxjmYOycJFVOyceWb8BA', 'Monitor Dashboard', 'Monitoring', '2025-03-11 02:34:55'),
 (7, '906IZi3K8od7FBS518t5I31jY', 'Edit/Delete Account', 'Account', '2025-03-11 02:49:21'),
 (8, '8sAygcnqpOXP8aAAG7IAWI4Cg', 'Add Permission', 'Permission', '2025-03-11 06:04:06'),
-(9, 'ubmssiHKw9GEPDulEVpDtOudM', 'View User Permission', 'Permission', '2025-03-11 09:32:05');
+(9, 'ubmssiHKw9GEPDulEVpDtOudM', 'View User Permission', 'Permission', '2025-03-11 09:32:05'),
+(10, '6QmUceiC4tYAFPR8ablg55KFZ', 'Accept/Decline Application', 'Membership', '2025-05-13 09:44:50'),
+(11, '3DijIfOkS1uljCeXsJoyJAIbt', 'Activate/Deactivate Member', 'Membership', '2025-05-13 09:46:01'),
+(12, 'M24yNFhXnUXIgzruLUVLrr1dQ', 'View Member Codes', 'Membership', '2025-05-13 09:46:01'),
+(13, 'nLpx3AoiT6FJB8BVTGy4D6VE7', 'Add Account Type', 'Configuration', '2025-05-13 09:59:58'),
+(14, 'p1YjKW0Ny5bLE64YdGreQJ92w', 'View Account Type', 'Configuration', '2025-05-13 09:59:58');
 
 -- --------------------------------------------------------
 
@@ -198,15 +232,6 @@ CREATE TABLE `purpose` (
   `purpose` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `purpose`
---
-
-INSERT INTO `purpose` (`id`, `client_id`, `purpose`) VALUES
-(54, 43, 'NISI MINUS SUNT VEL'),
-(55, 44, 'ET SED NEMO LABORUM'),
-(56, 45, 'MOLLIT MAGNA PERSPIC');
-
 -- --------------------------------------------------------
 
 --
@@ -215,16 +240,18 @@ INSERT INTO `purpose` (`id`, `client_id`, `purpose`) VALUES
 
 CREATE TABLE `role` (
   `id` int(255) NOT NULL,
-  `role` varchar(100) NOT NULL
+  `role` varchar(100) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `role`
 --
 
-INSERT INTO `role` (`id`, `role`) VALUES
-(1, 'admin'),
-(2, 'staff');
+INSERT INTO `role` (`id`, `role`, `created_at`) VALUES
+(5, 'MENTOR', '2025-05-09 14:16:32'),
+(6, 'COORDINATOR', '2025-05-09 14:42:26'),
+(7, 'MEMBER', '2025-05-09 14:42:41');
 
 -- --------------------------------------------------------
 
@@ -256,19 +283,9 @@ CREATE TABLE `time_logs` (
   `client_id` int(255) NOT NULL,
   `time_in` varchar(255) NOT NULL,
   `time_out` varchar(255) DEFAULT NULL,
-  `code` varchar(6) DEFAULT NULL,
-  `office_id` int(50) NOT NULL,
+  `code` varchar(100) DEFAULT NULL,
   `status` varchar(100) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `time_logs`
---
-
-INSERT INTO `time_logs` (`id`, `client_id`, `time_in`, `time_out`, `code`, `office_id`, `status`) VALUES
-(52, 43, '2025-05-02 13:06:05', '2025-05-02 13:06:29', NULL, 1, 'User Logout'),
-(53, 44, '2025-05-02 13:06:50', NULL, 'YS9I0W', 1, 'On Site'),
-(54, 45, '2025-05-02 13:07:29', NULL, 'EZYDFW', 1, 'On Site');
 
 -- --------------------------------------------------------
 
@@ -287,18 +304,42 @@ CREATE TABLE `user_permissions` (
 --
 
 INSERT INTO `user_permissions` (`id`, `user_id`, `permission_id`) VALUES
-(246, 84, 'JyCQULxjmYOycJFVOyceWb8BA'),
 (247, 84, '8sAygcnqpOXP8aAAG7IAWI4Cg'),
-(248, 84, 'T9rPHeL7ectsYwT6Ih2AswTeZ'),
-(249, 84, '906IZi3K8od7FBS518t5I31jY'),
 (250, 84, 'c5pwoB1uPkzwwZgFokRZZ85fE'),
 (251, 84, 'GfsdZkrEFuNhmIUmxIm8e7fS8'),
 (252, 84, 'qD0mEzTMK6Toi4u8aR1Pdusag'),
 (253, 84, 'ubmssiHKw9GEPDulEVpDtOudM'),
-(254, 99, 'GfsdZkrEFuNhmIUmxIm8e7fS8'),
-(255, 99, 'JyCQULxjmYOycJFVOyceWb8BA'),
-(256, 99, 'c5pwoB1uPkzwwZgFokRZZ85fE'),
-(257, 99, 'qD0mEzTMK6Toi4u8aR1Pdusag');
+(259, 100, 'T9rPHeL7ectsYwT6Ih2AswTeZ'),
+(260, 100, '906IZi3K8od7FBS518t5I31jY'),
+(261, 100, 'c5pwoB1uPkzwwZgFokRZZ85fE'),
+(262, 100, 'GfsdZkrEFuNhmIUmxIm8e7fS8'),
+(263, 100, 'qD0mEzTMK6Toi4u8aR1Pdusag'),
+(264, 100, '8sAygcnqpOXP8aAAG7IAWI4Cg'),
+(265, 100, 'ubmssiHKw9GEPDulEVpDtOudM'),
+(266, 84, '906IZi3K8od7FBS518t5I31jY'),
+(268, 100, '3DijIfOkS1uljCeXsJoyJAIbt'),
+(270, 100, '6QmUceiC4tYAFPR8ablg55KFZ'),
+(271, 100, 'M24yNFhXnUXIgzruLUVLrr1dQ'),
+(275, 100, 'p1YjKW0Ny5bLE64YdGreQJ92w'),
+(276, 100, 'nLpx3AoiT6FJB8BVTGy4D6VE7'),
+(277, 84, '6QmUceiC4tYAFPR8ablg55KFZ'),
+(278, 84, '3DijIfOkS1uljCeXsJoyJAIbt'),
+(279, 84, 'M24yNFhXnUXIgzruLUVLrr1dQ'),
+(280, 84, 'nLpx3AoiT6FJB8BVTGy4D6VE7'),
+(281, 84, 'p1YjKW0Ny5bLE64YdGreQJ92w'),
+(282, 101, 'T9rPHeL7ectsYwT6Ih2AswTeZ'),
+(283, 101, '906IZi3K8od7FBS518t5I31jY'),
+(284, 101, 'c5pwoB1uPkzwwZgFokRZZ85fE'),
+(285, 101, 'GfsdZkrEFuNhmIUmxIm8e7fS8'),
+(286, 101, 'qD0mEzTMK6Toi4u8aR1Pdusag'),
+(287, 101, '8sAygcnqpOXP8aAAG7IAWI4Cg'),
+(288, 101, 'ubmssiHKw9GEPDulEVpDtOudM'),
+(289, 101, '6QmUceiC4tYAFPR8ablg55KFZ'),
+(290, 101, '3DijIfOkS1uljCeXsJoyJAIbt'),
+(291, 101, 'M24yNFhXnUXIgzruLUVLrr1dQ'),
+(292, 101, 'nLpx3AoiT6FJB8BVTGy4D6VE7'),
+(293, 101, 'p1YjKW0Ny5bLE64YdGreQJ92w'),
+(294, 84, 'T9rPHeL7ectsYwT6Ih2AswTeZ');
 
 -- --------------------------------------------------------
 
@@ -313,20 +354,26 @@ CREATE TABLE `visitors` (
   `last_name` varchar(255) NOT NULL,
   `sex_id` int(20) NOT NULL,
   `purpose_id` int(100) NOT NULL,
-  `office_id` int(100) NOT NULL,
+  `school_id` int(100) NOT NULL,
   `barangay_id` int(100) NOT NULL,
   `age` varchar(100) DEFAULT NULL,
+  `membership_id` int(11) DEFAULT NULL,
+  `type` varchar(50) NOT NULL,
   `created_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `visitors`
+-- Table structure for table `visitor_school_name`
 --
 
-INSERT INTO `visitors` (`id`, `first_name`, `middle_name`, `last_name`, `sex_id`, `purpose_id`, `office_id`, `barangay_id`, `age`, `created_at`) VALUES
-(43, 'HYATT', 'SOPOLINE LEVINE', 'SOTO', 1, 43, 1, 20, '23', '2025-05-02 13:06:05'),
-(44, 'BRIAN', 'ORLI DAVIDSON', 'BURTON', 1, 44, 1, 30, '21', '2025-05-02 13:06:50'),
-(45, 'KIERAN', 'YULI POLLARD', 'SEARS', 2, 45, 1, 4, '21', '2025-05-02 13:07:29');
+CREATE TABLE `visitor_school_name` (
+  `id` int(11) NOT NULL,
+  `school_name` varchar(255) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime DEFAULT NULL ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -357,9 +404,31 @@ ALTER TABLE `email`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `office`
+-- Indexes for table `member_applicants`
 --
-ALTER TABLE `office`
+ALTER TABLE `member_applicants`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_member_email` (`email_id`),
+  ADD KEY `fk_member_barangay` (`barangay_id`),
+  ADD KEY `fk_member_sex` (`sex_id`),
+  ADD KEY `fk_member_school_name` (`school_id`);
+
+--
+-- Indexes for table `member_code`
+--
+ALTER TABLE `member_code`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `member_email`
+--
+ALTER TABLE `member_email`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `member_school_name`
+--
+ALTER TABLE `member_school_name`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -404,6 +473,17 @@ ALTER TABLE `user_permissions`
 -- Indexes for table `visitors`
 --
 ALTER TABLE `visitors`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_visitors_school` (`school_id`),
+  ADD KEY `fk_visitors_barangay` (`barangay_id`),
+  ADD KEY `fk_visitors_purpose` (`purpose_id`),
+  ADD KEY `fk_visitors_sex` (`sex_id`),
+  ADD KEY `fk_visitor_member` (`membership_id`);
+
+--
+-- Indexes for table `visitor_school_name`
+--
+ALTER TABLE `visitor_school_name`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -414,13 +494,13 @@ ALTER TABLE `visitors`
 -- AUTO_INCREMENT for table `account`
 --
 ALTER TABLE `account`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=103;
 
 --
 -- AUTO_INCREMENT for table `account_email`
 --
 ALTER TABLE `account_email`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `barangays`
@@ -432,31 +512,49 @@ ALTER TABLE `barangays`
 -- AUTO_INCREMENT for table `email`
 --
 ALTER TABLE `email`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `office`
+-- AUTO_INCREMENT for table `member_applicants`
 --
-ALTER TABLE `office`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `member_applicants`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `member_code`
+--
+ALTER TABLE `member_code`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `member_email`
+--
+ALTER TABLE `member_email`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `member_school_name`
+--
+ALTER TABLE `member_school_name`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `permission`
 --
 ALTER TABLE `permission`
-  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(100) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `purpose`
 --
 ALTER TABLE `purpose`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `sex`
@@ -468,23 +566,38 @@ ALTER TABLE `sex`
 -- AUTO_INCREMENT for table `time_logs`
 --
 ALTER TABLE `time_logs`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `user_permissions`
 --
 ALTER TABLE `user_permissions`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=295;
 
 --
 -- AUTO_INCREMENT for table `visitors`
 --
 ALTER TABLE `visitors`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `visitor_school_name`
+--
+ALTER TABLE `visitor_school_name`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `member_applicants`
+--
+ALTER TABLE `member_applicants`
+  ADD CONSTRAINT `fk_member_barangay` FOREIGN KEY (`barangay_id`) REFERENCES `barangays` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_member_email` FOREIGN KEY (`email_id`) REFERENCES `member_email` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_member_school_name` FOREIGN KEY (`school_id`) REFERENCES `member_school_name` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_member_sex` FOREIGN KEY (`sex_id`) REFERENCES `sex` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `purpose`
@@ -497,6 +610,15 @@ ALTER TABLE `purpose`
 --
 ALTER TABLE `user_permissions`
   ADD CONSTRAINT `user_permissions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `account` (`id`);
+
+--
+-- Constraints for table `visitors`
+--
+ALTER TABLE `visitors`
+  ADD CONSTRAINT `fk_visitors_barangay` FOREIGN KEY (`barangay_id`) REFERENCES `barangays` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_visitors_member_code` FOREIGN KEY (`membership_id`) REFERENCES `member_code` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_visitors_school` FOREIGN KEY (`school_id`) REFERENCES `visitor_school_name` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_visitors_sex` FOREIGN KEY (`sex_id`) REFERENCES `sex` (`id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
