@@ -45,9 +45,19 @@ if (isset($_GET['visitor_code'])) {
             </form>
 
             <div class="row mt-4">
+                <h4>Time Logs of Visitors</h4>
                 <div class="col-md-6">
                     <canvas id="visitorChart"></canvas>
                 </div>
+                 <div class="col-md-6">
+                    <canvas id="memberChart"></canvas>
+                </div>                 
+            </div>
+
+            <hr>
+
+            <div class="row mt-4">
+                <h4>Users</h4>
                 <div class="col-md-6">
                     <canvas id="userChart"></canvas>
                 </div>

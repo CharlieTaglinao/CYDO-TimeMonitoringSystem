@@ -48,21 +48,28 @@ if (isset($_POST['application_id']) && isset($_POST['action'])) {
             $visitorStmt = $conn->prepare($visitorInsertQuery);
             $visitorStmt->bind_param('sssiiii', $applicant['first_name'], $applicant['middle_name'], $applicant['last_name'], $applicant['sex_id'], $applicant['school_id'], $applicant['barangay_id'], $applicant['age']);
             $visitorStmt->execute();
+            $visitorId = $conn->insert_id;
 
             // Generate unique membership code
             $membershipCode = 'CH-' . date('Y') . '-' . strtoupper(substr(md5(uniqid(rand(), true)), 0, 6));
 
-            // Insert into member_code table
+            // Insert into member_code table (initially without visitor_id)
             $memberCodeInsertQuery = "INSERT INTO member_code (membership_code, created_at) VALUES (?, NOW())";
             $memberCodeStmt = $conn->prepare($memberCodeInsertQuery);
             $memberCodeStmt->bind_param('s', $membershipCode);
             $memberCodeStmt->execute();
+            $membershipId = $conn->insert_id;
+
+            // Update member_code with visitor_id
+            $updateMemberCodeQuery = "UPDATE member_code SET visitor_id = ? WHERE id = ?";
+            $updateMemberCodeStmt = $conn->prepare($updateMemberCodeQuery);
+            $updateMemberCodeStmt->bind_param('ii', $visitorId, $membershipId);
+            $updateMemberCodeStmt->execute();
+            $updateMemberCodeStmt->close();
 
             // Update visitor record with membership ID
-            $membershipId = $conn->insert_id;
             $updateVisitorQuery = "UPDATE visitors SET membership_id = ? WHERE id = ?";
             $updateVisitorStmt = $conn->prepare($updateVisitorQuery);
-            $visitorId = $conn->insert_id;
             $updateVisitorStmt->bind_param('ii', $membershipId, $visitorId);
             $updateVisitorStmt->execute();
 

@@ -616,6 +616,78 @@ function initialize3DChart(chartId, chartData, chartOptions, chartTitle) {
   });
 }
 
+function initialize3DLineChart(chartId, chartData, chartOptions, chartTitle) {
+  const ctx = document.getElementById(chartId).getContext("2d");
+  new Chart(ctx, {
+    type: "line",
+    data: chartData,
+    options: {
+      ...chartOptions,
+      plugins: {
+        legend: {
+          display: true,
+          labels: {
+            color: "#4B4B4B",
+          },
+        },
+        tooltip: {
+          mode: "index",
+          intersect: false,
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          titleColor: "#FFFFFF",
+          bodyColor: "#FFFFFF",
+          borderColor: "#4B4B4B",
+          borderWidth: 1,
+        },
+        title: {
+          display: true,
+          text: chartTitle,
+          color: "#4B4B4B",
+          font: {
+            size: 18,
+            weight: "bold",
+          },
+        },
+      },
+      elements: {
+        line: {
+          borderWidth: 3,
+          tension: 0.4, // smooth curve
+        },
+        point: {
+          radius: 5,
+          backgroundColor: "#2e2c73",
+          borderColor: "#fff",
+          borderWidth: 2,
+        },
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false,
+          },
+          ticks: {
+            color: "#4B4B4B",
+          },
+        },
+        y: {
+          grid: {
+            display: false,
+          },
+          beginAtZero: true,
+          ticks: {
+            color: "#4B4B4B",
+            callback: function (value) {
+              return Number.isInteger(value) ? value : null;
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+
 // Ensure visitorData and other datasets are defined
 document.addEventListener("DOMContentLoaded", function () {
   if (typeof visitorData === "undefined" || typeof userData === "undefined") {
@@ -626,10 +698,23 @@ document.addEventListener("DOMContentLoaded", function () {
     labels: visitorData.labels,
     datasets: [
       {
-        label: "Visitors",
+        label: "GUEST",
         data: visitorData.values,
-        backgroundColor: "rgb(64, 156, 108)",
-        borderColor: "rgba(64, 156, 108, 1)",
+        backgroundColor: "#2e2c73",
+        borderWidth: 2,
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const memberChartData = {
+    labels: memberData.labels,
+    datasets: [
+      {
+        label: "MEMBERS",
+        data: memberData.values,
+        borderColor: "#2e2c73",
         borderWidth: 2,
         fill: true,
         tension: 0.4,
@@ -643,8 +728,8 @@ document.addEventListener("DOMContentLoaded", function () {
       {
         label: "Users",
         data: userData.values,
-        backgroundColor: "rgb(0, 51, 255)",
-        borderColor: "rgba(0, 51, 255, 1)",
+        backgroundColor: "#2e2c73",
+        borderColor: "#2e2c73",
         borderWidth: 2,
         fill: true,
         tension: 0.4,
@@ -668,11 +753,7 @@ document.addEventListener("DOMContentLoaded", function () {
     },
   };
 
-  initialize3DChart(
-    "visitorChart",
-    visitorChartData,
-    chartOptions,
-    "Total Visitors"
-  );
+  initialize3DLineChart("visitorChart",visitorChartData,chartOptions,"Total Guest");
+  initialize3DLineChart("memberChart", memberChartData, chartOptions, "Total Members");
   initialize3DChart("userChart", userChartData, chartOptions, "Total Users");
 });

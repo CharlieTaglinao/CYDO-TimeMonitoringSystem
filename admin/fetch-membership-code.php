@@ -40,16 +40,17 @@ $totalAllQuery = "SELECT COUNT(*) AS totalApplication FROM member_applicants WHE
 $totalAllResult = $conn->query($totalAllQuery);
 $totalApplicants = $totalAllResult->fetch_assoc()['totalApplication'];
 
-
 // Set pagination variables
 $limit = 8;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
 // Count total rows with search filter
-$totalRowsQuery = "SELECT COUNT(*) AS total FROM account WHERE username != '$username'";
+$totalRowsQuery = "SELECT COUNT(*) AS total FROM visitors 
+    INNER JOIN member_code ON visitors.membership_id = member_code.id
+    WHERE visitors.type = 'MEMBER'";
 if (!empty($search)) {
-    $totalRowsQuery .= " AND (visitors.first_name LIKE '%$search%' OR visitors.last_name LIKE '%$search%')";
+    $totalRowsQuery .= " AND (visitors.first_name LIKE '%$search%' OR visitors.last_name LIKE '%$search%' OR member_code.membership_code LIKE '%$search%')";
 }
 $totalRowsResult = $conn->query($totalRowsQuery);
 $totalRows = $totalRowsResult->fetch_assoc()['total'];
@@ -70,8 +71,11 @@ INNER JOIN visitor_school_name ON visitors.school_id = visitor_school_name.id
 INNER JOIN barangays ON visitors.barangay_id = barangays.id
 INNER JOIN member_code ON visitors.membership_id = member_code.id
 INNER JOIN sex ON visitors.sex_id = sex.id
-WHERE (visitors.first_name LIKE '%$search%' OR visitors.last_name LIKE '%$search%')
-LIMIT $limit OFFSET $offset";
+WHERE visitors.type = 'MEMBER'";
+if (!empty($search)) {
+    $accountQuery .= " AND (visitors.first_name LIKE '%$search%' OR visitors.last_name LIKE '%$search%' OR member_code.membership_code LIKE '%$search%')";
+}
+$accountQuery .= " LIMIT $limit OFFSET $offset";
 
 // Debugging: Log the query to check for issues
 error_log("SQL Query: $accountQuery");
