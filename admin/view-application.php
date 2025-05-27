@@ -8,9 +8,9 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
     <div class="d-flex">
         <!-- Sidebar -->
         <?php include 'includes/sidebar.php'; ?>
-         <?php
-                            include 'fetch-application.php';
-                            ?>
+        <?php
+        include 'fetch-application.php';
+        ?>
 
         <!-- Main Content -->
         <div class="flex-grow-1 p-4">
@@ -22,7 +22,7 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
                                 <h5 class="card-title">TOTAL APPLICATION</h5>
                                 <p class="card-text" id="current-visitors"><?php echo $totalApplicants; ?></p>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                 </div>
 
@@ -63,7 +63,8 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
                             <?php if ($accountResult->num_rows > 0): ?>
                                 <?php while ($row = $accountResult->fetch_assoc()): ?>
                                     <tr>
-                                        <td><?php echo $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']; ?></td>
+                                        <td><?php echo $row['first_name'] . ' ' . $row['middle_name'] . ' ' . $row['last_name']; ?>
+                                        </td>
                                         <td><?php echo $row['email_address']; ?></td>
                                         <td><?php echo $row['school_name']; ?></td>
                                         <td><?php echo $row['age']; ?></td>
@@ -84,7 +85,9 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
                                     </tr>
                                 <?php endwhile; ?>
                             <?php else: ?>
-                                <tr><td colspan="7">No records found</td></tr>
+                                <tr>
+                                    <td colspan="7">No records found</td>
+                                </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
@@ -133,9 +136,33 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
             </div>
         </div>
     </div>
+
+    <!-- Membership Code Modal -->
+    <div class="modal fade" id="membershipCodeModal" tabindex="-1" aria-labelledby="membershipCodeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="membershipCodeModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center" id="membershipCodeDetails">
+                    <!-- Details will be injected here -->
+                </div>
+                <div class="">
+                    <h6 class="fst-italic fw-normal">Note: Please take a capture of this details</h6>
+                </div>
+              
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Handle Accept button
+            // Handle Accept/Decline button
             document.querySelectorAll('form[action="process/accept-decline-application-logic.php"]').forEach(function (form) {
                 form.addEventListener('submit', function (event) {
                     event.preventDefault(); // Prevent form submission
@@ -154,7 +181,41 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
                         cancelButtonText: 'No'
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            form.submit(); // Submit the form if confirmed
+                            if (action === 'accept') {
+                                // AJAX for accept
+                                const formData = new FormData(form);
+                                // Get details from the row
+                                const row = form.closest('tr');
+                                const fullName = row.children[0].textContent.trim();  
+                                const school = row.children[2].textContent.trim();
+                                fetch('process/accept-decline-application-logic.php', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.status === 'success' && data.membership_code) {
+                                            // Set modal header and body with details
+                                            document.getElementById('membershipCodeModalLabel').textContent = fullName;
+                                            document.getElementById('membershipCodeDetails').innerHTML = `
+                                                <div class="mb-2"><strong>School:</strong> ${school}</div>
+                                                <div class="mb-2 fw-bold fs-5"><strong>Membership Code:</strong> <span class="text-success">${data.membership_code}</span></div>
+                                            `;
+                                            var modal = new bootstrap.Modal(document.getElementById('membershipCodeModal'));
+                                            modal.show();
+                                            // Optionally reload after closing modal
+                                            document.getElementById('membershipCodeModal').addEventListener('hidden.bs.modal', function () {
+                                                window.location.reload();
+                                            }, { once: true });
+                                        } else {
+                                            window.location.reload();
+                                        }
+                                    })
+                                    .catch(() => window.location.reload());
+                            } else {
+                                // Decline: normal submit
+                                form.submit();
+                            }
                         }
                     });
                 });
@@ -162,4 +223,5 @@ include 'permission/permissionAcceptDeclineMemberApplication.php';
         });
     </script>
 </body>
+
 </html>

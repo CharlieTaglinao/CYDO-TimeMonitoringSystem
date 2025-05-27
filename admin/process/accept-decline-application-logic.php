@@ -95,7 +95,7 @@ if (isset($_POST['application_id']) && isset($_POST['action'])) {
     
 
     $stmt->close();
-    header('Location: ../view-activation.php');
+
     exit;
 } else {
     $_SESSION['message'] = 'Invalid request.';

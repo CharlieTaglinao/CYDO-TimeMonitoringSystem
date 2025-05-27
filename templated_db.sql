@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2025 at 07:42 AM
+-- Generation Time: May 27, 2025 at 06:37 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -158,6 +158,7 @@ CREATE TABLE `member_applicants` (
 
 CREATE TABLE `member_code` (
   `id` int(11) NOT NULL,
+  `visitor_id` int(11) DEFAULT NULL,
   `membership_code` varchar(100) DEFAULT NULL,
   `status` varchar(100) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),

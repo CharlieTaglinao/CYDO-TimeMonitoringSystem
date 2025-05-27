@@ -216,7 +216,7 @@ select.form-select {
     }
 
     .LOGO-CYDO {
-        width: 250px;
+        width: auto;
         height: 250px;
         position: relative;
         top: 50px;
@@ -272,8 +272,8 @@ select.form-select {
     }
 
     .LOGO-CYDO {
-        width: 250px;
-        height: 250px;
+        width: calc(100% - 10%);
+        height: 230px;
         position: relative;
         bottom: 40px;
         left: -0px;
@@ -341,8 +341,8 @@ select.form-select {
 
 
     .LOGO-CYDO {
-        width: 190px;
-        height: 190px;
+        width: auto;
+        height: 150px;
         position: relative;
         top: 5px;
         left: -0px;
@@ -394,7 +394,7 @@ select.form-select {
         margin: 10px auto;
     }
     .LOGO-CYDO{
-        width: 280px;
+        width: auto;
         height: 280px;
         position: relative;
         top: 5px;
